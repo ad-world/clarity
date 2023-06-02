@@ -8,4 +8,4 @@
 | New Project Idea After Presentation | 1.5 hours | 11:15 AM | 12:45 PM | May 31st, 2023 |
 | Work on creating FPs and NFPs for Proposal Document | 1.5 hours | 8:00 PM | 9:30 PM | June 1st, 2023 |
 | Justified FPs and NFPs and worked on Human Values section for Proposal Document | 1.5 hour | 9:45 PM | 11:15 PM | June 2st, 2023 |
-Total time spent as of June 1st, 2023: 9.0 hours
+Total time spent as of June 2nd, 2023: 9.0 hours
