@@ -10,5 +10,7 @@
 | Architecture Discussion | 1 hour | 9:00 AM | 10:00 AM | June 2nd, 2023 | N/A |
 | Sequence Diagram #1 for D1 | 30 mins | 10:15 AM | 10:45 AM | June 2nd, 2023 | N/A |
 | Create Android App Template | 15 mins | 7:00 PM | 7:15 PM | June 3rd, 2023 | [Creating template app](https://github.com/ad-world/clarity/commit/588dff3410809337c95ed25f946832247fde76ff) |
+| D2 Discussion | 1 hour | 6:00 PM | 7:00 PM | June 12th, 2023 | N/A |
+| D2 Paragraph Write-up| 0.5 hours | 6:00 PM | 6:30 PM | June 14th, 2023 | N/A |
 
-Total time spent as of May 26th, 2023: 8.5 hours
+Total time spent as of May 26th, 2023: 10 hours
