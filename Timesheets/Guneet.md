@@ -9,5 +9,8 @@
 | Creating Mockups for Features | 2 hour | 7:00 AM | 9:00 AM | June 2nd, 2023 | N/A |
 | Architecture Discussion | 1 hour | 9:00 AM | 10:00 AM | June 2nd, 2023 | N/A |
 | Creating Mockups for Features | 2 hour | 12:00 PM | 2:00 PM | June 2nd, 2023 | N/A |
+| D2 Discussion | 1 hour | 6:00 PM | 7:00 PM | June 12th, 2023 | N/A
+| D2 Paragraph Write Up (Harmful Population - Young Kids) | 1 hour | 6:00 PM | 7:00 PM | June 13th, 2023 | N/A
+| D3 Discussion | 2 hour | 10:30 PM | 12:30 PM | June 17th, 2023 | N/A
 
-Total time spent as of May 26th, 2023: 9.75 hours
+Total time spent as of June 17, 2023: 13.75 hours
