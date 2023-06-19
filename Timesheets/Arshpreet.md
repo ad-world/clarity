@@ -11,4 +11,5 @@
 | D2 Paragraph Write Up (Harmful Postings - General Public) | 30 mins | 2:00 PM | 2:30 PM | June 15th, 2023 | N/A
 | Project Functionality Discussion | 2 hours | 10:30 PM | 12:30 PM | June 17th, 2023 | N/A
 | D3 UML Diagram + Functionality Discussion | 1.5 hours | 1:00 PM | 2:30 PM | June 19th, 2023 | N/A
+
 Total time spent as of June 19th, 2023: 13 hours
