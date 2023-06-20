@@ -17,6 +17,7 @@
 | Worked on User UML | 15 mins | 7:00 PM | 7:15 PM | June 18th, 2023 | N/A |
 | Created basic SQLite data source | 30 mins | 10:00 PM | 10:30 PM | June 18th, 2023 | [Create basic DataSource](https://github.com/ad-world/clarity/commit/b32ff5b8b618aa7c61e52f258264f28f991d725d) |
 | UML Discussion | 1 hour | 6:00 PM | 7:00 PM | June 19th, 2023 | N/A |
-| Create User Table + DB Class | 15 mins | 10:15 | 10:30 | June 19th, 2023 | [Create user table](https://github.com/ad-world/clarity/commit/3ad46f078f1c229123933878c471925f4951dc8b) |
+| Create User Table + DB Class | 15 mins | 10:15 PM | 10:30 PM | June 19th, 2023 | [Create user table](https://github.com/ad-world/clarity/commit/3ad46f078f1c229123933878c471925f4951dc8b) |
+| Create Basic Login Endpoint | 1.25 hour | 3:15 PM | 4:30 PM | June 20th, 2023 | [Create login endpoint](https://github.com/ad-world/clarity/commit/2548879ec41c2e8e383a42c4e5e8433b18c7daeb) |
 
-Total time spent as of May 26th, 2023: 13.75 hours
+Total time spent as of May 26th, 2023: 15 hours
