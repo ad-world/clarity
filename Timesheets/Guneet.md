@@ -12,5 +12,7 @@
 | D2 Discussion | 1 hour | 6:00 PM | 7:00 PM | June 12th, 2023 | N/A
 | D2 Paragraph Write Up (Harmful Population - Young Kids) | 1 hour | 6:00 PM | 7:00 PM | June 13th, 2023 | N/A
 | D3 Discussion | 2 hour | 10:30 PM | 12:30 PM | June 17th, 2023 | N/A
+| Worked on User/Profile UML | 30 mins | 6:30 PM | 7:00 PM | June 18th, 2023 | N/A |
+| UML Discussion | 1 hour | 6:00 PM | 7:00 PM | June 19th, 2023 | N/A |
 
-Total time spent as of June 17, 2023: 13.75 hours
+Total time spent as of June 20, 2023: 15.25 hours
