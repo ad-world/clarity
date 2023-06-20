@@ -5,7 +5,7 @@ import java.nio.charset.Charset
 import java.sql.Connection
 import java.sql.DriverManager
 class DataManager {
-    private val db = DriverManager.getConnection("jdbc:sqlite:data.sqlite")
+    val db: Connection = DriverManager.getConnection("jdbc:sqlite:data.sqlite")
 
     init {
         createDbFile()
@@ -43,9 +43,4 @@ class DataManager {
             println("${sqlFile.absolutePath} does not exist. Please fix your file path");
         }
     }
-
-    fun conn(): Connection {
-        return db
-    }
-
 }
