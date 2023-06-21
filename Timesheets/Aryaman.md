@@ -19,5 +19,6 @@
 | UML Discussion | 1 hour | 6:00 PM | 7:00 PM | June 19th, 2023 | N/A |
 | Create User Table + DB Class | 15 mins | 10:15 PM | 10:30 PM | June 19th, 2023 | [Create user table](https://github.com/ad-world/clarity/commit/3ad46f078f1c229123933878c471925f4951dc8b) |
 | Create Basic Login Endpoint | 1.25 hour | 3:15 PM | 4:30 PM | June 20th, 2023 | [Create login endpoint](https://github.com/ad-world/clarity/commit/2548879ec41c2e8e383a42c4e5e8433b18c7daeb) |
+| Create "Create User" Endpoint | 30 mins | 6:30 PM | 7:00 PM | June 21th, 2023 | [Create 'create user' endpoint](https://github.com/ad-world/clarity/commit/38c848e28e76880799acfcf554c91bd085072214) | 
 
-Total time spent as of May 26th, 2023: 15 hours
+Total time spent as of May 26th, 2023: 15.5 hours
