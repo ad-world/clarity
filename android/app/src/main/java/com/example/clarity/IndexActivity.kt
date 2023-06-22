@@ -1,11 +1,15 @@
 package com.example.clarity
 
 import android.os.Bundle
+import android.provider.ContactsContract.Profile
+import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.example.clarity.classroompage.ClassroomFragment
 import com.example.clarity.databinding.IndexActivityBinding
+import androidx.fragment.app.Fragment
 import com.example.clarity.sets.SetsFragment
+import com.example.clarity.databinding.IndexActivityBinding
 
 // Just created a blank file for the main content
 
