@@ -43,6 +43,9 @@
             android:name=".IndexActivity"
             android:exported="false" />
         <activity
+            android:name=".IndexActivity"
+            android:exported="false" />
+        <activity
             android:name=".MainActivity"
             android:exported="true"
             android:label="@string/app_name"
