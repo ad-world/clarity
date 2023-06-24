@@ -45,4 +45,9 @@
     </string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="create_set">Create Set</string>
+    <string name="add_card">Add Card</string>
+    <string name="enter_set_title">Enter Set Title</string>
+    <string name="enter_card_title">Enter Card Title</string>
+    <string name="delete">Delete</string>
 </resources>

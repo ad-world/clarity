@@ -1,4 +1,4 @@
-package com.example.clarity.setspage
+package com.example.clarity.sets
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -36,6 +36,12 @@ class SetsFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_sets, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        R.id.rvSets
     }
 
     companion object {
