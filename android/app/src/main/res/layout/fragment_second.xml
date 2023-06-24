@@ -9,52 +9,47 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/parent"
         android:padding="16dp">
 
 
         <ImageView
-            android:id="@+id/logo"
             android:layout_width="246dp"
             android:layout_height="131dp"
             android:src="@drawable/logo_with_name"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.496"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:ignore="MissingConstraints" />
+            tools:ignore="MissingConstraints"
+            tools:layout_editor_absoluteX="49dp"
+            tools:layout_editor_absoluteY="37dp" />
 
         <TextView
             android:id="@+id/Login"
-            android:layout_width="317dp"
-            android:layout_height="47dp"
+            android:layout_width="319dp"
+            android:layout_height="71dp"
+            android:layout_marginBottom="368dp"
             android:text="Create an Account"
             android:textSize="27dp"
             android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.173"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/logo" />
+            app:layout_constraintStart_toStartOf="parent" />
 
         <TextView
             android:id="@+id/textview_second"
-            android:layout_width="261dp"
-            android:layout_height="64dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="372dp"
             android:text="Start improving your pronunciation today!"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.104"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/Login" />
+            app:layout_constraintStart_toStartOf="parent" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
             tools:layout_editor_absoluteX="16dp"
-            tools:layout_editor_absoluteY="315dp"
-            app:layout_constraintTop_toBottomOf="@+id/textview_second"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent">
+            tools:layout_editor_absoluteY="315dp">
 
             <TextView
                 android:id="@+id/username"
