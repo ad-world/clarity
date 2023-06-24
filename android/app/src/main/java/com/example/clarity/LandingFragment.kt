@@ -4,52 +4,43 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
-import android.widget.EditText
-import android.widget.TextView
 import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
-import com.example.clarity.databinding.FragmentFirstBinding
+//import com.example.clarity.databinding.FragmentFirstBinding
+import com.example.clarity.databinding.FragmentLandingBinding
 
 /**
  * A simple [Fragment] subclass as the default destination in the navigation.
  */
-class FirstFragment : Fragment() {
+class LandingFragment : Fragment() {
 
-    private var _binding: FragmentFirstBinding? = null
+    private var _binding: FragmentLandingBinding? = null
 
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
 
     override fun onCreateView(
-            inflater: LayoutInflater, container: ViewGroup?,
-            savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View? {
 
-        _binding = FragmentFirstBinding.inflate(inflater, container, false)
+        _binding = FragmentLandingBinding.inflate(inflater, container, false)
         return binding.root
 
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-
         super.onViewCreated(view, savedInstanceState)
-        super.onCreate(savedInstanceState)
 
-        binding.buttonLogin.setOnClickListener {
-            val username = binding.editTextUsername.text.toString()
-            val password = binding.editTextPassword.text.toString()
-
-            //need to call api
-            findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
-        }
-
-        binding.signupLink.setOnClickListener {
+        binding.buttonSignup.setOnClickListener {
             findNavController().navigate(R.id.SecondFragment)
         }
 
-
+        binding.buttonLogin.setOnClickListener {
+            findNavController().navigate(R.id.FirstFragment)
+        }
     }
 
     override fun onDestroyView() {
