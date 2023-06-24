@@ -11,6 +11,8 @@ data class CreateClassroomEntity(val name: String, val teacher: Integer)
 // response formats
 data class CreateClassroomResponse(val response: StatusResponse, val id: String)
 
+data class GetClassroomResponse(val response: StatusResponse, val id: List<String>)
+
 class ClassroomEntity(dataManager: DataManager) {
     private val db = dataManager.db
 
@@ -37,6 +39,27 @@ class ClassroomEntity(dataManager: DataManager) {
         } catch(e: Exception) {
             e.printStackTrace();
             return CreateClassroomResponse(StatusResponse.Failure, "Failed to create class")
+        }
+    }
+
+    fun getClasses(userId: Int) : GetClassroomResponse{
+        try {
+            val statement = db.createStatement()
+            val selectStatement = """
+                SELECT * FROM Classroom WHERE teacher = $userId
+            """.trimIndent()
+            val classNames = mutableListOf<String>()
+            val result = statement.executeQuery(selectStatement)
+            while (result.next()) {
+                var className = result.getString("name")
+                classNames.add(className)
+            }
+
+            return GetClassroomResponse(StatusResponse.Success, classNames)
+        } catch(e: Exception) {
+            e.printStackTrace();
+            val resultPlaceholder = mutableListOf<String>()
+            return GetClassroomResponse(StatusResponse.Failure, resultPlaceholder)
         }
     }
 }
