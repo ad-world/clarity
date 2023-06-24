@@ -3,8 +3,10 @@ package clarity.backend.controllers
 import clarity.backend.DataManager
 import clarity.backend.entity.*
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
@@ -35,6 +37,28 @@ class LoginController {
             ResponseEntity.badRequest().body(newUserResponse.message)
         }
 
+    }
+
+    @GetMapping("/getUser")
+    fun getUser(@RequestParam username: String): ResponseEntity<GetUserResponse> {
+        val userEntity = UserEntity(db)
+        val getUserResponse = userEntity.getUser(username)
+
+        return if(username.isNotEmpty()) {
+            if(getUserResponse.response == StatusResponse.Success) {
+                ResponseEntity.ok(getUserResponse)
+            } else {
+                ResponseEntity.badRequest().body(getUserResponse)
+            }
+        } else {
+            ResponseEntity.badRequest().body(
+                GetUserResponse(
+                    StatusResponse.Failure,
+                    null,
+                    "Please pass a username as a request param and try again."
+                )
+            )
+        }
     }
 
 
