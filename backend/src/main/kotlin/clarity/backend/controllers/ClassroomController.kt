@@ -12,22 +12,26 @@ class ClassroomController {
     val db = DataManager()
 
     // add class
-    @PostMapping("/addClass")
-    fun addClass(@RequestBody classroom: JoinClassroomEntity): ResponseEntity<String>  {
-        val classroomEntity = ClassroomEntity(db)
-
-        val response = classroomEntity.joinClass(classroom)
-
-    }
+//    @PostMapping("/addClass")
+//    fun addClass(@RequestBody classroom: JoinClassroomEntity): ResponseEntity<String>  {
+//        val classroomEntity = ClassroomEntity(db)
+//
+//        val response = classroomEntity.joinClass(classroom)
+//
+//    }
 
     // remove class
 
     // create class
     @PostMapping("/createClass")
-    fun createClass(@RequestBody newClassroom: ): ResponseEntity<String>  {
+    fun createClass(@RequestBody newClassroom: CreateClassroomEntity): ResponseEntity<String>  {
         val classroomEntity = ClassroomEntity(db)
+        val classroomResponse = classroomEntity.createClass(newClassroom)
 
-        val response = classroomEntity.createClass(newClassroom)
-
+        return if(classroomResponse.response == StatusResponse.Success) {
+            ResponseEntity.ok(classroomResponse.id)
+        } else {
+            ResponseEntity.badRequest().body(classroomResponse.id)
+        }
     }
 }
