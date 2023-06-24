@@ -43,6 +43,12 @@
             android:name=".IndexActivity"
             android:exported="false" />
         <activity
+            android:name=".sets.PracticeSetActivity"
+            android:exported="false" />
+        <activity
+            android:name=".sets.CreateSetActivity"
+            android:exported="false" />
+        <activity
             android:name=".IndexActivity"
             android:exported="false" />
         <activity
