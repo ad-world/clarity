@@ -14,13 +14,16 @@ class ClassroomController {
     val db = DataManager()
 
     // add class
-//    @PostMapping("/addClass")
-//    fun addClass(@RequestBody classroom: JoinClassroomEntity): ResponseEntity<String>  {
-//        val classroomEntity = ClassroomEntity(db)
-//
-//        val response = classroomEntity.joinClass(classroom)
-//
-//    }
+    @PostMapping("/addClass")
+    fun addClass(@RequestBody classroom: JoinClassroomEntity): ResponseEntity<String>  {
+        val classroomEntity = ClassroomEntity(db)
+        val joinResponse = classroomEntity.joinClass(classroom)
+        return if(joinResponse.response == StatusResponse.Success) {
+            ResponseEntity.ok(joinResponse.id)
+        } else {
+            ResponseEntity.badRequest().body(joinResponse.id)
+        }
+    }
 
     // remove class
 
@@ -41,6 +44,17 @@ class ClassroomController {
     fun getClasses(@RequestParam("id") id: String) : ResponseEntity<String> {
         val classroomEntity = ClassroomEntity(db)
         val classroomResponse = classroomEntity.getClasses(id.toInt())
+        return if(classroomResponse.response == StatusResponse.Success) {
+            ResponseEntity.ok(classroomResponse.id.toString())
+        } else {
+            ResponseEntity.badRequest().body("Error occurred while querying")
+        }
+    }
+
+    @GetMapping("/getClassesStudent")
+    fun getClassesStudent(@RequestParam("id") id: String) : ResponseEntity<String> {
+        val classroomEntity = ClassroomEntity(db)
+        val classroomResponse = classroomEntity.getClassesStudent(id.toInt())
         return if(classroomResponse.response == StatusResponse.Success) {
             ResponseEntity.ok(classroomResponse.id.toString())
         } else {

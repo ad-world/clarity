@@ -1,7 +1,5 @@
 PRAGMA foreign_keys = ON;
 
-DROP TABLE Classroom;
-
 CREATE TABLE IF NOT EXISTS Classroom (
     private_code TEXT PRIMARY KEY,
     name TEXT NOT NULL,
