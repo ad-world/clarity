@@ -7,13 +7,11 @@ import android.widget.EditText
 import com.example.clarity.R
 
 class CreateSetActivity : AppCompatActivity() {
-    private lateinit var setAdapter: SetAdapter
     private lateinit var cardAdapter: CardAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_set)
-        setAdapter = SetAdapter(mutableListOf())
         cardAdapter = CardAdapter(mutableListOf())
 
         val btnAddSet = findViewById<Button>(R.id.btnAddSet)
@@ -21,10 +19,19 @@ class CreateSetActivity : AppCompatActivity() {
 
         btnAddSet.setOnClickListener {
             val setTitle = etSetTitle.text.toString()
-            if (setTitle.isNotEmpty()) {
-                val set = Set(setTitle, 0, cardAdapter.getCards(), 0.0, SetCategory.MYSET)
-                setAdapter.addSet(set)
-                etSetTitle.text.clear()
+            var allCardsFull = true
+            for (card in cardAdapter.getCards()) {
+                if (card.phrase == "") {
+                    allCardsFull = false
+                    break
+                }
+            }
+            if (setTitle.isNotEmpty() && cardAdapter.getCards().size > 0 && allCardsFull) {
+                // TODO: Compute a new set id, probably take largest current ID for user and increment
+                val setId = 0
+                val set = Set(setId, setTitle, cardAdapter.getCards().size, cardAdapter.getCards(), 0, SetCategory.CREATED_SET)
+                // TODO: Upload SET to Database
+                finish()
             }
         }
 
