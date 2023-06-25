@@ -61,6 +61,36 @@ class SetsFragment : Fragment() {
                 cvStartActivity.visibility = INVISIBLE
             }
         }
+
+        sets = mutableListOf()
+        // TODO: Replace following lines with a query for all sets with our userId, and then parse
+        //  through the object returned, creating a set data class for each set, and appending it
+        //  to the sets array
+
+        // TEST DATA, will be removed when database is connected
+        sets.add(Set(0, "Animals", 4,
+            mutableListOf(Card("Dog", false),
+                Card("Cat", false),
+                Card("Zebra", false),
+                Card("Kangaroo", false)),
+            0, SetCategory.DEFAULT_SET))
+
+        sets.add(Set(1, "Countries", 3,
+            mutableListOf(Card("Canada", false),
+                Card("Russia", false),
+                Card("Japan", false)),
+            0, SetCategory.DOWNLOADED_SET))
+
+        sets.add(Set(2, "Devices", 5,
+            mutableListOf(Card("Phone", false),
+                Card("Laptop", false),
+                Card("Computer", false),
+                Card("Television", false),
+                Card("Tablet", false)),
+            0, SetCategory.COMMUNITY_SET))
+
+        setAdapter = SetAdapter(sets) { position -> onSetClick(position) }
+        binding.rvSets.adapter = setAdapter
     }
 
     override fun onCreateView(
@@ -119,6 +149,8 @@ class SetsFragment : Fragment() {
     }
 
     companion object {
+        // This uses a design pattern lol are we allowed to say that this is one of the ones we implemented
+
         /**
          * Use this factory method to create a new instance of
          * this fragment using the provided parameters.
