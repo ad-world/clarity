@@ -14,6 +14,8 @@ class DataManager {
 
     private fun createSampleTable() {
         executeSqlFile("ddl/CREATE_USER.sql");
+        executeSqlFile("ddl/CREATE_CLASSROOM.sql")
+        executeSqlFile("ddl/CREATE_CLASSROOM_STUDENTS.sql")
     }
 
     private fun createDbFile() {
