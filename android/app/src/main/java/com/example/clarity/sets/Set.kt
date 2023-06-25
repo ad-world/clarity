@@ -1,13 +1,10 @@
 package com.example.clarity.sets
 
 data class Set(
+    val id: Int,
     val title: String,
-    val cardCount: Int,
+    val userId: Int,
     val cards: MutableList<Card>,
-    val progress: Double,
+    var progress: Int,
     val category:SetCategory,
 )
-
-enum class SetCategory {
-    MYSET, DEFAULTSET, SAVEDSET, BOOKMARKEDSET,
-}
