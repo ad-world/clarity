@@ -139,7 +139,6 @@
             android:layout_gravity="center"
             android:text="@string/great_job"
             android:textSize="15sp" />
-
     </androidx.cardview.widget.CardView>
 
     <androidx.cardview.widget.CardView
