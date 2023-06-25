@@ -88,8 +88,6 @@ class SetsFragment() : Fragment() {
     }
 
     companion object {
-        // This uses a design pattern lol are we allowed to say that this is one of the ones we implemented
-
         /**
          * Use this factory method to create a new instance of
          * this fragment using the provided parameters.

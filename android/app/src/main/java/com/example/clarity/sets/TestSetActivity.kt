@@ -26,7 +26,8 @@ class TestSetActivity() : AppCompatActivity() {
         AndroidAudioRecorder(applicationContext)
     }
 
-    // TODO: Not sure if they can hear the correct recording afterwards?
+    // TODO: Not sure if they can hear the correct recording after answering?
+    //  added this here in case they can
     private val player by lazy {
         AndroidAudioPlayer(applicationContext)
     }
