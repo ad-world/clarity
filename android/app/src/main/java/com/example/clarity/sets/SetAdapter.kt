@@ -9,10 +9,21 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.clarity.R
 
 class SetAdapter (
-    private val sets: MutableList<Set>
+    private val sets: MutableList<Set>,
+    private val onItemClicked: (position: Int) -> Unit
 ) : RecyclerView.Adapter<SetAdapter.SetViewHolder>() {
 
-    class SetViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
+    class SetViewHolder(itemView: View, private val onItemClicked: (position: Int) -> Unit
+    ) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
+        init {
+            itemView.setOnClickListener(this)
+        }
+
+        override fun onClick(v: View) {
+            val position = adapterPosition
+            onItemClicked(position)
+        }
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SetViewHolder {
         return SetViewHolder(
@@ -20,7 +31,7 @@ class SetAdapter (
                 R.layout.set_card,
                 parent,
                 false
-            )
+            ), onItemClicked
         )
     }
 
@@ -35,13 +46,15 @@ class SetAdapter (
 
     @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: SetViewHolder, position: Int) {
-        val curSet = sets[position]
+        val set = sets[position]
         holder.itemView.apply {
             val setTitle = findViewById<TextView>(R.id.tvSetTitle)
-            setTitle.text = "Title: ${curSet.title}\n" +
-                    "Count: ${curSet.cardCount}\n" +
-                    "Category: ${curSet.category}\n" +
-                    "Progress: ${curSet.progress}"
+
+            setTitle.text = "Title: ${set.title}\n" +
+                    "Count: ${set.cards.size}\n" +
+                    "Category: ${set.category}\n" +
+                    "Progress: ${set.progress}" +
+                    "Card Phrase 1: "
 
         }
     }
