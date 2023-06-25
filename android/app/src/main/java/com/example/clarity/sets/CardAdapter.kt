@@ -1,6 +1,5 @@
 package com.example.clarity.sets
 
-import android.annotation.SuppressLint
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
@@ -8,10 +7,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
-import android.widget.TextView
+import android.widget.ImageButton
 import androidx.recyclerview.widget.RecyclerView
 import com.example.clarity.R
-import kotlin.collections.Set
 
 class CardAdapter (private val cards: MutableList<Card>) : RecyclerView.Adapter<CardAdapter.CardViewHolder>() {
 
@@ -36,7 +34,7 @@ class CardAdapter (private val cards: MutableList<Card>) : RecyclerView.Adapter<
     }
 
     fun addCard() {
-        cards.add(Card(""))
+        cards.add(Card("", false))
         notifyItemInserted(cards.size - 1)
     }
 
@@ -48,8 +46,8 @@ class CardAdapter (private val cards: MutableList<Card>) : RecyclerView.Adapter<
     override fun onBindViewHolder(holder: CardViewHolder, position: Int) {
         val card = cards[position]
         holder.itemView.apply {
-            val btnDeleteCard = findViewById<Button>(R.id.btnDeleteCard)
-            val etCardTitle = findViewById<EditText>(R.id.etCardTitle)
+            val btnDeleteCard = findViewById<ImageButton>(R.id.iBtnDeleteCard)
+            val etCardTitle = findViewById<EditText>(R.id.etCardPhrase)
             btnDeleteCard.setOnClickListener {
                 deleteCard(position)
             }
