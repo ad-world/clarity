@@ -1,8 +1,6 @@
 package com.example.clarity
 
 import android.os.Bundle
-import android.provider.ContactsContract.Profile
-import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.example.clarity.classroompage.ClassroomFragment
@@ -10,6 +8,7 @@ import com.example.clarity.databinding.IndexActivityBinding
 import androidx.fragment.app.Fragment
 import com.example.clarity.sets.SetsFragment
 import com.example.clarity.databinding.IndexActivityBinding
+import com.example.clarity.sets.SetsFragment
 
 // Just created a blank file for the main content
 
@@ -22,6 +21,11 @@ class IndexActivity : AppCompatActivity() {
     private lateinit var binding : IndexActivityBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // TODO: If no one else implements this, we need to get the userId after login/signup
+        //  For now we use a hard coded value (0) for testing
+        val intent = intent
+        val userId: Int = intent.getIntExtra("userId", 0)
+
         binding = IndexActivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
         replaceFragment(ProfileFragment())
@@ -29,7 +33,7 @@ class IndexActivity : AppCompatActivity() {
         binding.bottomNav.setOnItemSelectedListener {
             when(it.itemId){
                 R.id.profile -> replaceFragment(ProfileFragment())
-                R.id.sets -> replaceFragment(SetsFragment())
+                R.id.sets -> replaceFragment(SetsFragment.newInstance(userId))
                 R.id.community -> replaceFragment(CommunityFragment())
                 R.id.classroom -> replaceFragment(ClassroomFragment())
                 else -> {}
