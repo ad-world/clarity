@@ -9,38 +9,62 @@
         android:id="@+id/tvTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="30dp"
-        android:textSize="40sp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="88dp"
+        android:fontFamily="@font/inter_semibold"
+        android:text="@string/cities"
+        android:textColor="#000000"
+        android:textSize="45sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageButton
         android:id="@+id/iBtnClose"
-        android:layout_width="54dp"
-        android:layout_height="63dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="20dp"
-        android:src="@drawable/baseline_close_24"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="28dp"
+        android:background="@drawable/setclosebutton"
+        android:contentDescription="@string/exit_set"
+        android:scaleX="1.2"
+        android:scaleY="1.2"
+        android:src="@drawable/baseline_close_24_white"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:contentDescription="@string/exit_set" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageButton
         android:id="@+id/iBtnMic"
-        android:layout_width="83dp"
-        android:layout_height="78dp"
-        android:layout_marginBottom="44dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="76dp"
+        android:layout_marginEnd="100dp"
+        android:background="@drawable/roundcorner"
+        android:contentDescription="@string/record_voice"
+        android:scaleX="2"
+        android:scaleY="2"
         android:src="@drawable/baseline_mic_24"
-        app:layout_constraintBottom_toTopOf="@+id/progressBar"
+        app:circularflow_radiusInDP="10dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintTop_toBottomOf="@+id/cvCard" />
+
+    <ImageButton
+        android:id="@+id/iBtnSpeaker"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="100dp"
+        android:layout_marginTop="76dp"
+        android:background="@drawable/roundcorner"
+        android:contentDescription="@string/record_voice"
+        android:scaleX="2"
+        android:scaleY="2"
+        android:src="@drawable/baseline_volume_up_24"
+        app:circularflow_radiusInDP="10dp"
         app:layout_constraintStart_toStartOf="parent"
-        android:contentDescription="@string/record_voice" />
+        app:layout_constraintTop_toBottomOf="@+id/cvCard" />
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cvPopUp"
-        android:visibility="invisible"
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="30dp"
         android:layout_marginStart="120dp"
@@ -63,23 +87,42 @@
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cvCard"
-        android:layout_width="300dp"
+        android:layout_width="0dp"
         android:layout_height="200dp"
-        android:layout_marginStart="20dp"
         android:layout_marginEnd="20dp"
         android:background="@color/white"
-        android:backgroundTint="#0090FF"
+        android:backgroundTint="#116DF5"
+        app:cardCornerRadius="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/tvTitle"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.329">
 
         <TextView
             android:id="@+id/tvCardPhrase"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:textSize="40sp" />
+            android:text="@string/rome"
+            android:textColor="@color/white"
+            android:textSize="40sp"
+            tools:fontFamily="@font/inter_semibold"
+            tools:layout_margin="5dp" />
+
+        <ImageButton
+            android:id="@+id/iBtnNext"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:backgroundTint="#00FFFFFF"
+            android:contentDescription="@string/navigate_to_next_card"
+            android:scaleX="2"
+            android:scaleY="2"
+            android:translationX="310dp"
+            android:visibility="visible"
+            app:srcCompat="@drawable/baseline_navigate_next_24" />
     </androidx.cardview.widget.CardView>
 
     <ProgressBar
@@ -89,11 +132,14 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="40dp"
         android:layout_marginEnd="40dp"
-        android:layout_marginBottom="28dp"
+        android:layout_marginBottom="80dp"
         android:progress="0"
+        android:progressTint="#F1416C"
+        android:scaleY="2"
+        app:circularflow_defaultRadius="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
@@ -101,17 +147,23 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="5dp"
+        android:fontFamily="@font/inter_semibold"
+        android:text="@string/_0_complete"
+        android:textColor="#000000"
+        android:textSize="18sp"
         app:layout_constraintBottom_toTopOf="@+id/progressBar"
         app:layout_constraintStart_toStartOf="@+id/progressBar" />
 
     <TextView
-        android:id="@+id/tvCompleted"
+        android:id="@+id/tvPercentComplete"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
         android:layout_marginBottom="5dp"
-        android:text="@string/completed"
+        android:fontFamily="@font/inter_semibold"
+        android:text="@string/_0"
+        android:textColor="#000000"
+        android:textSize="18sp"
         app:layout_constraintBottom_toTopOf="@+id/progressBar"
-        app:layout_constraintStart_toEndOf="@+id/tvCompletedPhrases" />
+        app:layout_constraintEnd_toEndOf="@+id/progressBar" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
