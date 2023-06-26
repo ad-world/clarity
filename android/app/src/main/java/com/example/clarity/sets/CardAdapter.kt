@@ -2,6 +2,7 @@ package com.example.clarity.sets
 
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,10 +11,13 @@ import android.widget.EditText
 import android.widget.ImageButton
 import androidx.recyclerview.widget.RecyclerView
 import com.example.clarity.R
+import com.google.android.material.textfield.TextInputEditText
 
 class CardAdapter (private val cards: MutableList<Card>) : RecyclerView.Adapter<CardAdapter.CardViewHolder>() {
 
     class CardViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
+
+    private var counter = 0
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CardViewHolder {
         return CardViewHolder(
@@ -34,22 +38,24 @@ class CardAdapter (private val cards: MutableList<Card>) : RecyclerView.Adapter<
     }
 
     fun addCard() {
-        cards.add(Card("", false))
+        Log.d("card add", cards.size.toString())
+        cards.add(Card(counter, "", false))
+        counter++
         notifyItemInserted(cards.size - 1)
     }
 
-    private fun deleteCard(position: Int) {
-        cards.removeAt(position)
-        notifyItemRemoved(position)
+    private fun deleteCard(cardId: Int) {
+        cards.removeAll { card -> card.id == cardId }
+        notifyDataSetChanged()
     }
 
     override fun onBindViewHolder(holder: CardViewHolder, position: Int) {
         val card = cards[position]
         holder.itemView.apply {
             val btnDeleteCard = findViewById<ImageButton>(R.id.iBtnDeleteCard)
-            val etCardTitle = findViewById<EditText>(R.id.etCardPhrase)
+            val etCardTitle = findViewById<TextInputEditText>(R.id.etCardPhrase)
             btnDeleteCard.setOnClickListener {
-                deleteCard(position)
+                deleteCard(card.id)
             }
             etCardTitle.addTextChangedListener(object: TextWatcher {
                 override fun beforeTextChanged(
