@@ -1,19 +1,11 @@
 package com.example.clarity
 
 import android.os.Bundle
-import android.provider.ContactsContract.Profile
-import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.WindowCompat
-import androidx.navigation.findNavController
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.navigateUp
-import androidx.navigation.ui.setupActionBarWithNavController
-import android.view.Menu
-import android.view.MenuItem
 import androidx.fragment.app.Fragment
-import com.example.clarity.databinding.ActivityMainBinding
+import com.example.clarity.classroompage.ClassroomFragment
 import com.example.clarity.databinding.IndexActivityBinding
+import com.example.clarity.setspage.SetsFragment
 
 // Just created a blank file for the main content
 
