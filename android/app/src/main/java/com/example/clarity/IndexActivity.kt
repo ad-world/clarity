@@ -3,6 +3,7 @@ package com.example.clarity
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import com.example.clarity.classroompage.ClassroomFragment
 import com.example.clarity.databinding.IndexActivityBinding
 import com.example.clarity.sets.SetsFragment
 
