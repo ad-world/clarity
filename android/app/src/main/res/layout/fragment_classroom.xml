@@ -21,11 +21,11 @@
 
         <TextView
             android:id="@+id/welcomeTextView"
-            android:layout_width="361dp"
-            android:layout_height="54dp"
-            android:layout_marginTop="60dp"
+            android:layout_width="174dp"
+            android:layout_height="23dp"
+            android:layout_marginTop="192dp"
             android:text="Welcome To Classroom"
-            android:textSize="34sp"
+            android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.499"
             app:layout_constraintStart_toStartOf="parent"
@@ -36,28 +36,28 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Join or Create your own class today!"
-            android:textSize="34sp"
+            android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/welcomeTextView" />
 
-
         <Button
             android:id="@+id/btnJoinClass"
-            android:layout_width="143dp"
-            android:layout_height="58dp"
-            android:layout_marginTop="196dp"
+            android:layout_width="127dp"
+            android:layout_height="48dp"
+            android:layout_marginTop="268dp"
             android:text="Join Class"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.247"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+
         <Button
             android:id="@+id/btnCreateClass"
-            android:layout_width="143dp"
-            android:layout_height="58dp"
-            android:layout_marginTop="196dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="268dp"
             android:text="Create Class"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.767"
