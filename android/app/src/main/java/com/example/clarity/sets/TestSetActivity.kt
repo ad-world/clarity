@@ -3,8 +3,10 @@ package com.example.clarity.sets
 import android.Manifest
 import android.annotation.SuppressLint
 import android.graphics.Color
+import android.media.Image
 import android.os.Bundle
-import android.view.View.INVISIBLE
+import android.util.Log
+import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.ImageButton
 import android.widget.ProgressBar
@@ -38,6 +40,7 @@ class TestSetActivity() : AppCompatActivity() {
     private var recordingCompleted = false
 
     var index = 0
+    @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.RECORD_AUDIO), 0)
@@ -49,34 +52,34 @@ class TestSetActivity() : AppCompatActivity() {
         // TODO: Backend query to search for set with given userId and setId
         //  for now we use our hard coded sets
         var set = Set(0, "Animals", 4,
-                    mutableListOf(Card("Dog", false),
-                        Card("Cat", false),
-                        Card("Zebra", false),
-                        Card("Kangaroo", false)),
+                    mutableListOf(Card(0, "Dog", false),
+                        Card(1, "Cat", false),
+                        Card(2, "Zebra", false),
+                        Card(3, "Kangaroo", false)),
                     0, SetCategory.DEFAULT_SET)
         when (setId) {
             0 -> {
                 set = Set(0, "Animals", 4,
-                    mutableListOf(Card("Dog", false),
-                        Card("Cat", false),
-                        Card("Zebra", false),
-                        Card("Kangaroo", false)),
+                    mutableListOf(Card(0, "Dog", false),
+                        Card(1, "Cat", false),
+                        Card(2, "Zebra", false),
+                        Card(3, "Kangaroo", false)),
                     0, SetCategory.DEFAULT_SET)
             }
             1 -> {
                 set = Set(1, "Countries", 3,
-                    mutableListOf(Card("Canada", false),
-                        Card("Russia", false),
-                        Card("Japan", false)),
+                    mutableListOf(Card(0, "Canada", false),
+                        Card(1, "Russia", false),
+                        Card(2, "Japan", false)),
                     0, SetCategory.DOWNLOADED_SET)
             }
             2 -> {
                 set = Set(2, "Devices", 5,
-                    mutableListOf(Card("Phone", false),
-                        Card("Laptop", false),
-                        Card("Computer", false),
-                        Card("Television", false),
-                        Card("Tablet", false)),
+                    mutableListOf(Card(0, "Phone", false),
+                        Card(1, "Laptop", false),
+                        Card(2, "Computer", false),
+                        Card(3, "Television", false),
+                        Card(4, "Tablet", false)),
                     0, SetCategory.COMMUNITY_SET)
             }
         }
@@ -84,6 +87,8 @@ class TestSetActivity() : AppCompatActivity() {
         val tvTitle = findViewById<TextView>(R.id.tvTitle)
         val iBtnClose = findViewById<ImageButton>(R.id.iBtnClose)
         val iBtnMic = findViewById<ImageButton>(R.id.iBtnMic)
+        val iBtnNext = findViewById<ImageButton>(R.id.iBtnNext)
+        val cvPopUp = findViewById<CardView>(R.id.cvPopUp)
         tvTitle.text = set.title
         iBtnClose.setOnClickListener {
             finish()
@@ -94,6 +99,8 @@ class TestSetActivity() : AppCompatActivity() {
                 if (!isRecording) {
                     // TODO: Change UI of button to reflect ongoing recording
                     //  ...
+                    iBtnMic.setBackgroundResource(R.drawable.setclosebutton)
+                    iBtnMic.setImageResource(R.drawable.baseline_mic_24_white)
                     File(cacheDir, "audio.mp3").also {
                         recorder.start(it)
                         audioFile = it
@@ -101,26 +108,38 @@ class TestSetActivity() : AppCompatActivity() {
                 } else {
                     // TODO Change UI of button to reflect recording stopped
                     //  ...
+                    iBtnMic.setBackgroundResource(R.drawable.roundcorner)
+                    iBtnMic.setImageResource(R.drawable.baseline_mic_24)
                     recorder.stop()
                     recordingCompleted = true
 
                     val score = getAccuracyScore(File(cacheDir, "audio.mp3"))
                     displayMessagePopup(score)
-                    index++
-                    if (index < set.cards.size) {
-                        val progressBar = findViewById<ProgressBar>(R.id.progressBar)
-                        val tvCompletedCount = findViewById<TextView>(R.id.tvCompletedPhrases)
-                        progressBar.progress = index / set.cards.size
-                        tvCompletedCount.text = index.toString()
-                        set.progress = index
-                        loadCard(set.cards[index])
-                        recordingCompleted = false
-                    } else {
-                        // TODO: some completed screen?
-                        finish()
-                    }
+                    iBtnNext.isEnabled = true
+                    iBtnMic.isEnabled = false
                 }
                 isRecording = !isRecording
+            }
+        }
+
+        iBtnNext.setOnClickListener {
+            index++
+            set.progress = index
+            iBtnMic.isEnabled = true
+            if (index < set.cards.size) {
+                val progressBar = findViewById<ProgressBar>(R.id.progressBar)
+                val tvCompletedCount = findViewById<TextView>(R.id.tvCompletedPhrases)
+                val tvPercentComplete = findViewById<TextView>(R.id.tvPercentComplete)
+                progressBar.progress = (index * 100) / set.cards.size
+                tvCompletedCount.text = "$index Complete"
+                tvPercentComplete.text = "${(index * 100) / set.cards.size} %"
+                iBtnNext.isEnabled = false
+                cvPopUp.visibility = GONE
+                loadCard(set.cards[index])
+                recordingCompleted = false
+            } else {
+                // TODO: some completed screen?
+                finish()
             }
         }
 
@@ -138,7 +157,7 @@ class TestSetActivity() : AppCompatActivity() {
     }
 
     @SuppressLint("SetTextI18n")
-    private fun displayMessagePopup(score: Int) = runBlocking {
+    private fun displayMessagePopup(score: Int)  {
         val cvPopUp = findViewById<CardView>(R.id.cvPopUp)
         val tvResultMessage = findViewById<TextView>(R.id.tvResultMessage)
         if (score in 0..50)  {
@@ -149,11 +168,7 @@ class TestSetActivity() : AppCompatActivity() {
             tvResultMessage.text = resources.getString(R.string.great_job)
         }
 
-        //TODO: check functionality when we click the close button during this delay
-        launch {
-            delay(3000L)
-            cvPopUp.visibility = INVISIBLE
-        }
         cvPopUp.visibility = VISIBLE
+        // Log.d("Tag Visibility 1", cvPopUp.visibility.toString())
     }
 }
