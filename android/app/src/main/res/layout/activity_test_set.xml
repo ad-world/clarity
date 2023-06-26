@@ -180,7 +180,6 @@
             android:translationX="310dp"
             android:visibility="visible"
             app:srcCompat="@drawable/baseline_navigate_next_24" />
-
     </androidx.cardview.widget.CardView>
 
     <ProgressBar
