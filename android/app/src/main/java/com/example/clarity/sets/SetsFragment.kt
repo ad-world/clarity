@@ -2,10 +2,14 @@ package com.example.clarity.sets
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.INVISIBLE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.clarity.databinding.FragmentSetsBinding
 
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -16,7 +20,7 @@ private const val USER_ID = "userId"
  * Use the [SetsFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class SetsFragment() : Fragment() {
+class SetsFragment : Fragment() {
 
     private var userId: Int? = 0
     private var _binding: FragmentSetsBinding? = null
@@ -27,47 +31,36 @@ class SetsFragment() : Fragment() {
     private val binding get() = _binding!!
 
     private fun onSetClick(position: Int) {
-        val intent = Intent(activity, TestSetActivity::class.java)
-        intent.putExtra("setId", sets[position].id);
-        intent.putExtra("userId", userId);
-        startActivity(intent)
-    }
+        val btnTest = binding.btnTest
+        val btnPractice = binding.btnPractice
+        val btnCancel = binding.btnCancel
+        val cvStartActivity = binding.cvStartActivity
+        val tvPopupSetTitle = binding.tvPopupSetTitle
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            userId = it.getInt(USER_ID)
+        if (cvStartActivity.visibility != VISIBLE) {
+            tvPopupSetTitle.text = sets[position].title
+            cvStartActivity.visibility = VISIBLE
+
+            btnTest.setOnClickListener {
+                cvStartActivity.visibility = INVISIBLE
+                val intent = Intent(activity, TestSetActivity::class.java)
+                intent.putExtra("setId", sets[position].id);
+                intent.putExtra("userId", userId);
+                startActivity(intent)
+            }
+
+            btnPractice.setOnClickListener {
+                cvStartActivity.visibility = INVISIBLE
+                val intent = Intent(activity, PracticeSetActivity::class.java)
+                intent.putExtra("setId", sets[position].id);
+                intent.putExtra("userId", userId);
+                startActivity(intent)
+            }
+
+            btnCancel.setOnClickListener {
+                cvStartActivity.visibility = INVISIBLE
+            }
         }
-
-        sets = mutableListOf()
-        // TODO: Replace following lines with a query for all sets with our userId, and then parse
-        //  through the object returned, creating a set data class for each set, and appending it
-        //  to the sets array
-
-        // TEST DATA, will be removed when database is connected
-        sets.add(Set(0, "Animals", 4,
-            mutableListOf(Card("Dog", false),
-                Card("Cat", false),
-                Card("Zebra", false),
-                Card("Kangaroo", false)),
-            0, SetCategory.DEFAULT_SET))
-
-        sets.add(Set(1, "Countries", 3,
-            mutableListOf(Card("Canada", false),
-                Card("Russia", false),
-                Card("Japan", false)),
-            0, SetCategory.DOWNLOADED_SET))
-
-        sets.add(Set(2, "Devices", 5,
-            mutableListOf(Card("Phone", false),
-                Card("Laptop", false),
-                Card("Computer", false),
-                Card("Television", false),
-                Card("Tablet", false)),
-            0, SetCategory.COMMUNITY_SET))
-
-        setAdapter = SetAdapter(sets) { position -> onSetClick(position) }
-        binding.rvSets.adapter = setAdapter
     }
 
     override fun onCreateView(
@@ -76,11 +69,49 @@ class SetsFragment() : Fragment() {
     ): View {
         // Inflate the layout for this fragment
         _binding = FragmentSetsBinding.inflate(inflater, container, false)
+
         return binding.root
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        arguments?.let {
+            userId = it.getInt(USER_ID)
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        sets = mutableListOf()
+        // TODO: Replace following lines with a query for all sets with our userId, and then parse
+        //  through the object returned, creating a set data class for each set, and appending it
+        //  to the sets array
+
+        // TEST DATA, will be removed when database is connected
+        sets.add(Set(0, "Animals", 4,
+            mutableListOf(Card(0, "Dog", false),
+                Card(1, "Cat", false),
+                Card(2, "Zebra", false),
+                Card(3, "Kangaroo", false)),
+            0, SetCategory.DEFAULT_SET))
+
+        sets.add(Set(1, "Countries", 3,
+            mutableListOf(Card(0, "Canada", false),
+                Card(1, "Russia", false),
+                Card(2, "Japan", false)),
+            0, SetCategory.DOWNLOADED_SET))
+
+        sets.add(Set(2, "Devices", 5,
+            mutableListOf(Card(0, "Phone", false),
+                Card(1, "Laptop", false),
+                Card(2, "Computer", false),
+                Card(3, "Television", false),
+                Card(4, "Tablet", false)),
+            0, SetCategory.COMMUNITY_SET))
+        Log.d("myTag", "SET SIZE: " + sets.size)
+        setAdapter = SetAdapter(sets, userId) { position -> onSetClick(position) }
+        binding.rvSets.adapter = setAdapter
+        binding.rvSets.layoutManager = LinearLayoutManager(context)
         binding.btnCreateSet.setOnClickListener {
             val intent = Intent(activity, CreateSetActivity::class.java)
             startActivity(intent)
