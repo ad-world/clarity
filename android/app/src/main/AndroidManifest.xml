@@ -46,6 +46,9 @@
             android:name=".sets.PracticeSetActivity"
             android:exported="false" />
         <activity
+            android:name=".sets.TestSetActivity"
+            android:exported="false" />
+        <activity
             android:name=".sets.CreateSetActivity"
             android:exported="false" />
         <activity
