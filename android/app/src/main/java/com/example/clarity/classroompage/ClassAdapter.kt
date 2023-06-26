@@ -8,8 +8,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.clarity.R
 
 class ClassAdapter(
-    private val classes: Array<Pair<String,String>>,
-    private val onItemClick: (Pair<String, String>) -> Unit
+    private val classes: Array<String>,
+    private val onItemClick: (String) -> Unit
 ) : RecyclerView.Adapter<ClassAdapter.ClassViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ClassViewHolder {
@@ -26,7 +26,6 @@ class ClassAdapter(
 
     inner class ClassViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val tvClassName: TextView = itemView.findViewById(R.id.tvClassName)
-        private val tvInstructorName: TextView = itemView.findViewById(R.id.tvInstructorName)
 
         init {
             itemView.setOnClickListener {
@@ -38,9 +37,8 @@ class ClassAdapter(
             }
         }
 
-        fun bind(className: Pair<String, String>) {
-            tvClassName.text = className.first
-            tvInstructorName.text = className.second
+        fun bind(className: String) {
+            tvClassName.text = className
         }
     }
 }
