@@ -19,18 +19,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <EditText
-        android:id="@+id/etSetTitle"
-        android:layout_width="170dp"
-        android:layout_height="44dp"
-        android:layout_marginTop="4dp"
-        android:hint="@string/enter_set_title"
-        android:importantForAutofill="no"
-        android:inputType="text"
-        android:textSize="14sp"
-        app:layout_constraintStart_toStartOf="@+id/textView3"
-        app:layout_constraintTop_toBottomOf="@+id/textView3" />
-
     <Button
         android:id="@+id/btnAddCard"
         android:layout_width="wrap_content"
@@ -52,7 +40,6 @@
         android:backgroundTint="#2196F3"
         android:fontFamily="@font/inter_semibold"
         android:text="@string/create_set"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.121"
         app:layout_constraintStart_toStartOf="parent" />
