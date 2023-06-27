@@ -33,7 +33,7 @@ class SetsFragment : Fragment() {
     private fun onSetClick(position: Int) {
         val btnTest = binding.btnTest
         val btnPractice = binding.btnPractice
-        val btnCancel = binding.btnCancel
+        val btnCancel = binding.iBtnCancel
         val cvStartActivity = binding.cvStartActivity
         val tvPopupSetTitle = binding.tvPopupSetTitle
 
