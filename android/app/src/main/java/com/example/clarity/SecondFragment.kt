@@ -1,6 +1,9 @@
 package com.example.clarity
 
+<<<<<<< HEAD
 import android.app.AlertDialog
+=======
+>>>>>>> e447f3838fff6eb13007107376fdf8ab08935c85
 import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -42,6 +45,7 @@ class SecondFragment : Fragment() {
 
             //call api
 
+<<<<<<< HEAD
             val successfulSignup = true
 
             if(successfulSignup) {
@@ -54,6 +58,9 @@ class SecondFragment : Fragment() {
                 binding.editTextEmail.setText("")
                 unsuccessfulSignUp()
             }
+=======
+            findNavController().navigate(R.id.FirstFragment) //will go to login page once they signup for now
+>>>>>>> e447f3838fff6eb13007107376fdf8ab08935c85
         }
 
         binding.loginLink.setOnClickListener {
