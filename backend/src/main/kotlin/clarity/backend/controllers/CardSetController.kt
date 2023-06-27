@@ -10,9 +10,9 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 class CardController {
 
-    @PostMapping("/addCard")
-    fun addCard(@RequestBody card: AddCard) : ResponseEntity<String> {
-        val resp = CardSetEntity().addCard(card)
+    @PostMapping("/addCardToSet")
+    fun addCardToSet(@RequestBody card: AddCard) : ResponseEntity<String> {
+        val resp = CardSetEntity().addCardToSet(card)
         return if (resp.response == StatusResponse.Success) {
             ResponseEntity.ok(resp.msg)
         } else {
@@ -20,9 +20,9 @@ class CardController {
         }
     }
 
-    @PostMapping("/deleteCard")
-    fun deleteCard(@RequestBody card: DeleteCard) : ResponseEntity<String> {
-        val resp = CardSetEntity().deleteCard(card)
+    @PostMapping("/deleteCardFromSet")
+    fun deleteCardFromSet(@RequestBody card: DeleteCard) : ResponseEntity<String> {
+        val resp = CardSetEntity().deleteCardFromSet(card)
         return if (resp.response == StatusResponse.Success) {
             ResponseEntity.ok(resp.msg)
         } else {
@@ -31,7 +31,7 @@ class CardController {
     }
 
     @PostMapping("/addSet")
-    fun addCard(@RequestBody cardSetEntity: CreateCardSetEntity) : ResponseEntity<String> {
+    fun addSet(@RequestBody cardSetEntity: CreateCardSetEntity) : ResponseEntity<String> {
         val resp = CardSetEntity().createCardSet(cardSetEntity)
         return if (resp.response == StatusResponse.Success) {
             ResponseEntity.ok(resp.msg)
@@ -51,7 +51,7 @@ class CardController {
     }
 
     @GetMapping("/getSets")
-    fun getAllSets() : ResponseEntity<String> {
+    fun getAllSets() : ResponseEntity<List<String>> {
         val resp = CardSetEntity().getSets()
         return if (resp.response == StatusResponse.Success) {
             ResponseEntity.ok(resp.sets)
