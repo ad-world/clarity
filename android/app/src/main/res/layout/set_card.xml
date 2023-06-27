@@ -42,7 +42,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="160dp"
                 android:layout_marginTop="36dp"
-                android:fontFamily="@font/manrope_semibold"
+                android:fontFamily="@font/inter_semibold"
                 android:text="@string/your_sets"
                 android:textColor="#000000"
                 android:textFontWeight="400"
@@ -61,7 +61,7 @@
                 app:layout_constraintStart_toStartOf="@+id/tvCompletedPhrases"
                 app:layout_constraintTop_toBottomOf="@+id/tvCardCount"
                 tools:textFontWeight="600"
-                tools:textSize="32.5sp" />
+                tools:textSize="32sp" />
 
             <TextView
                 android:id="@+id/tvCompletedPhrases"
