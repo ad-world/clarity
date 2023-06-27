@@ -11,13 +11,11 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 class LoginController {
-    val db = DataManager();
-
     @PostMapping("/login")
     fun login(@RequestBody user: UserLoginEntity): ResponseEntity<String> {
         val username = user.username
         val password = user.password
-        val userEntity = UserEntity(db)
+        val userEntity = UserEntity()
 
         if(username.isNotEmpty() && password.isNotEmpty() && userEntity.checkCredentials(user)) {
             return ResponseEntity.ok("Login successful")
@@ -27,7 +25,7 @@ class LoginController {
 
     @PostMapping("/createUser")
     fun createUser(@RequestBody user: CreateUserEntity): ResponseEntity<String> {
-        val userEntity = UserEntity(db);
+        val userEntity = UserEntity();
 
         val newUserResponse = userEntity.createUser(user)
 
@@ -41,7 +39,7 @@ class LoginController {
 
     @GetMapping("/getUser")
     fun getUser(@RequestParam username: String): ResponseEntity<GetUserResponse> {
-        val userEntity = UserEntity(db)
+        val userEntity = UserEntity()
         val getUserResponse = userEntity.getUser(username)
 
         return if(username.isNotEmpty()) {

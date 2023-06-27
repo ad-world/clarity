@@ -15,7 +15,8 @@ data class CreateUserResponse(val response: StatusResponse, val message: String)
 data class GetUserResponse(val response: StatusResponse, val user: UserWithId?, val message: String)
 
 
-class UserEntity(dataManager: DataManager) {
+class UserEntity() {
+    private val dataManager = DataManager();
     private val db = dataManager.db
 
     fun checkCredentials(user: UserLoginEntity): Boolean {
