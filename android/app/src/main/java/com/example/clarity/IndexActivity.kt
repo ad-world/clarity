@@ -14,6 +14,7 @@ import android.view.MenuItem
 import androidx.fragment.app.Fragment
 import com.example.clarity.databinding.ActivityMainBinding
 import com.example.clarity.databinding.IndexActivityBinding
+import com.example.clarity.setspage.SetsFragment
 
 // Just created a blank file for the main content
 
