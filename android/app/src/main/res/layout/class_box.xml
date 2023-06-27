@@ -6,9 +6,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <FrameLayout
-        android:layout_width="300dp"
-        android:layout_height="160dp"
-        android:layout_margin="10dp"
+        android:layout_width="700px"
+        android:layout_height="200px"
         android:background="@drawable/class_box_background"
         android:clickable="true"
         android:focusable="true"
@@ -27,11 +26,8 @@
             android:layout_gravity="start"
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
-            android:textFontWeight="600"
-            android:fontFamily="@font/inter_semibold"
             android:textStyle="bold"
             android:textColor="#FFFFFF"
-            android:textSize="32.5sp"
             android:text="Text 1" />
 
         <TextView
@@ -40,9 +36,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="start"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="60dp"
+            android:layout_marginTop="32dp"
             android:textColor="#FFFFFF"
-            android:textSize="20sp"
             android:text="Text 2"/>
 
         <!-- Add more TextViews as needed -->
