@@ -1,5 +1,4 @@
 package com.example.clarity
-
 import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -10,16 +9,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
 import com.example.clarity.databinding.FragmentFirstBinding
+import android.app.AlertDialog
 
-/**
- * A simple [Fragment] subclass as the default destination in the navigation.
- */
+
 class FirstFragment : Fragment() {
 
     private var _binding: FragmentFirstBinding? = null
 
-    // This property is only valid between onCreateView and
-    // onDestroyView.
     private val binding get() = _binding!!
 
     override fun onCreateView(
@@ -35,21 +31,39 @@ class FirstFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
         super.onViewCreated(view, savedInstanceState)
-        super.onCreate(savedInstanceState)
+
 
         binding.buttonLogin.setOnClickListener {
             val username = binding.editTextUsername.text.toString()
             val password = binding.editTextPassword.text.toString()
 
-            //need to call api
-            findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
+            //check if the username/password is valid
+
+            val valid = true
+            if (valid) {
+                val intent = Intent(activity, IndexActivity::class.java)
+                startActivity(intent)
+            } else {
+                binding.editTextUsername.setText("")
+                binding.editTextPassword.setText("")
+                wrongUserPassAlert()
+            }
+
         }
+            //need to call api
 
         binding.signupLink.setOnClickListener {
             findNavController().navigate(R.id.SecondFragment)
         }
-
-
+    }
+    private fun wrongUserPassAlert() {
+        val alertDialog = AlertDialog.Builder(requireContext()).create() //the method to get context might be incorrect
+        alertDialog.setMessage("Wrong Username or Password. Please enter correct credentials")
+        alertDialog.setTitle("Incorrect Username/Password")
+        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "OK") { dialog, _ ->
+            dialog.dismiss()
+        }
+        alertDialog.show()
     }
 
     override fun onDestroyView() {
