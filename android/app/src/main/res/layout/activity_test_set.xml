@@ -139,6 +139,7 @@
             android:layout_gravity="center"
             android:text="@string/great_job"
             android:textSize="15sp" />
+
     </androidx.cardview.widget.CardView>
 
     <androidx.cardview.widget.CardView
@@ -180,6 +181,7 @@
             android:translationX="310dp"
             android:visibility="visible"
             app:srcCompat="@drawable/baseline_navigate_next_24" />
+
     </androidx.cardview.widget.CardView>
 
     <ProgressBar
