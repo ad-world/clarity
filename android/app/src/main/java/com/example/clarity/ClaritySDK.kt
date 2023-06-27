@@ -23,6 +23,9 @@ data class JoinClassroomEntity(val privateCode: String, val userID: String)
 data class CreateClassroomEntity(val name: String, val teacher: Integer)
 data class CreateClassroomResponse(val response: StatusResponse, val id: String)
 
+data class LoginResponse(val success: Boolean, val message: String)
+
+
 class ClaritySDK {
     private val retrofit: Retrofit = Retrofit.Builder()
         .baseUrl("http://10.0.2.2:8080")
@@ -34,7 +37,7 @@ class ClaritySDK {
 
 interface API {
     @POST("login")
-    suspend fun login(@Body user: LoginRequest): Response<String>
+    suspend fun login(@Body user: LoginRequest): Response<LoginResponse>
 
     @POST("createUser")
     suspend fun createUser(@Body user: User): Response<CreateUserResponse>
