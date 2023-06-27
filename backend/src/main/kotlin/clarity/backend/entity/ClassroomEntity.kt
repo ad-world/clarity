@@ -15,7 +15,8 @@ data class JoinClassroomResponse(val response: StatusResponse, val id: String)
 
 data class GetClassroomResponse(val response: StatusResponse, val id: List<String>)
 
-class ClassroomEntity(dataManager: DataManager) {
+class ClassroomEntity() {
+    private val dataManager = DataManager()
     private val db = dataManager.db
 
     fun joinClass(classroom : JoinClassroomEntity) : JoinClassroomResponse {

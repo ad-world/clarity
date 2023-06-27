@@ -11,12 +11,11 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 class ClassroomController {
-    val db = DataManager()
 
     // add class
     @PostMapping("/addClass")
     fun addClass(@RequestBody classroom: JoinClassroomEntity): ResponseEntity<String>  {
-        val classroomEntity = ClassroomEntity(db)
+        val classroomEntity = ClassroomEntity()
         val joinResponse = classroomEntity.joinClass(classroom)
         return if(joinResponse.response == StatusResponse.Success) {
             ResponseEntity.ok(joinResponse.id)
@@ -30,7 +29,7 @@ class ClassroomController {
     // create class
     @PostMapping("/createClass")
     fun createClass(@RequestBody newClassroom: CreateClassroomEntity): ResponseEntity<String>  {
-        val classroomEntity = ClassroomEntity(db)
+        val classroomEntity = ClassroomEntity()
         val classroomResponse = classroomEntity.createClass(newClassroom)
 
         return if(classroomResponse.response == StatusResponse.Success) {
@@ -42,7 +41,7 @@ class ClassroomController {
 
     @GetMapping("/getClasses")
     fun getClasses(@RequestParam("id") id: String) : ResponseEntity<String> {
-        val classroomEntity = ClassroomEntity(db)
+        val classroomEntity = ClassroomEntity()
         val classroomResponse = classroomEntity.getClasses(id.toInt())
         return if(classroomResponse.response == StatusResponse.Success) {
             ResponseEntity.ok(classroomResponse.id.toString())
@@ -53,7 +52,7 @@ class ClassroomController {
 
     @GetMapping("/getClassesStudent")
     fun getClassesStudent(@RequestParam("id") id: String) : ResponseEntity<String> {
-        val classroomEntity = ClassroomEntity(db)
+        val classroomEntity = ClassroomEntity()
         val classroomResponse = classroomEntity.getClassesStudent(id.toInt())
         return if(classroomResponse.response == StatusResponse.Success) {
             ResponseEntity.ok(classroomResponse.id.toString())
