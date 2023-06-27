@@ -12,6 +12,9 @@ class DataManager {
         executeSqlFile("ddl/CREATE_USER.sql");
         executeSqlFile("ddl/CREATE_CLASSROOM.sql")
         executeSqlFile("ddl/CREATE_CLASSROOM_STUDENTS.sql")
+        executeSqlFile("ddl/CREATE_CARDSET.sql")
+        executeSqlFile("ddl/CREATE_CARD.sql")
+        executeSqlFile("ddl/CREATE_CARD_IN_SET.sql")
     }
 
     private fun createDbFile() {
