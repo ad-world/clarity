@@ -1,0 +1,8 @@
+PRAGMA foreign_keys = ON;
+
+CREATE TABLE IF NOT EXISTS Card (
+    card_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    set_id INTEGER NOT NULL,
+    phrase TEXT NOT NULL,
+    FOREIGN KEY set_id REFERENCES CardSet(set_id)
+)
