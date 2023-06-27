@@ -30,6 +30,16 @@ class CardController {
         }
     }
 
+    @PostMapping("/addSet")
+    fun addCard(@RequestBody cardSetEntity: CreateCardSetEntity) : ResponseEntity<String> {
+        val resp = CardSetEntity().createCardSet(cardSetEntity)
+        return if (resp.response == StatusResponse.Success) {
+            ResponseEntity.ok(resp.msg)
+        } else {
+            ResponseEntity.badRequest().body(resp.msg)
+        }
+    }
+
     @PostMapping("/getCardsForSet")
     fun getCards(@RequestBody set: GetCardsInSet) : ResponseEntity<List<String>> {
         val resp = CardSetEntity().getTotalCardsFromSet(set)
@@ -41,7 +51,7 @@ class CardController {
     }
 
     @GetMapping("/getSets")
-    fun getAllSets() : ResponseEntity<List<String>> {
+    fun getAllSets() : ResponseEntity<String> {
         val resp = CardSetEntity().getSets()
         return if (resp.response == StatusResponse.Success) {
             ResponseEntity.ok(resp.sets)
@@ -49,5 +59,4 @@ class CardController {
             ResponseEntity.badRequest().body(resp.sets)
         }
     }
-
 }

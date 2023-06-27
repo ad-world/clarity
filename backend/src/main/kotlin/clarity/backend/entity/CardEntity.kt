@@ -21,7 +21,7 @@ class CardEntity() {
             val statement = db.createStatement()
             val query = """
                 INSERT OR IGNORE INTO Card(phrase, title)
-                VALUES (${card.phrase}, ${card.title});
+                VALUES ('${card.phrase}', '${card.title}');
             """.trimIndent()
             statement.executeUpdate(query)
         } catch (e: Exception) {

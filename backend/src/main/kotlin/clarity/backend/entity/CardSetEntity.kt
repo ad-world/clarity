@@ -16,7 +16,7 @@ data class AddCardResponse(val response: StatusResponse, val msg: String)
 data class DeleteCardResponse(val response: StatusResponse, val msg: String)
 data class GetCardsInSetResponse(val response: StatusResponse, val cards: List<String>)
 
-data class GetSetsResponse(val response: StatusResponse, val sets: List<String>)
+data class GetSetsResponse(val response: StatusResponse, val sets: String)
 
 class CardSetEntity() {
     private val db = DataManager().db
@@ -25,8 +25,8 @@ class CardSetEntity() {
         try {
             val statement = db.createStatement()
             val query = """
-                INSERT OR IGNORE INTO CardSet(creator_id, title, type)
-                VALUES (${set.creator_id}, ${set.title}, ${set.type});
+                INSERT INTO CardSet(creator_id, title, type)
+                VALUES (${set.creator_id}, '${set.title}', '${set.type}');
             """.trimIndent()
             statement.executeUpdate(query)
         } catch (e: Exception) {
@@ -103,11 +103,11 @@ class CardSetEntity() {
                 setList.add(setId)
             }
             resultSet.close()
-            return GetSetsResponse(StatusResponse.Success, setList.toList())
+
+            return GetSetsResponse(StatusResponse.Success, setList.joinToString())
         } catch (e: Exception) {
             val errMsg: String = "Failed to get sets: ${e.message ?: "Unknown error"}"
-            return GetSetsResponse(StatusResponse.Failure, emptyList())
+            return GetSetsResponse(StatusResponse.Failure, errMsg)
         }
     }
-
 }
