@@ -9,14 +9,15 @@ data class AddCard(val card_id: Int, val set_id: Int)
 data class DeleteCard(val card_id: Int, val set_id: Int)
 
 data class GetCardsInSet(val set_id: Int)
+data class GetDataForSetRequest(val set_id: Int)
 
 // Response Formats.
 data class CreateCardSetResponse(val response: StatusResponse, val msg: String)
 data class AddCardResponse(val response: StatusResponse, val msg: String)
 data class DeleteCardResponse(val response: StatusResponse, val msg: String)
 data class GetCardsInSetResponse(val response: StatusResponse, val cards: List<String>)
-
 data class GetSetsResponse(val response: StatusResponse, val sets: List<String>)
+data class GetDataForSetResponse(val response: StatusResponse, val data: List<String>)
 
 class CardSetEntity() {
     private val db = DataManager().db
@@ -64,6 +65,31 @@ class CardSetEntity() {
             return DeleteCardResponse(StatusResponse.Failure, errMsg)
         }
         return DeleteCardResponse(StatusResponse.Success, "Deleted card from set.")
+    }
+
+    fun getDataForSet(request: GetDataForSetRequest) : GetDataForSetResponse {
+        try {
+            val statement = db.createStatement()
+            val query = """
+                SELECT * FROM CardSet
+                WHERE [set_id] = ${request.set_id};
+            """.trimIndent()
+            val resultSet = statement.executeQuery(query)
+            val resultList: MutableList<String> = mutableListOf()
+            
+            // Since it will only return one row, just extract val of all the columns and return
+            // a list of strings.
+            if (resultSet.next()) {
+                val columnCount = resultSet.metaData.columnCount
+                for (i in 1..columnCount) {
+                    val columnValue: String = resultSet.getString(i)
+                    resultList.add(columnValue)
+                }
+            }
+            return GetDataForSetResponse(StatusResponse.Success, resultList.toList())
+        } catch (e: Exception) {
+            return GetDataForSetResponse(StatusResponse.Failure, listOf(e.message) as List<String>)
+        }
     }
 
     fun getTotalCardsFromSet(set: GetCardsInSet) : GetCardsInSetResponse {

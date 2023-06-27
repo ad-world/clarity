@@ -59,4 +59,14 @@ class CardController {
             ResponseEntity.badRequest().body(resp.sets)
         }
     }
+
+    @PostMapping("/getDataForSet")
+    fun getDataForSet(@RequestBody req: GetDataForSetRequest) : ResponseEntity<List<String>> {
+        val resp = CardSetEntity().getDataForSet(req)
+        return if (resp.response == StatusResponse.Success) {
+            ResponseEntity.ok(resp.data)
+        } else {
+            ResponseEntity.badRequest().body(resp.data)
+        }
+    }
 }
