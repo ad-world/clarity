@@ -29,25 +29,18 @@ class FirstFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-<<<<<<< HEAD
 
         super.onViewCreated(view, savedInstanceState)
 
-=======
-
-        super.onViewCreated(view, savedInstanceState)
-        super.onCreate(savedInstanceState)
->>>>>>> e447f3838fff6eb13007107376fdf8ab08935c85
 
         binding.buttonLogin.setOnClickListener {
             val username = binding.editTextUsername.text.toString()
             val password = binding.editTextPassword.text.toString()
 
-<<<<<<< HEAD
             //check if the username/password is valid
 
             val valid = true
-            if(valid) {
+            if (valid) {
                 val intent = Intent(activity, IndexActivity::class.java)
                 startActivity(intent)
             } else {
@@ -56,17 +49,12 @@ class FirstFragment : Fragment() {
                 wrongUserPassAlert()
             }
 
-=======
-            //need to call api
-            findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
->>>>>>> e447f3838fff6eb13007107376fdf8ab08935c85
         }
+            //need to call api
 
         binding.signupLink.setOnClickListener {
             findNavController().navigate(R.id.SecondFragment)
         }
-
-<<<<<<< HEAD
     }
     private fun wrongUserPassAlert() {
         val alertDialog = AlertDialog.Builder(requireContext()).create() //the method to get context might be incorrect
@@ -76,9 +64,6 @@ class FirstFragment : Fragment() {
             dialog.dismiss()
         }
         alertDialog.show()
-=======
-
->>>>>>> e447f3838fff6eb13007107376fdf8ab08935c85
     }
 
     override fun onDestroyView() {
