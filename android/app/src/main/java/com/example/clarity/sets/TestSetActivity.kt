@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View.GONE
 import android.view.View.VISIBLE
+import android.widget.Button
 import android.widget.ImageButton
 import android.widget.ProgressBar
 import android.widget.TextView
@@ -89,6 +90,9 @@ class TestSetActivity() : AppCompatActivity() {
         val iBtnMic = findViewById<ImageButton>(R.id.iBtnMic)
         val iBtnNext = findViewById<ImageButton>(R.id.iBtnNext)
         val cvPopUp = findViewById<CardView>(R.id.cvPopUp)
+        val cvCompletedScreen = findViewById<CardView>(R.id.cvCompletedScreen)
+        val btnReturn = findViewById<Button>(R.id.btnReturn)
+
         tvTitle.text = set.title
         iBtnClose.setOnClickListener {
             finish()
@@ -138,9 +142,19 @@ class TestSetActivity() : AppCompatActivity() {
                 loadCard(set.cards[index])
                 recordingCompleted = false
             } else {
-                // TODO: some completed screen?
-                finish()
+                cvCompletedScreen.visibility = VISIBLE
+                iBtnClose.isEnabled = false
+                iBtnNext.isEnabled = false
+                iBtnMic.isEnabled = false
             }
+        }
+
+        btnReturn.setOnClickListener {
+            cvCompletedScreen.visibility = GONE
+            iBtnClose.isEnabled = true
+            iBtnNext.isEnabled = true
+            iBtnMic.isEnabled = true
+            finish()
         }
 
         loadCard(set.cards[index])
