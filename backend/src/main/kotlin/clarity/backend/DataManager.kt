@@ -7,12 +7,8 @@ import java.sql.DriverManager
 class DataManager {
     val db: Connection = DriverManager.getConnection("jdbc:sqlite:data.sqlite")
 
-    init {
+    fun createTables() {
         createDbFile()
-        createSampleTable();
-    }
-
-    private fun createSampleTable() {
         executeSqlFile("ddl/CREATE_USER.sql");
         executeSqlFile("ddl/CREATE_CLASSROOM.sql")
         executeSqlFile("ddl/CREATE_CLASSROOM_STUDENTS.sql")
@@ -29,7 +25,7 @@ class DataManager {
     /*
     Use this function if you want to run one sql statement from a file (such as a CREATE TABLE statement)
      */
-    fun executeSqlFile(pathInsideSQLFolder: String) {
+    private fun executeSqlFile(pathInsideSQLFolder: String) {
         val sqlFile = File("src/main/sql/$pathInsideSQLFolder")
         if(sqlFile.exists()) {
             try {
