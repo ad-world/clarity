@@ -42,7 +42,6 @@ class SetAdapter(
         return sets.size
     }
 
-    @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: SetViewHolder, position: Int) {
         val set = sets[position]
         println("Position: $position")
