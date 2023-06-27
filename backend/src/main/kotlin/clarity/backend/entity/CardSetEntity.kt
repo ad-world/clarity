@@ -8,6 +8,8 @@ data class CreateCardSetEntity(val creator_id: Int, val title: String, val type:
 data class AddCard(val card_id: Int, val set_id: Int)
 data class DeleteCard(val card_id: Int, val set_id: Int)
 
+data class GetCardsInSet(val set_id: Int)
+
 // Response Formats.
 data class CreateCardSetResponse(val response: StatusResponse, val msg: String)
 data class AddCardResponse(val response: StatusResponse, val msg: String)
@@ -62,12 +64,12 @@ class CardSetEntity() {
         return DeleteCardResponse(StatusResponse.Success, "Deleted card from set.")
     }
 
-    fun getTotalCardsFromSet(set_id: Int) : GetCardsInSetResponse {
+    fun getTotalCardsFromSet(set: GetCardsInSet) : GetCardsInSetResponse {
         try {
             val statement = db.createStatement()
             val query = """
                 SELECT card_id FROM CardInSet
-                WHERE [set_id] = $set_id
+                WHERE [set_id] = ${set.set_id}
             """.trimIndent()
             val resultSet = statement.executeQuery(query)
             val cardIdList = mutableListOf<String>()
