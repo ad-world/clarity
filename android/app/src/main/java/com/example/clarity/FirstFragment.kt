@@ -10,9 +10,13 @@ import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
 import com.example.clarity.databinding.FragmentFirstBinding
 import android.app.AlertDialog
+import kotlinx.coroutines.runBlocking
+import retrofit2.Response
 
 
 class FirstFragment : Fragment() {
+
+    private val api = ClaritySDK().apiService
 
     private var _binding: FragmentFirstBinding? = null
 
@@ -38,8 +42,16 @@ class FirstFragment : Fragment() {
             val password = binding.editTextPassword.text.toString()
 
             //check if the username/password is valid
+            val req = LoginRequest(username, password)
+            val response : Response<LoginResponse> = runBlocking {
+                return@runBlocking api.login(req)
+            }
+            println(response.body())
 
-            val valid = true
+            var valid = false
+            if (response.isSuccessful) {
+                valid = true
+            }
             if (valid) {
                 val intent = Intent(activity, IndexActivity::class.java)
                 startActivity(intent)
