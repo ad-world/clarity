@@ -55,6 +55,8 @@ class CardAdapter (private val cards: MutableList<Card>) : RecyclerView.Adapter<
             val btnDeleteCard = findViewById<ImageButton>(R.id.iBtnDeleteCard)
             val etCardTitle = findViewById<TextInputEditText>(R.id.etCardPhrase)
             btnDeleteCard.setOnClickListener {
+                Log.d("delete ID", card.id.toString())
+                Log.d("position", position.toString())
                 deleteCard(card.id)
             }
             etCardTitle.addTextChangedListener(object: TextWatcher {
@@ -68,6 +70,7 @@ class CardAdapter (private val cards: MutableList<Card>) : RecyclerView.Adapter<
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
 
                 override fun afterTextChanged(s: Editable?) {
+                    Log.d("changed ID", card.id.toString())
                     card.phrase = etCardTitle.text.toString()
                 }
             })
