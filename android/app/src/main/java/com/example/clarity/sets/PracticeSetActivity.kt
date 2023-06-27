@@ -5,6 +5,8 @@ import android.annotation.SuppressLint
 import android.graphics.Color
 import android.os.Bundle
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.widget.ImageButton
 import android.widget.ProgressBar
 import android.widget.TextView
@@ -127,6 +129,10 @@ class PracticeSetActivity() : AppCompatActivity() {
                 tvCompletedCount.text = "Phrase ${index + 1} / ${set.cards.size}"
                 cvPopUp.visibility = View.GONE
                 loadCard(set.cards[index])
+                if(index == set.cards.size - 1) {
+                    iBtnNext.visibility = GONE
+                }
+                iBtnPrev.visibility = VISIBLE
             }
         }
 
@@ -138,6 +144,10 @@ class PracticeSetActivity() : AppCompatActivity() {
                 tvCompletedCount.text = "Phrase $index / ${set.cards.size} "
                 cvPopUp.visibility = View.GONE
                 loadCard(set.cards[index])
+                if(index == 0) {
+                    iBtnPrev.visibility = GONE
+                }
+                iBtnNext.visibility = VISIBLE
             }
         }
 
