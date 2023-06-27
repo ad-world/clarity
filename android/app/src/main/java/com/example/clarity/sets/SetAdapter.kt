@@ -47,11 +47,13 @@ class SetAdapter(
         println("Position: $position")
         holder.itemView.apply {
             val tvSetTitle = findViewById<TextView>(R.id.tvSetTitle)
+            val tvYourSets = findViewById<TextView>(R.id.tvYourSets)
             val tvCardCount = findViewById<TextView>(R.id.tvCardCount)
             val tvCompletedPhrases = findViewById<TextView>(R.id.tvCompletedPhrases)
             val tvCompletedPercent = findViewById<TextView>(R.id.tvCompletedPercent)
             val progressBarSet = findViewById<ProgressBar>(R.id.progressBarSet)
 
+            tvYourSets.text = "Your Sets"
             tvSetTitle.text = set.title
             tvCardCount.text = set.cards.size.toString()
             tvCompletedPhrases.text = "${set.progress} Completed"
