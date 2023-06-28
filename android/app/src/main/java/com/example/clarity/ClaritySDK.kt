@@ -77,16 +77,16 @@ interface API {
     suspend fun getClassesStudent(@Query("id") id: String): Response<GetClassroomResponse>
 
     @POST("addCardToSet")
-    suspend fun addCardToSet(@Body card: AddCard): Response<AddCardResponse>
+    suspend fun addCardToSet(@Body card: AddCardToSetRequest): Response<AddCardToSetResponse>
 
     @POST("deleteCardFromSet")
-    suspend fun deleteCardFromSet(@Body card: DeleteCard): Response<DeleteCardResponse>
+    suspend fun deleteCardFromSet(@Body card: DeleteCardFromSetRequest): Response<DeleteCardFromSetResponse>
 
     @POST("addSet")
     suspend fun addSet(@Body set: CreateCardSetEntity) : Response<CreateCardSetResponse>
 
     @POST("getCardsForSet")
-    suspend fun getCards(@Body set: GetCardsInSet) : Response<GetCardsInSetResponse>
+    suspend fun getCards(@Body set: GetCardsInSetRequest) : Response<GetCardsInSetResponse>
 
     @GET("getSets")
     suspend fun getAllSets() : Response<GetSetsResponse>
