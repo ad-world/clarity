@@ -1,10 +1,8 @@
 package com.example.clarity.sets
 
-import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
@@ -12,7 +10,6 @@ import com.example.clarity.R
 
 class SetAdapter(
     private val sets: MutableList<Set>,
-    private val userId: Int?,
     private val onItemClicked: (position: Int) -> Unit
 ) : RecyclerView.Adapter<SetAdapter.SetViewHolder>() {
 

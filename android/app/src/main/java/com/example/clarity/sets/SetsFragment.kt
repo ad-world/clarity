@@ -22,7 +22,6 @@ private const val USER_ID = "userId"
  */
 class SetsFragment : Fragment() {
 
-    private var userId: Int? = 0
     private var _binding: FragmentSetsBinding? = null
     private lateinit var setAdapter: SetAdapter
     private lateinit var sets: MutableList<Set>
@@ -45,7 +44,6 @@ class SetsFragment : Fragment() {
                 cvStartActivity.visibility = INVISIBLE
                 val intent = Intent(activity, TestSetActivity::class.java)
                 intent.putExtra("setId", sets[position].id);
-                intent.putExtra("userId", userId);
                 startActivity(intent)
             }
 
@@ -53,7 +51,6 @@ class SetsFragment : Fragment() {
                 cvStartActivity.visibility = INVISIBLE
                 val intent = Intent(activity, PracticeSetActivity::class.java)
                 intent.putExtra("setId", sets[position].id);
-                intent.putExtra("userId", userId);
                 startActivity(intent)
             }
 
@@ -75,9 +72,6 @@ class SetsFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            userId = it.getInt(USER_ID)
-        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -109,7 +103,7 @@ class SetsFragment : Fragment() {
                 Card(4, "Tablet", false)),
             0, SetCategory.COMMUNITY_SET))
         Log.d("myTag", "SET SIZE: " + sets.size)
-        setAdapter = SetAdapter(sets, userId) { position -> onSetClick(position) }
+        setAdapter = SetAdapter(sets) { position -> onSetClick(position) }
         binding.rvSets.adapter = setAdapter
         binding.rvSets.layoutManager = LinearLayoutManager(context)
         binding.btnCreateSet.setOnClickListener {
@@ -127,10 +121,9 @@ class SetsFragment : Fragment() {
          * @return A new instance of fragment SetsFragment.
          */
         @JvmStatic
-        fun newInstance(userId: Int) =
+        fun newInstance() =
             SetsFragment().apply {
                 arguments = Bundle().apply {
-                    putInt(USER_ID, userId)
                 }
             }
     }
