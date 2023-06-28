@@ -47,7 +47,7 @@ class SecondFragment : Fragment() {
 
             val user = User(username, email, password, first, last, number)
             val response : Response<CreateUserResponse> = runBlocking {
-                return@runBlocking api.createUser(user)
+                return@runBlocking api.createUser(CreateUserEntity(user))
             }
             println(response.body())
 

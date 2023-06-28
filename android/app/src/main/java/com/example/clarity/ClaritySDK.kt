@@ -15,6 +15,8 @@ enum class StatusResponse {
 }
 
 data class LoginRequest(val username: String, val password: String)
+
+data class CreateUserEntity(val user: User)
 data class User(val username: String, val email: String, val password: String, val firstname: String, val lastname: String, val phone_number: String)
 data class CreateUserResponse(val response: StatusResponse, val message: String)
 data class UserWithId(val user_id: Int, val username: String, val email: String, val firstname: String, val lastname: String, val phone_number: String)
@@ -43,6 +45,19 @@ data class AddCardToSetResponse(val response: StatusResponse, val msg: String)
 data class JoinClassroomResponse(val response: StatusResponse, val id: String)
 
 data class GetClassroomResponse(val response: StatusResponse, val id: List<String>)
+// Request Formats.
+data class CreateCardEntity(val phrase: String, val title: String)
+data class Evaluate(val user_recording: String) // Just wrote it as string for now.
+
+// Response Formats.
+data class CreateCardResponse(val response: StatusResponse, val msg: String)
+data class EvaluateResponse(val response: StatusResponse, val score: Int)
+
+data class AddCardToSetRequest(val card_id: Int, val set_id: Int)
+data class DeleteCardFromSetRequest(val card_id: Int, val set_id: Int)
+data class GetCardsInSetRequest(val set_id: Int)
+data class AddCardToSetResponse(val response: StatusResponse, val msg: String)
+data class DeleteCardFromSetResponse(val response: StatusResponse, val msg: String)
 
 
 class ClaritySDK {
@@ -59,7 +74,7 @@ interface API {
     suspend fun login(@Body user: LoginRequest): Response<LoginResponse>
 
     @POST("createUser")
-    suspend fun createUser(@Body user: User): Response<CreateUserResponse>
+    suspend fun createUser(@Body user: CreateUserEntity): Response<CreateUserResponse>
 
     @GET("getUser")
     suspend fun getUser(@Query("username") username: String): Response<GetUserResponse>
