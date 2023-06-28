@@ -25,4 +25,24 @@
             android:id="@+id/action_SecondFragment_to_FirstFragment"
             app:destination="@id/FirstFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/ClassAnnouncements"
+        android:name="com.example.clarity.classroompage.ClassAnnouncement"
+        android:label="announcement_label"
+        tools:layout="@layout/fragment_class_announcement">
+
+        <action
+            android:id="@+id/action_announcement_to_tasks"
+            app:destination="@id/ClassTasks" />
+    </fragment>
+    <fragment
+        android:id="@+id/ClassTasks"
+        android:name="com.example.clarity.classroompage.ClassTask"
+        android:label="task_label"
+        tools:layout="@layout/fragment_class_task">
+
+        <action
+            android:id="@+id/action_tasks_to_announcements"
+            app:destination="@id/ClassAnnouncements" />
+    </fragment>
 </navigation>

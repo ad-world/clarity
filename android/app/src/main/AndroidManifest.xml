@@ -14,6 +14,9 @@
         android:theme="@style/Theme.Clarity"
         tools:targetApi="31">
         <activity
+            android:name=".classroompage.Classroom"
+            android:exported="false" />
+        <activity
             android:name=".sets.PracticeSetActivity"
             android:exported="false" />
         <activity

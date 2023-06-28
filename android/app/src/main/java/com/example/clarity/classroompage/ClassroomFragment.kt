@@ -1,6 +1,7 @@
 package com.example.clarity.classroompage
 
 import android.app.AlertDialog
+import android.content.Intent
 import android.os.Bundle
 import android.text.InputType
 import android.view.LayoutInflater
@@ -11,6 +12,7 @@ import android.widget.EditText
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.clarity.IndexActivity
 import com.example.clarity.R
 
 
@@ -65,6 +67,8 @@ class ClassroomFragment : Fragment() {
 
         // adding the list classes to the recycler view (with recycler custom ClassAdapter)
         classAdapter = ClassAdapter(dummyData) { className ->
+            val intent = Intent(requireContext(), Classroom::class.java)
+            startActivity(intent)
             // Handle item click event here, e.g., navigate to a separate page
         }
         recyclerView.adapter = classAdapter
@@ -73,6 +77,13 @@ class ClassroomFragment : Fragment() {
         val joinClassButton = view.findViewById<Button>(R.id.btnJoinClass)
         joinClassButton.setOnClickListener {
             showJoinClassDialog()
+        }
+
+        // creating a listener action for the join class button
+        val createClassButton = view.findViewById<Button>(R.id.btnCreateClass)
+        createClassButton.setOnClickListener {
+            val intent = Intent(activity, Classroom::class.java)
+            startActivity(intent)
         }
 
         return view
