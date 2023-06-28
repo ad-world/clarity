@@ -14,13 +14,13 @@ class ClassroomController {
 
     // add class
     @PostMapping("/addClass")
-    fun addClass(@RequestBody classroom: JoinClassroomEntity): ResponseEntity<String>  {
+    fun addClass(@RequestBody classroom: JoinClassroomEntity): ResponseEntity<JoinClassroomResponse>  {
         val classroomEntity = ClassroomEntity()
         val joinResponse = classroomEntity.joinClass(classroom)
         return if(joinResponse.response == StatusResponse.Success) {
-            ResponseEntity.ok(joinResponse.id)
+            ResponseEntity.ok(joinResponse)
         } else {
-            ResponseEntity.badRequest().body(joinResponse.id)
+            ResponseEntity.badRequest().body(joinResponse)
         }
     }
 
@@ -28,36 +28,36 @@ class ClassroomController {
 
     // create class
     @PostMapping("/createClass")
-    fun createClass(@RequestBody newClassroom: CreateClassroomEntity): ResponseEntity<String>  {
+    fun createClass(@RequestBody newClassroom: CreateClassroomEntity): ResponseEntity<CreateClassroomResponse>  {
         val classroomEntity = ClassroomEntity()
         val classroomResponse = classroomEntity.createClass(newClassroom)
 
         return if(classroomResponse.response == StatusResponse.Success) {
-            ResponseEntity.ok(classroomResponse.id)
+            ResponseEntity.ok(classroomResponse)
         } else {
-            ResponseEntity.badRequest().body(classroomResponse.id)
+            ResponseEntity.badRequest().body(classroomResponse)
         }
     }
 
     @GetMapping("/getClasses")
-    fun getClasses(@RequestParam("id") id: String) : ResponseEntity<String> {
+    fun getClasses(@RequestParam("id") id: String) : ResponseEntity<GetClassroomResponse> {
         val classroomEntity = ClassroomEntity()
         val classroomResponse = classroomEntity.getClasses(id.toInt())
         return if(classroomResponse.response == StatusResponse.Success) {
-            ResponseEntity.ok(classroomResponse.id.toString())
+            ResponseEntity.ok(classroomResponse)
         } else {
-            ResponseEntity.badRequest().body("Error occurred while querying")
+            ResponseEntity.badRequest().body(classroomResponse)
         }
     }
 
     @GetMapping("/getClassesStudent")
-    fun getClassesStudent(@RequestParam("id") id: String) : ResponseEntity<String> {
+    fun getClassesStudent(@RequestParam("id") id: String) : ResponseEntity<GetClassroomResponse> {
         val classroomEntity = ClassroomEntity()
         val classroomResponse = classroomEntity.getClassesStudent(id.toInt())
         return if(classroomResponse.response == StatusResponse.Success) {
-            ResponseEntity.ok(classroomResponse.id.toString())
+            ResponseEntity.ok(classroomResponse)
         } else {
-            ResponseEntity.badRequest().body("Error occurred while querying")
+            ResponseEntity.badRequest().body(classroomResponse)
         }
     }
 }
