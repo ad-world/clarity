@@ -37,22 +37,21 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/tvYourSets"
+                android:id="@+id/tvSetTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="160dp"
-                android:layout_marginTop="36dp"
                 android:fontFamily="@font/inter_semibold"
                 android:text="@string/your_sets"
-                android:textColor="#000000"
-                android:textFontWeight="400"
-                android:textSize="30sp"
+                android:textColor="#FFFFFF"
+                android:textFontWeight="600"
+                android:textSize="32sp"
                 android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintStart_toStartOf="@+id/tvCompletedPhrases"
+                app:layout_constraintTop_toBottomOf="@+id/tvCardCount"/>
 
             <TextView
-                android:id="@+id/tvSetTitle"
+                android:id="@+id/tvYourSets"
+                android:visibility="gone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/inter_semibold"
