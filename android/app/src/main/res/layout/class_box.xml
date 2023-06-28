@@ -1,49 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <FrameLayout
-        android:layout_width="300dp"
-        android:layout_height="160dp"
+        android:layout_width="325dp"
+        android:layout_height="wrap_content"
+        android:minHeight="130dp"
         android:layout_margin="10dp"
         android:background="@drawable/class_box_background"
-        android:clickable="true"
-        android:focusable="true"
         android:foreground="?android:attr/selectableItemBackground"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_bias="0.5">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <!-- Add your text elements here as TextViews -->
-        <TextView
-            android:id="@+id/tvClassName"
-            android:layout_width="91dp"
-            android:layout_height="48dp"
-            android:layout_gravity="start"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
-            android:textFontWeight="600"
-            android:fontFamily="@font/inter_semibold"
-            android:textStyle="bold"
-            android:textColor="#FFFFFF"
-            android:textSize="32.5sp"
-            android:text="Text 1" />
 
-        <TextView
-            android:id="@+id/tvInstructorName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="start"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="60dp"
-            android:textColor="#FFFFFF"
-            android:textSize="20sp"
-            android:text="Text 2"/>
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
+
+            <TextView
+                android:id="@+id/tvClassName"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:layout_gravity="start"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="5dp"
+                android:fontFamily="@font/inter_semibold"
+                android:text="Text 1"
+                android:textColor="#FFFFFF"
+                android:textFontWeight="600"
+                android:textSize="32.5sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tvInstructorName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="4dp"
+                android:text="Text 2"
+                android:textColor="#FFFFFF"
+                android:textSize="20sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.038"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tvClassName"
+                app:layout_constraintVertical_bias="0.0" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
 
         <!-- Add more TextViews as needed -->
 
