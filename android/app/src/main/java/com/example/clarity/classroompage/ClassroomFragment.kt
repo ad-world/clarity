@@ -57,8 +57,8 @@ class ClassroomFragment : Fragment() {
 
             // adding dummy data to the list of classrooms
             val dummyData = arrayOf(
-                Pair("Class 1", "Instructor: Arshpreet Chabbewal"),
-                Pair("Class 2", "Instructor: Dhir Patel")
+                Pair("ENGL 100", "Instructor: Arshpreet Chabbewal"),
+                Pair("ENGL 200", "Instructor: Dhir Patel")
             )
 
             // adding the list classes to the recycler view (with recycler custom ClassAdapter)
