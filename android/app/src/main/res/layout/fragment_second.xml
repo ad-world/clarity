@@ -118,7 +118,7 @@
                 android:id="@+id/phone_num"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Password" />
+                android:text="Phone Number" />
 
             <EditText
                 android:id="@+id/editText_phone_num"
