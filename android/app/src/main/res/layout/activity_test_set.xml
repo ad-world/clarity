@@ -179,7 +179,7 @@
             android:scaleX="2"
             android:scaleY="2"
             android:translationX="310dp"
-            android:visibility="visible"
+            android:visibility="gone"
             app:srcCompat="@drawable/baseline_navigate_next_24" />
 
     </androidx.cardview.widget.CardView>
@@ -191,14 +191,14 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="40dp"
         android:layout_marginEnd="40dp"
-        android:layout_marginBottom="70dp"
+        android:layout_marginBottom="48dp"
         android:progress="0"
         android:progressTint="#F1416C"
         android:scaleY="2"
         app:circularflow_defaultRadius="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView

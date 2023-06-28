@@ -140,8 +140,8 @@ class PracticeSetActivity() : AppCompatActivity() {
             if (index > 0) {
                 index--
                 iBtnMic.isEnabled = true
-                progressBar.progress = (index * 100) / set.cards.size
-                tvCompletedCount.text = "Phrase $index / ${set.cards.size} "
+                progressBar.progress = ((index + 1) * 100) / set.cards.size
+                tvCompletedCount.text = "Phrase ${index + 1} / ${set.cards.size} "
                 cvPopUp.visibility = View.GONE
                 loadCard(set.cards[index])
                 if(index == 0) {
