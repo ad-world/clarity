@@ -4,138 +4,32 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".FirstFragment">
+    tools:context=".SecondFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/parent"
         android:padding="16dp">
 
-
-        <ImageView
-            android:id="@+id/logo"
-            android:layout_width="246dp"
-            android:layout_height="131dp"
-            android:src="@drawable/logo_with_name"
+        <Button
+            android:id="@+id/button_second"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/previous"
+            app:layout_constraintBottom_toTopOf="@id/textview_second"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.496"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:ignore="MissingConstraints" />
-
-        <TextView
-            android:id="@+id/Login"
-            android:layout_width="317dp"
-            android:layout_height="47dp"
-            android:text="Create an Account"
-            android:textSize="27dp"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.173"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/logo" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/textview_second"
-            android:layout_width="261dp"
-            android:layout_height="64dp"
-            android:text="Start improving your pronunciation today!"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/lorem_ipsum"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.104"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/Login" />
-
-
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            tools:layout_editor_absoluteX="16dp"
-            tools:layout_editor_absoluteY="315dp"
-            app:layout_constraintTop_toBottomOf="@+id/textview_second"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent">
-
-            <TextView
-                android:id="@+id/username"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Username" />
-
-            <EditText
-                android:id="@+id/editText_username"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Enter Username"
-                android:inputType="text"
-                android:textSize="14sp" />
-
-            <TextView
-                android:id="@+id/name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Name" />
-
-            <EditText
-                android:id="@+id/editText_name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Enter Name"
-                android:inputType="text"
-                android:textSize="14sp" />
-
-            <TextView
-                android:id="@+id/email"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Email" />
-
-            <EditText
-                android:id="@+id/editText_email"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Enter Email"
-                android:inputType="textEmailAddress"
-                android:textSize="14sp" />
-
-            <TextView
-                android:id="@+id/password"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Password" />
-
-            <EditText
-                android:id="@+id/editText_password"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Enter Password"
-                android:inputType="textPassword"
-                android:textSize="14sp" />
-
-            <Button
-                android:id="@+id/button_create_account"
-                android:layout_width="300dp"
-                android:layout_height="60dp"
-                android:layout_gravity="center_horizontal"
-                android:backgroundTint="#116DF5"
-                android:text="Create Account"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                tools:ignore="MissingConstraints"
-                tools:layout_editor_absoluteY="588dp" />
-
-            <TextView
-                android:id="@+id/login_link"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:text="Already have an Account? Login."
-                android:textColor="#116DF5" />
-
-        </LinearLayout>
-
-
+            app:layout_constraintTop_toBottomOf="@id/button_second" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>
