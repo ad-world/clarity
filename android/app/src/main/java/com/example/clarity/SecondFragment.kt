@@ -9,12 +9,15 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
 import com.example.clarity.databinding.FragmentSecondBinding
+import kotlinx.coroutines.runBlocking
+import retrofit2.Response
 
 /**
  * A simple [Fragment] subclass as the default destination in the navigation.
  */
 class SecondFragment : Fragment() {
 
+    private val api = ClaritySDK().apiService
     private var _binding: FragmentSecondBinding? = null
 
     // This property is only valid between onCreateView and
@@ -37,19 +40,31 @@ class SecondFragment : Fragment() {
         binding.buttonCreateAccount.setOnClickListener {
             val username = binding.editTextUsername.text.toString()
             val password = binding.editTextPassword.text.toString()
-            val name = binding.editTextName.text.toString()
+            val first = binding.editTextFirst.text.toString()
+            val last = binding.editTextLast.text.toString()
             val email = binding.editTextEmail.text.toString()
+            val number = binding.editTextPhoneNum.text.toString()
 
-            //call api
-            val successfulSignup = true
+            val user = User(username, email, password, first, last, number)
+            val response : Response<CreateUserResponse> = runBlocking {
+                return@runBlocking api.createUser(CreateUserEntity(user))
+            }
+            println(response.body())
 
-            if(successfulSignup) {
+            var valid = false
+            if (response.isSuccessful) {
+                valid = true
+            }
+
+            if(valid) {
                 val intent = Intent(activity, IndexActivity::class.java)
                 startActivity(intent)
             } else {
                 binding.editTextUsername.setText("")
                 binding.editTextPassword.setText("")
-                binding.editTextName.setText("")
+                binding.editTextFirst.setText("")
+                binding.editTextLast.setText("")
+                binding.editTextPhoneNum.setText("")
                 binding.editTextEmail.setText("")
                 unsuccessfulSignUp()
             }

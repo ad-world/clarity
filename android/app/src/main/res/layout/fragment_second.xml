@@ -73,16 +73,30 @@
                 android:textSize="14sp" />
 
             <TextView
-                android:id="@+id/name"
+                android:id="@+id/first_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Name" />
+                android:text="First Name" />
 
             <EditText
-                android:id="@+id/editText_name"
+                android:id="@+id/editText_first"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Enter Name"
+                android:hint="Enter First Name"
+                android:inputType="text"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/last_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Last Name" />
+
+            <EditText
+                android:id="@+id/editText_last"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Enter Last Name"
                 android:inputType="text"
                 android:textSize="14sp" />
 
@@ -98,6 +112,20 @@
                 android:layout_height="wrap_content"
                 android:hint="Enter Email"
                 android:inputType="textEmailAddress"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/phone_num"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Phone Number" />
+
+            <EditText
+                android:id="@+id/editText_phone_num"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Enter Phone Number"
+                android:inputType="text"
                 android:textSize="14sp" />
 
             <TextView
