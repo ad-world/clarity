@@ -33,7 +33,7 @@ class SetsFragment : Fragment() {
     private var _binding: FragmentSetsBinding? = null
     private lateinit var setAdapter: SetAdapter
     private lateinit var sets: MutableList<Set>
-    // private val api = ClaritySDK().apiService
+    private val api = ClaritySDK().apiService
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
@@ -96,7 +96,7 @@ class SetsFragment : Fragment() {
         //  through the object returned, creating a set data class for each set, and appending it
         //  to the sets array
 
-/*
+
         val response : Response<GetSetsResponse> = runBlocking {
             return@runBlocking api.getAllSets()
         }
@@ -119,7 +119,7 @@ class SetsFragment : Fragment() {
                 set.cards.add(Card(counter, card, false))
             }
             sets.add(set)
-        }*/
+        }
 
         // TEST DATA, will be removed when database is connected
         /*sets.add(Set(0, "Animals", 4,

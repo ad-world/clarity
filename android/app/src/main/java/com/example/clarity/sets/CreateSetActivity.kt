@@ -58,12 +58,9 @@ class CreateSetActivity : AppCompatActivity() {
                 }
                 val res : Response<CreateCardSetResponse> = runBlocking {
                     Log.d("inhere", "here")
-                    return@runBlocking api.addSet(CreateCardSetEntity(0, "test title", "type"))
+                    return@runBlocking api.addSet(CreateCardSetEntity(0, title, type))
                 }
 
-                /* val response : Response<GetSetsResponse> = runBlocking {
-                    return@runBlocking api.getAllSets()
-                } */
                 Log.d("res", res.toString())
                 // TODO: Compute a new set id, probably take largest current ID for user and increment
                 // val setId = 0
