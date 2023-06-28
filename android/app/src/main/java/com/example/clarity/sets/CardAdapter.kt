@@ -24,6 +24,7 @@ class CardAdapter(private val cards: MutableList<Card>, val hideKeyboard: () -> 
     private var deleteLock = false
 
     private var counter = 0
+    private var deleteLock = false
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CardViewHolder {
         return CardViewHolder(
