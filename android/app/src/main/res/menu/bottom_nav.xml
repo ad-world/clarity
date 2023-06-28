@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:title="Profile"
+        android:id="@+id/profile"
+        android:icon="@drawable/baseline_person_24"/>
+    <item android:title="Sets"
+        android:id="@+id/sets"
+        android:icon="@drawable/baseline_auto_awesome_motion_24"/>
+    <item android:title="Community"
+        android:id="@+id/community"
+        android:icon="@drawable/baseline_people_24"/>
+    <item android:title="Classroom"
+        android:id="@+id/classroom"
+        android:icon="@drawable/baseline_school_24"/>
+</menu>
