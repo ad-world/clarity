@@ -43,4 +43,24 @@
         libero vel nunc consequat, quis tincidunt nisl eleifend. Cras bibendum enim a justo luctus
         vestibulum. Fusce dictum libero quis erat maximus, vitae volutpat diam dignissim.
     </string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="create_set">Create Set</string>
+    <string name="add_card">Add Card</string>
+    <string name="enter_set_title">Enter Title</string>
+    <string name="enter_card_title">Enter Phrase</string>
+    <string name="delete">Delete</string>
+    <string name="great_job">Great Job! 👍</string>
+    <string name="try_again">Just a little off, try again!</string>
+    <string name="completed">Completed</string>
+    <string name="exit_set">Exit Set</string>
+    <string name="record_voice">Record Voice</string>
+    <string name="your_sets">Your Sets</string>
+    <string name="create_new_set">Create New Set</string>
+    <string name="_0_completed">0 Completed</string>
+    <string name="navigate_to_next_card">Navigate to next card</string>
+    <string name="_0">0 %</string>
+    <string name="_0_complete">0 Complete</string>
+    <string name="rome">Rome</string>
+    <string name="cities">Cities</string>
 </resources>
