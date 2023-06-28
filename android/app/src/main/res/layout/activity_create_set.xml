@@ -40,6 +40,7 @@
         android:backgroundTint="#2196F3"
         android:fontFamily="@font/inter_semibold"
         android:text="@string/create_set"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.121"
         app:layout_constraintStart_toStartOf="parent" />
