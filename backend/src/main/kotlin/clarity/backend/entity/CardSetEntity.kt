@@ -8,16 +8,11 @@ data class CreateCardSetEntity(val creator_id: Int, val title: String, val type:
 data class AddCard(val card_id: Int, val set_id: Int)
 data class DeleteCard(val card_id: Int, val set_id: Int)
 
-data class GetCardsInSet(val set_id: Int)
-data class GetDataForSetRequest(val set_id: Int)
-
 // Response Formats.
 data class CreateCardSetResponse(val response: StatusResponse, val msg: String)
 data class AddCardResponse(val response: StatusResponse, val msg: String)
 data class DeleteCardResponse(val response: StatusResponse, val msg: String)
 data class GetCardsInSetResponse(val response: StatusResponse, val cards: List<String>)
-data class GetSetsResponse(val response: StatusResponse, val sets: List<String>)
-data class GetDataForSetResponse(val response: StatusResponse, val data: List<String>)
 
 class CardSetEntity() {
     private val db = DataManager().db
@@ -26,8 +21,8 @@ class CardSetEntity() {
         try {
             val statement = db.createStatement()
             val query = """
-                INSERT INTO CardSet(creator_id, title, type)
-                VALUES (${set.creator_id}, '${set.title}', '${set.type}');
+                INSERT OR IGNORE INTO CardSet(creator_id, title, type)
+                VALUES (${set.creator_id}, ${set.title}, ${set.type});
             """.trimIndent()
             statement.executeUpdate(query)
         } catch (e: Exception) {
@@ -37,11 +32,11 @@ class CardSetEntity() {
         return CreateCardSetResponse(StatusResponse.Success, "Created Card Set!")
     }
 
-    fun addCardToSet(card: AddCard) : AddCardResponse {
+    fun addCard(card: AddCard) : AddCardResponse {
         try {
             val statement = db.createStatement()
             val query = """
-                INSERT INTO CardInSet([set_id], card_id)
+                INSERT OR IGNORE INTO CardInSet([set_id], card_id)
                 VALUES (${card.set_id}, ${card.card_id});
             """.trimIndent()
             statement.executeUpdate(query)
@@ -52,7 +47,7 @@ class CardSetEntity() {
         return AddCardResponse(StatusResponse.Success, "Added card ${card.card_id} to set.")
     }
 
-    fun deleteCardFromSet(card: DeleteCard) : DeleteCardResponse {
+    fun deleteCard(card: DeleteCard) : DeleteCardResponse {
         try {
             val statement = db.createStatement()
             val query = """
@@ -67,37 +62,12 @@ class CardSetEntity() {
         return DeleteCardResponse(StatusResponse.Success, "Deleted card from set.")
     }
 
-    fun getDataForSet(request: GetDataForSetRequest) : GetDataForSetResponse {
-        try {
-            val statement = db.createStatement()
-            val query = """
-                SELECT * FROM CardSet
-                WHERE [set_id] = ${request.set_id};
-            """.trimIndent()
-            val resultSet = statement.executeQuery(query)
-            val resultList: MutableList<String> = mutableListOf()
-            
-            // Since it will only return one row, just extract val of all the columns and return
-            // a list of strings.
-            if (resultSet.next()) {
-                val columnCount = resultSet.metaData.columnCount
-                for (i in 1..columnCount) {
-                    val columnValue: String = resultSet.getString(i)
-                    resultList.add(columnValue)
-                }
-            }
-            return GetDataForSetResponse(StatusResponse.Success, resultList.toList())
-        } catch (e: Exception) {
-            return GetDataForSetResponse(StatusResponse.Failure, listOf(e.message) as List<String>)
-        }
-    }
-
-    fun getTotalCardsFromSet(set: GetCardsInSet) : GetCardsInSetResponse {
+    fun getTotalCardsFromSet(set_id: Int) : GetCardsInSetResponse {
         try {
             val statement = db.createStatement()
             val query = """
                 SELECT card_id FROM CardInSet
-                WHERE [set_id] = ${set.set_id}
+                WHERE [set_id] = $set_id
             """.trimIndent()
             val resultSet = statement.executeQuery(query)
             val cardIdList = mutableListOf<String>()
@@ -114,25 +84,7 @@ class CardSetEntity() {
             val errMsg: String = "Failed to get cards: ${e.message ?: "Unknown error"}"
             return GetCardsInSetResponse(StatusResponse.Failure, emptyList())
         }
+
     }
 
-    fun getSets() : GetSetsResponse {
-        try {
-            val statement = db.createStatement()
-            val query = "SELECT [set_id] FROM CardSet"
-            val resultSet = statement.executeQuery(query)
-            val setList = mutableListOf<String>()
-
-            // Extract the card ids and convert to a list of strings.
-            while (resultSet.next()) {
-                val setId = resultSet.getString("set_id")
-                setList.add(setId)
-            }
-            resultSet.close()
-
-            return GetSetsResponse(StatusResponse.Success, setList.toList())
-        } catch (e: Exception) {
-            return GetSetsResponse(StatusResponse.Failure, emptyList())
-        }
-    }
 }
