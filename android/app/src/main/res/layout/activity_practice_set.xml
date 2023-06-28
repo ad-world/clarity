@@ -65,17 +65,21 @@
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cvPopUp"
-        android:visibility="gone"
         android:layout_width="match_parent"
-        android:layout_height="30dp"
-        android:layout_marginStart="120dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="120dp"
+        android:layout_height="35dp"
+        android:layout_marginStart="100dp"
+        android:layout_marginTop="52dp"
+        android:layout_marginEnd="100dp"
+        android:layout_marginBottom="20dp"
         android:backgroundTint="#DEFDBB"
-        app:layout_constraintBottom_toTopOf="@+id/iBtnMic"
+        android:visibility="gone"
+        app:cardCornerRadius="10dp"
+        app:layout_constraintBottom_toTopOf="@+id/tvCompletedPhrases"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cvCard">
+        app:layout_constraintTop_toBottomOf="@+id/iBtnSpeaker"
+        app:layout_constraintVertical_bias="0.0">
 
         <TextView
             android:id="@+id/tvResultMessage"
@@ -84,6 +88,7 @@
             android:layout_gravity="center"
             android:text="@string/great_job"
             android:textSize="15sp" />
+
     </androidx.cardview.widget.CardView>
 
     <androidx.cardview.widget.CardView
@@ -135,7 +140,7 @@
             android:scaleX="2"
             android:scaleY="2"
             android:translationX="15dp"
-            android:visibility="visible"
+            android:visibility="gone"
             app:srcCompat="@drawable/baseline_navigate_before_24" />
     </androidx.cardview.widget.CardView>
 
@@ -146,7 +151,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="40dp"
         android:layout_marginEnd="40dp"
-        android:layout_marginBottom="80dp"
+        android:layout_marginBottom="48dp"
         android:progress="5"
         android:progressTint="#F1416C"
         android:scaleY="2"

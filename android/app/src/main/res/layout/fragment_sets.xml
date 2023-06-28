@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:translationZ="10dp"
     tools:context=".sets.SetsFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -13,9 +14,9 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvSets"
             android:layout_width="match_parent"
-            android:layout_height="660dp"
-            android:layout_marginTop="70dp"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="20dp"
+            app:layout_constraintBottom_toTopOf="@+id/cardView"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tvYourSets" />
@@ -23,12 +24,14 @@
         <androidx.cardview.widget.CardView
             android:id="@+id/cvStartActivity"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginStart="30dp"
-            android:layout_marginTop="250dp"
-            android:layout_marginEnd="30dp"
-            android:layout_marginBottom="250dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="25dp"
+            android:layout_marginTop="200dp"
+            android:layout_marginEnd="25dp"
+            android:layout_marginBottom="200dp"
+            android:backgroundTint="#19376D"
             android:visibility="gone"
+            app:cardCornerRadius="10dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -42,12 +45,12 @@
                     android:id="@+id/iBtnCancel"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginEnd="16dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="10dp"
                     android:background="@drawable/setclosebutton"
                     android:contentDescription="@string/exit_set"
-                    android:scaleX="1"
-                    android:scaleY="1"
+                    android:scaleX="0.7"
+                    android:scaleY="0.7"
                     android:src="@drawable/baseline_close_24_white"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -56,51 +59,65 @@
                     android:id="@+id/tvPopupSetTitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginTop="20dp"
+                    android:layout_marginTop="30dp"
                     android:fontFamily="@font/manrope_semibold"
                     android:text="Set Title"
-                    android:textColor="#000000"
+                    android:textColor="#FFFFFF"
                     android:textFontWeight="400"
-                    android:textSize="30sp"
+                    android:textSize="35sp"
                     android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <Button
                     android:id="@+id/btnTest"
-                    android:layout_width="0dp"
+                    android:layout_width="160dp"
                     android:layout_height="66dp"
-                    android:backgroundTint="#2196F3"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="60dp"
+                    android:layout_marginBottom="10dp"
+                    android:backgroundTint="#576CBC"
                     android:fontFamily="@font/manrope_semibold"
                     android:insetTop="0dp"
                     android:insetBottom="0dp"
                     android:text="Start Test"
                     android:textFontWeight="600"
                     android:textIsSelectable="false"
-                    android:textSize="18sp"
-                    app:cornerRadius="0dp"
-                    app:layout_constraintBottom_toTopOf="@+id/btnPractice"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent" />
+                    android:textSize="16sp"
+                    app:cornerRadius="15dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tvNumCards" />
 
                 <Button
                     android:id="@+id/btnPractice"
-                    android:layout_width="0dp"
+                    android:layout_width="160dp"
                     android:layout_height="66dp"
-                    android:background="#FF2525"
-                    android:backgroundTint="#FF7070"
+                    android:layout_marginEnd="10dp"
+                    android:backgroundTint="#576CBC"
                     android:fontFamily="@font/manrope_semibold"
                     android:insetTop="0dp"
                     android:insetBottom="0dp"
                     android:text="Start Practice"
                     android:textFontWeight="600"
-                    app:cornerRadius="0dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:textIsSelectable="false"
+                    android:textSize="16sp"
+                    app:cornerRadius="15dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/btnTest" />
+
+                <TextView
+                    android:id="@+id/tvNumCards"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="18dp"
+                    android:text="Card Count: 50"
+                    android:textColor="#99FFFFFF"
+                    android:textSize="17dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    tools:backgroundTint="#673AB7"
-                    tools:textSize="18sp" />
+                    app:layout_constraintTop_toBottomOf="@+id/tvPopupSetTitle" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.cardview.widget.CardView>
@@ -133,6 +150,14 @@
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardView"
+            android:layout_width="0dp"
+            android:layout_height="80dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

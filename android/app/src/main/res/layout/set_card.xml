@@ -7,11 +7,12 @@
 
 
     <androidx.cardview.widget.CardView
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="30dp"
+        android:layout_marginBottom="10dp"
         app:cardCornerRadius="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -30,7 +31,7 @@
                 android:layout_marginTop="20dp"
                 android:fontFamily="@font/manrope_semibold"
                 android:text="50 Cards"
-                android:textColor="#80FFFFFF"
+                android:textColor="#A6FFFFFF"
                 android:textFontWeight="600"
                 android:textSize="14sp"
                 app:layout_constraintStart_toStartOf="@+id/tvSetTitle"
@@ -41,12 +42,40 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/inter_semibold"
+                android:text="@string/your_sets"
+                android:textColor="#FFFFFF"
+                android:textFontWeight="600"
+                android:textSize="32sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="@+id/tvCompletedPhrases"
+                app:layout_constraintTop_toBottomOf="@+id/tvCardCount" />
+
+            <TextView
+                android:id="@+id/tvYourSets"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/inter_semibold"
+                android:text="@string/your_sets"
+                android:textColor="#FFFFFF"
+                android:textFontWeight="600"
+                android:textSize="32sp"
+                android:textStyle="bold"
+                android:visibility="gone"
+                app:layout_constraintStart_toStartOf="@+id/tvCompletedPhrases"
+                app:layout_constraintTop_toBottomOf="@+id/tvCardCount" />
+
+            <TextView
+                android:id="@+id/tvYourSets2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/inter_semibold"
                 android:text="Cities"
                 android:textColor="#FFFFFF"
+                android:visibility="gone"
                 app:layout_constraintStart_toStartOf="@+id/tvCompletedPhrases"
                 app:layout_constraintTop_toBottomOf="@+id/tvCardCount"
                 tools:textFontWeight="600"
-                tools:textSize="32.5sp" />
+                tools:textSize="32sp" />
 
             <TextView
                 android:id="@+id/tvCompletedPhrases"
@@ -55,7 +84,7 @@
                 android:layout_marginBottom="2dp"
                 android:fontFamily="@font/manrope_semibold"
                 android:text="20 Complete"
-                android:textColor="#80FFFFFF"
+                android:textColor="#A6FFFFFF"
                 android:textFontWeight="600"
                 app:layout_constraintBottom_toTopOf="@+id/progressBarSet"
                 app:layout_constraintStart_toStartOf="@+id/progressBarSet"
@@ -68,7 +97,7 @@
                 android:layout_marginBottom="2dp"
                 android:fontFamily="@font/manrope_semibold"
                 android:text="40 %"
-                android:textColor="#80FFFFFF"
+                android:textColor="#A6FFFFFF"
                 app:layout_constraintBottom_toTopOf="@+id/progressBarSet"
                 app:layout_constraintEnd_toEndOf="@+id/progressBarSet"
                 tools:textFontWeight="600" />
@@ -93,6 +122,17 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tvSetTitle" />
+
+            <ImageView
+                android:id="@+id/imageView2"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginTop="9dp"
+                android:layout_marginEnd="10dp"
+                android:scaleX="1.1"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/baseline_bookmark_24" />
 
             <ImageView
                 android:id="@+id/imageView"

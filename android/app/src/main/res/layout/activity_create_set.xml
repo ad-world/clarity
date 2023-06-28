@@ -23,7 +23,7 @@
         android:id="@+id/btnAddCard"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="52dp"
+        android:layout_marginEnd="48dp"
         android:backgroundTint="#2196F3"
         android:fontFamily="@font/inter_semibold"
         android:text="@string/add_card"
@@ -36,14 +36,14 @@
         android:id="@+id/btnAddSet"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="428dp"
+        android:layout_marginBottom="50dp"
         android:backgroundTint="#2196F3"
         android:fontFamily="@font/inter_semibold"
         android:text="@string/create_set"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.121"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView2" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/textView2"
