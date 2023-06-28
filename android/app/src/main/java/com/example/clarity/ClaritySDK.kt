@@ -22,11 +22,11 @@ data class GetUserResponse(val response: StatusResponse, val user: UserWithId?, 
 data class JoinClassroomEntity(val privateCode: String, val userID: String)
 data class CreateClassroomEntity(val name: String, val teacher: Integer)
 data class CreateClassroomResponse(val response: StatusResponse, val id: String)
-data class DeleteCard(val card_id: Int, val set_id: Int)
-data class DeleteCardResponse(val response: StatusResponse, val msg: String)
+data class DeleteCardFromSetRequest(val card_id: Int, val set_id: Int)
+data class DeleteCardFromSetResponse(val response: StatusResponse, val msg: String)
 data class CreateCardSetEntity(val creator_id: Int, val title: String, val type: String)
 data class CreateCardSetResponse(val response: StatusResponse, val msg: String)
-data class GetCardsInSet(val set_id: Int)
+data class GetCardsInSetRequest(val set_id: Int)
 data class GetCardsInSetResponse(val response: StatusResponse, val cards: List<String>)
 data class GetSetsResponse(val response: StatusResponse, val sets: List<String>)
 data class GetDataForSetRequest(val set_id: Int)
@@ -36,9 +36,9 @@ data class GetDataForSetResponse(val response: StatusResponse, val data: List<St
 
 data class LoginResponse(val success: Boolean, val message: String)
 
-data class AddCard(val card_id: Int, val set_id: Int)
+data class AddCardToSetRequest(val card_id: Int, val set_id: Int)
 
-data class AddCardResponse(val response: StatusResponse, val msg: String)
+data class AddCardToSetResponse(val response: StatusResponse, val msg: String)
 
 data class JoinClassroomResponse(val response: StatusResponse, val id: String)
 
