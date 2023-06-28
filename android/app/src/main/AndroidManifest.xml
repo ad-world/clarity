@@ -9,9 +9,9 @@
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/ic_launcher_clarity_icon"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@mipmap/ic_launcher_clarity_icon_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Clarity"
         >
@@ -29,30 +29,6 @@
             android:exported="false" />
         <activity
             android:name=".classroompage.Classroom"
-            android:exported="false" />
-        <activity
-            android:name=".sets.PracticeSetActivity"
-            android:exported="false" />
-        <activity
-            android:name=".sets.TestSetActivity"
-            android:exported="false" />
-        <activity
-            android:name=".sets.CreateSetActivity"
-            android:exported="false" />
-        <activity
-            android:name=".IndexActivity"
-            android:exported="false" />
-        <activity
-            android:name=".sets.PracticeSetActivity"
-            android:exported="false" />
-        <activity
-            android:name=".sets.TestSetActivity"
-            android:exported="false" />
-        <activity
-            android:name=".sets.CreateSetActivity"
-            android:exported="false" />
-        <activity
-            android:name=".IndexActivity"
             android:exported="false" />
         <activity
             android:name=".MainActivity"
