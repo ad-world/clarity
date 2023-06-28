@@ -46,15 +46,15 @@ class SecondFragment : Fragment() {
             val number = binding.editTextPhoneNum.text.toString()
 
             val user = User(username, email, password, first, last, number)
-            val response : Response<CreateUserResponse> = runBlocking {
+            /*val response : Response<CreateUserResponse> = runBlocking {
                 return@runBlocking api.createUser(CreateUserEntity(user))
             }
-            println(response.body())
+            println(response.body())*/
 
-            var valid = false
-            if (response.isSuccessful) {
-                valid = true
-            }
+            var valid = true
+            //if (response.isSuccessful) {
+            //    valid = true
+            //}
 
             if(valid) {
                 val intent = Intent(activity, IndexActivity::class.java)
