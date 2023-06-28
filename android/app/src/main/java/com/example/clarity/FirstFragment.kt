@@ -42,16 +42,16 @@ class FirstFragment : Fragment() {
             val password = binding.editTextPassword.text.toString()
 
             //check if the username/password is valid
-            val req = LoginRequest(username, password)
+            /*val req = LoginRequest(username, password)
             val response : Response<LoginResponse> = runBlocking {
                 return@runBlocking api.login(req)
             }
-            println(response.body())
+            println(response.body())*/
 
-            var valid = false
-            if (response.isSuccessful) {
-                valid = true
-            }
+            var valid = true
+            //if (response.isSuccessful) {
+             //   valid = true
+            //}
             if (valid) {
                 val intent = Intent(activity, IndexActivity::class.java)
                 startActivity(intent)
