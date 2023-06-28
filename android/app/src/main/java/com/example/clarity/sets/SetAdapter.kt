@@ -50,11 +50,14 @@ class SetAdapter(
             val tvCompletedPercent = findViewById<TextView>(R.id.tvCompletedPercent)
             val progressBarSet = findViewById<ProgressBar>(R.id.progressBarSet)
 
-            tvYourSets.text = set.title
             tvSetTitle.text = set.title
-            tvCardCount.text = set.cards.size.toString()
+            if (set.cards.size == 1) {
+                tvCardCount.text = "${set.cards.size} Card"
+            } else {
+                tvCardCount.text = "${set.cards.size} Cards"
+            }
             tvCompletedPhrases.text = "${set.progress} Completed"
-            tvCompletedPercent.text = "${set.progress / set.cards.size}%"
+            tvCompletedPercent.text = "${set.progress / set.cards.size} %"
             progressBarSet.progress = set.progress / set.cards.size
         }
     }
