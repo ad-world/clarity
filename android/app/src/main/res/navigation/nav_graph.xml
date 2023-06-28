@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/FirstFragment">
+    app:startDestination="@+id/LandingFragment">
 
     <fragment
         android:id="@+id/FirstFragment"
@@ -14,6 +14,13 @@
         <action
             android:id="@+id/action_FirstFragment_to_SecondFragment"
             app:destination="@id/SecondFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/LandingFragment"
+        android:name="com.example.clarity.LandingFragment"
+        android:label="Landing Fragment"
+        tools:layout="@layout/fragment_landing">
+
     </fragment>
     <fragment
         android:id="@+id/SecondFragment"

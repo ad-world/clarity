@@ -18,11 +18,6 @@ class IndexActivity : AppCompatActivity() {
     private lateinit var binding : IndexActivityBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // TODO: If no one else implements this, we need to get the userId after login/signup
-        //  For now we use a hard coded value (0) for testing
-        val intent = intent
-        val userId: Int = intent.getIntExtra("userId", 0)
-
         binding = IndexActivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
         replaceFragment(ProfileFragment())
@@ -30,7 +25,7 @@ class IndexActivity : AppCompatActivity() {
         binding.bottomNav.setOnItemSelectedListener {
             when(it.itemId){
                 R.id.profile -> replaceFragment(ProfileFragment())
-                R.id.sets -> replaceFragment(SetsFragment.newInstance(userId))
+                R.id.sets -> replaceFragment(SetsFragment())
                 R.id.community -> replaceFragment(CommunityFragment())
                 R.id.classroom -> replaceFragment(ClassroomFragment())
                 else -> {}
