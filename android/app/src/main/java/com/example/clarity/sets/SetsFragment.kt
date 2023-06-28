@@ -96,21 +96,33 @@ class SetsFragment : Fragment() {
         //  through the object returned, creating a set data class for each set, and appending it
         //  to the sets array
 
-        /*
+
         val response : Response<GetSetsResponse> = runBlocking {
             return@runBlocking api.getAllSets()
         }
         println(response.body())
 
-        for(i in 0..(response.body()?.sets?.size ?:0)) {
+        val size = response.body()!!.sets.size - 1
+        for(i in 0..size) {
             val setId = response.body()?.sets?.get(i)!!.toInt()
+
             val setRes : Response<GetDataForSetResponse> = runBlocking {
-                return@runBlocking api.getDataForSet(GetDataForSetRequest(setId)))
+                return@runBlocking api.getDataForSet(GetDataForSetRequest(setId))
             }
-        }*/
+            val progress = setRes.body()?.data?.get(1)!!.toInt()
+            val setTitle = setRes.body()?.data!![2]
+            val setCards = setRes.body()?.data?.get(3)
+            val cardArray: List<String> = setCards!!.split(",")
+
+            val set = Set(setId, setTitle, 0, mutableListOf<Card>(), progress, SetCategory.CREATED_SET)
+            for ((counter, card) in cardArray.withIndex()) {
+                set.cards.add(Card(counter, card, false))
+            }
+            sets.add(set)
+        }
 
         // TEST DATA, will be removed when database is connected
-        sets.add(Set(0, "Animals", 4,
+        /*sets.add(Set(0, "Animals", 4,
             mutableListOf(Card(0, "Dog", false),
                 Card(1, "Cat", false),
                 Card(2, "Zebra", false),
@@ -129,7 +141,7 @@ class SetsFragment : Fragment() {
                 Card(2, "Computer", false),
                 Card(3, "Television", false),
                 Card(4, "Tablet", false)),
-            0, SetCategory.COMMUNITY_SET))
+            0, SetCategory.COMMUNITY_SET))*/
         Log.d("myTag", "SET SIZE: " + sets.size)
         setAdapter = SetAdapter(sets) { position -> onSetClick(position) }
         binding.rvSets.adapter = setAdapter

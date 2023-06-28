@@ -33,6 +33,7 @@ class CardController {
     @PostMapping("/addSet")
     fun addSet(@RequestBody cardSetEntity: CreateCardSetEntity) : ResponseEntity<CreateCardSetResponse> {
         val resp = CardSetEntity().createCardSet(cardSetEntity)
+        println(resp)
         return if (resp.response == StatusResponse.Success) {
             ResponseEntity.ok(resp)
         } else {

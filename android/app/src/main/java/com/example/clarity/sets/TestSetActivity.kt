@@ -16,12 +16,17 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.core.app.ActivityCompat
 import androidx.core.view.isVisible
+import com.example.clarity.ClaritySDK
+import com.example.clarity.CreateCardSetEntity
+import com.example.clarity.GetDataForSetRequest
+import com.example.clarity.GetDataForSetResponse
 import com.example.clarity.R
 import com.example.clarity.sets.audio.AndroidAudioPlayer
 import com.example.clarity.sets.audio.AndroidAudioRecorder
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import retrofit2.Response
 import java.io.File
 
 class TestSetActivity() : AppCompatActivity() {
@@ -40,6 +45,7 @@ class TestSetActivity() : AppCompatActivity() {
 
     private var isRecording = false
     private var recordingCompleted = false
+    private val api = ClaritySDK().apiService
 
     var index = 0
     @SuppressLint("SetTextI18n")
@@ -53,6 +59,20 @@ class TestSetActivity() : AppCompatActivity() {
         val userId: Int = intent.getIntExtra("userId", 0)
         // TODO: Backend query to search for set with given userId and setId
         //  for now we use our hard coded sets
+        val setRes : Response<GetDataForSetResponse> = runBlocking {
+            return@runBlocking api.getDataForSet(GetDataForSetRequest(setId))
+        }
+        val progress = setRes.body()?.data?.get(1)!!.toInt()
+        val setTitle = setRes.body()?.data!![2]
+        val setCards = setRes.body()?.data?.get(3)
+        val cardArray: List<String> = setCards!!.split(",")
+
+        val set = Set(setId, setTitle, 0, mutableListOf<Card>(), progress, SetCategory.CREATED_SET)
+        for ((counter, card) in cardArray.withIndex()) {
+            set.cards.add(Card(counter, card, false))
+        }
+
+        /*
         var set = Set(0, "Animals", 4,
                     mutableListOf(Card(0, "Dog", false),
                         Card(1, "Cat", false),
@@ -84,7 +104,7 @@ class TestSetActivity() : AppCompatActivity() {
                         Card(4, "Tablet", false)),
                     0, SetCategory.COMMUNITY_SET)
             }
-        }
+        }*/
 
         val tvTitle = findViewById<TextView>(R.id.tvTitle)
         val iBtnClose = findViewById<ImageButton>(R.id.iBtnClose)

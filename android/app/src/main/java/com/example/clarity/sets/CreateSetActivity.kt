@@ -3,16 +3,24 @@ package com.example.clarity.sets
 import android.app.Activity
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.clarity.ClaritySDK
+import com.example.clarity.CreateCardSetEntity
+import com.example.clarity.CreateCardSetResponse
+import com.example.clarity.GetSetsResponse
 import com.example.clarity.R
 import com.google.android.material.textfield.TextInputEditText
+import kotlinx.coroutines.runBlocking
+import retrofit2.Response
 
 class CreateSetActivity : AppCompatActivity() {
     private lateinit var cardAdapter: CardAdapter
+    private val api = ClaritySDK().apiService
 
     fun HideKeyboard() {
         val inputMethodManager = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
@@ -40,6 +48,20 @@ class CreateSetActivity : AppCompatActivity() {
                 }
             }
             if (setTitle.isNotEmpty() && cardAdapter.getCards().size > 0 && allCardsFull) {
+                var title = setTitle
+                var type = ""
+                for ((counter, card) in cardAdapter.getCards().withIndex()) {
+                    type += card
+                    if (counter != cardAdapter.getCards().size - 1) {
+                        type += ","
+                    }
+                }
+                val res : Response<CreateCardSetResponse> = runBlocking {
+                    Log.d("inhere", "here")
+                    return@runBlocking api.addSet(CreateCardSetEntity(0, title, type))
+                }
+
+                Log.d("res", res.toString())
                 // TODO: Compute a new set id, probably take largest current ID for user and increment
                 // val setId = 0
                 // val set = Set(setId, setTitle, cardAdapter.getCards().size, cardAdapter.getCards(), 0, SetCategory.CREATED_SET)
