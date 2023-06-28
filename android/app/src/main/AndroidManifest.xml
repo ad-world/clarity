@@ -28,6 +28,21 @@
             android:name=".IndexActivity"
             android:exported="false" />
         <activity
+            android:name=".classroompage.Classroom"
+            android:exported="false" />
+        <activity
+            android:name=".sets.PracticeSetActivity"
+            android:exported="false" />
+        <activity
+            android:name=".sets.TestSetActivity"
+            android:exported="false" />
+        <activity
+            android:name=".sets.CreateSetActivity"
+            android:exported="false" />
+        <activity
+            android:name=".IndexActivity"
+            android:exported="false" />
+        <activity
             android:name=".MainActivity"
             android:exported="true"
             android:label="@string/app_name"
