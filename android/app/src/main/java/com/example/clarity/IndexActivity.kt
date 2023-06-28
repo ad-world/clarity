@@ -25,7 +25,7 @@ class IndexActivity : AppCompatActivity() {
         binding.bottomNav.setOnItemSelectedListener {
             when(it.itemId){
                 R.id.profile -> replaceFragment(ProfileFragment())
-                R.id.sets -> replaceFragment(SetsFragment()))
+                R.id.sets -> replaceFragment(SetsFragment())
                 R.id.community -> replaceFragment(CommunityFragment())
                 R.id.classroom -> replaceFragment(ClassroomFragment())
                 else -> {}
