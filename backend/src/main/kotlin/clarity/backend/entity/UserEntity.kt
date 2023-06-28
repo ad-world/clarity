@@ -14,6 +14,7 @@ data class CreateUserEntity(val user: User)
 data class CreateUserResponse(val response: StatusResponse, val message: String)
 data class GetUserResponse(val response: StatusResponse, val user: UserWithId?, val message: String)
 
+data class LoginResponse(val success: Boolean, val message: String)
 
 class UserEntity() {
     private val dataManager = DataManager();
