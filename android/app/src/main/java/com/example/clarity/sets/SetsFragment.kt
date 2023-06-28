@@ -10,7 +10,15 @@ import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.clarity.ClaritySDK
+import com.example.clarity.GetDataForSetRequest
+import com.example.clarity.GetDataForSetResponse
+import com.example.clarity.GetSetsResponse
+import com.example.clarity.LoginRequest
+import com.example.clarity.LoginResponse
 import com.example.clarity.databinding.FragmentSetsBinding
+import kotlinx.coroutines.runBlocking
+import retrofit2.Response
 
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 private const val USER_ID = "userId"
@@ -22,10 +30,10 @@ private const val USER_ID = "userId"
  */
 class SetsFragment : Fragment() {
 
-    private var userId: Int? = 0
     private var _binding: FragmentSetsBinding? = null
     private lateinit var setAdapter: SetAdapter
     private lateinit var sets: MutableList<Set>
+    private val api = ClaritySDK().apiService
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
@@ -36,16 +44,21 @@ class SetsFragment : Fragment() {
         val btnCancel = binding.iBtnCancel
         val cvStartActivity = binding.cvStartActivity
         val tvPopupSetTitle = binding.tvPopupSetTitle
+        val tvNumCards = binding.tvNumCards
 
         if (cvStartActivity.visibility != VISIBLE) {
             tvPopupSetTitle.text = sets[position].title
+            if (sets[position].cards.size == 1) {
+                tvNumCards.text = "${sets[position].cards.size} card"
+            } else {
+                tvNumCards.text = "${sets[position].cards.size} cards"
+            }
             cvStartActivity.visibility = VISIBLE
 
             btnTest.setOnClickListener {
                 cvStartActivity.visibility = INVISIBLE
                 val intent = Intent(activity, TestSetActivity::class.java)
                 intent.putExtra("setId", sets[position].id);
-                intent.putExtra("userId", userId);
                 startActivity(intent)
             }
 
@@ -53,7 +66,6 @@ class SetsFragment : Fragment() {
                 cvStartActivity.visibility = INVISIBLE
                 val intent = Intent(activity, PracticeSetActivity::class.java)
                 intent.putExtra("setId", sets[position].id);
-                intent.putExtra("userId", userId);
                 startActivity(intent)
             }
 
@@ -75,9 +87,6 @@ class SetsFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            userId = it.getInt(USER_ID)
-        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -86,6 +95,19 @@ class SetsFragment : Fragment() {
         // TODO: Replace following lines with a query for all sets with our userId, and then parse
         //  through the object returned, creating a set data class for each set, and appending it
         //  to the sets array
+
+        /*
+        val response : Response<GetSetsResponse> = runBlocking {
+            return@runBlocking api.getAllSets()
+        }
+        println(response.body())
+
+        for(i in 0..(response.body()?.sets?.size ?:0)) {
+            val setId = response.body()?.sets?.get(i)!!.toInt()
+            val setRes : Response<GetDataForSetResponse> = runBlocking {
+                return@runBlocking api.getDataForSet(GetDataForSetRequest(setId)))
+            }
+        }*/
 
         // TEST DATA, will be removed when database is connected
         sets.add(Set(0, "Animals", 4,
@@ -109,7 +131,7 @@ class SetsFragment : Fragment() {
                 Card(4, "Tablet", false)),
             0, SetCategory.COMMUNITY_SET))
         Log.d("myTag", "SET SIZE: " + sets.size)
-        setAdapter = SetAdapter(sets, userId) { position -> onSetClick(position) }
+        setAdapter = SetAdapter(sets) { position -> onSetClick(position) }
         binding.rvSets.adapter = setAdapter
         binding.rvSets.layoutManager = LinearLayoutManager(context)
         binding.btnCreateSet.setOnClickListener {
@@ -127,10 +149,9 @@ class SetsFragment : Fragment() {
          * @return A new instance of fragment SetsFragment.
          */
         @JvmStatic
-        fun newInstance(userId: Int) =
+        fun newInstance() =
             SetsFragment().apply {
                 arguments = Bundle().apply {
-                    putInt(USER_ID, userId)
                 }
             }
     }

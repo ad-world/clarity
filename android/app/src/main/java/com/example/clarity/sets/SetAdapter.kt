@@ -1,10 +1,8 @@
 package com.example.clarity.sets
 
-import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
@@ -12,7 +10,6 @@ import com.example.clarity.R
 
 class SetAdapter(
     private val sets: MutableList<Set>,
-    private val userId: Int?,
     private val onItemClicked: (position: Int) -> Unit
 ) : RecyclerView.Adapter<SetAdapter.SetViewHolder>() {
 
@@ -47,15 +44,20 @@ class SetAdapter(
         println("Position: $position")
         holder.itemView.apply {
             val tvSetTitle = findViewById<TextView>(R.id.tvSetTitle)
+            val tvYourSets = findViewById<TextView>(R.id.tvYourSets)
             val tvCardCount = findViewById<TextView>(R.id.tvCardCount)
             val tvCompletedPhrases = findViewById<TextView>(R.id.tvCompletedPhrases)
             val tvCompletedPercent = findViewById<TextView>(R.id.tvCompletedPercent)
             val progressBarSet = findViewById<ProgressBar>(R.id.progressBarSet)
 
             tvSetTitle.text = set.title
-            tvCardCount.text = set.cards.size.toString()
+            if (set.cards.size == 1) {
+                tvCardCount.text = "${set.cards.size} Card"
+            } else {
+                tvCardCount.text = "${set.cards.size} Cards"
+            }
             tvCompletedPhrases.text = "${set.progress} Completed"
-            tvCompletedPercent.text = "${set.progress / set.cards.size}%"
+            tvCompletedPercent.text = "${set.progress / set.cards.size} %"
             progressBarSet.progress = set.progress / set.cards.size
         }
     }

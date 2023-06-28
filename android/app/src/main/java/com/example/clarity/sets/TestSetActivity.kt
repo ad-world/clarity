@@ -15,6 +15,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.core.app.ActivityCompat
+import androidx.core.view.isVisible
 import com.example.clarity.R
 import com.example.clarity.sets.audio.AndroidAudioPlayer
 import com.example.clarity.sets.audio.AndroidAudioRecorder
@@ -119,7 +120,15 @@ class TestSetActivity() : AppCompatActivity() {
 
                     val score = getAccuracyScore(File(cacheDir, "audio.mp3"))
                     displayMessagePopup(score)
-                    iBtnNext.isEnabled = true
+                    val progressBar = findViewById<ProgressBar>(R.id.progressBar)
+                    val tvCompletedCount = findViewById<TextView>(R.id.tvCompletedPhrases)
+                    val tvPercentComplete = findViewById<TextView>(R.id.tvPercentComplete)
+                    index++
+                    progressBar.progress = (index * 100) / set.cards.size
+                    tvCompletedCount.text = "$index Complete"
+                    tvPercentComplete.text = "${(index * 100) / set.cards.size} %"
+                    iBtnNext.visibility = VISIBLE
+                    set.progress = index
                     iBtnMic.isEnabled = false
                 }
                 isRecording = !isRecording
@@ -127,24 +136,16 @@ class TestSetActivity() : AppCompatActivity() {
         }
 
         iBtnNext.setOnClickListener {
-            index++
-            set.progress = index
             iBtnMic.isEnabled = true
             if (index < set.cards.size) {
-                val progressBar = findViewById<ProgressBar>(R.id.progressBar)
-                val tvCompletedCount = findViewById<TextView>(R.id.tvCompletedPhrases)
-                val tvPercentComplete = findViewById<TextView>(R.id.tvPercentComplete)
-                progressBar.progress = (index * 100) / set.cards.size
-                tvCompletedCount.text = "$index Complete"
-                tvPercentComplete.text = "${(index * 100) / set.cards.size} %"
-                iBtnNext.isEnabled = false
+                iBtnNext.visibility = GONE
                 cvPopUp.visibility = GONE
                 loadCard(set.cards[index])
                 recordingCompleted = false
             } else {
                 cvCompletedScreen.visibility = VISIBLE
                 iBtnClose.isEnabled = false
-                iBtnNext.isEnabled = false
+                iBtnNext.visibility = GONE
                 iBtnMic.isEnabled = false
             }
         }
@@ -152,7 +153,6 @@ class TestSetActivity() : AppCompatActivity() {
         btnReturn.setOnClickListener {
             cvCompletedScreen.visibility = GONE
             iBtnClose.isEnabled = true
-            iBtnNext.isEnabled = true
             iBtnMic.isEnabled = true
             finish()
         }
