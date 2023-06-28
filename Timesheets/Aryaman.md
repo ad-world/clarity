@@ -21,5 +21,6 @@
 | Create Basic Login Endpoint | 1.25 hour | 3:15 PM | 4:30 PM | June 20th, 2023 | [Create login endpoint](https://github.com/ad-world/clarity/commit/2548879ec41c2e8e383a42c4e5e8433b18c7daeb) |
 | Create "Create User" Endpoint | 30 mins | 6:30 PM | 7:00 PM | June 21th, 2023 | [Create 'create user' endpoint](https://github.com/ad-world/clarity/commit/38c848e28e76880799acfcf554c91bd085072214) | 
 | Create "Get user" endpoint | 15 mins | 7:30 PM | 7:45 PM | June 24th, 2023 | [Create 'get user' endpoint](https://github.com/ad-world/clarity/commit/9fed2accbb8af046971f8195e8d75c7c862d6089) | 
+| Create small SDK to interact with Backend + other small changes | 1.5 hours | 2:00 PM | 3:30 PM | June 27th, 2023 | [Remove data manager from constructors](https://github.com/ad-world/clarity/commit/4643c41699531a22809c544b01e439bcad93e1d0) <br> [Refactor main class](https://github.com/ad-world/clarity/commit/362b2694dadf607150d9952c4fc58c2582a6e299) <br> [Create small SDK](https://github.com/ad-world/clarity/commit/35f28993766b5882a1913e3f36c4cf96c8657d42) |
 
-Total time spent as of May 26th, 2023: 15.75 hours
+Total time spent as of May 26th, 2023: 17.25 hours
