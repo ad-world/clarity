@@ -38,20 +38,21 @@ class FirstFragment : Fragment() {
 
 
         binding.buttonLogin.setOnClickListener {
-            val username = binding.editTextUsername.text.toString()
-            val password = binding.editTextPassword.text.toString()
-
-            //check if the username/password is valid
-            val req = LoginRequest(username, password)
-            val response : Response<LoginResponse> = runBlocking {
-                return@runBlocking api.login(req)
-            }
-            println(response.body())
-
-            var valid = false
-            if (response.isSuccessful) {
-                valid = true
-            }
+//            val username = binding.editTextUsername.text.toString()
+//            val password = binding.editTextPassword.text.toString()
+//
+//            //check if the username/password is valid
+//            val req = LoginRequest(username, password)
+//            val response : Response<LoginResponse> = runBlocking {
+//                return@runBlocking api.login(req)
+//            }
+//            println(response.body())
+//
+//            var valid = false
+//            if (response.isSuccessful) {
+//                valid = true
+//            }
+            val valid = true
             if (valid) {
                 val intent = Intent(activity, IndexActivity::class.java)
                 startActivity(intent)

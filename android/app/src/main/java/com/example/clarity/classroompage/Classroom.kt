@@ -6,7 +6,6 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.clarity.R
 
 class Classroom : AppCompatActivity() {
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.classroom)

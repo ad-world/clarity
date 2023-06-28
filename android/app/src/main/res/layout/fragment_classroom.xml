@@ -11,21 +11,13 @@
         android:layout_height="match_parent"
         tools:context=".classroompage.ClassroomFragment">
 
-        <!-- Join Class Button -->
-
-        <!-- Create Class Button -->
-
-        <!-- Toggle Button -->
-
-        <!-- Classes List -->
-
 
         <TextView
             android:id="@+id/welcomeTextView"
-            android:layout_width="361dp"
-            android:layout_height="54dp"
+            android:layout_width="wrap_content"
+            android:layout_height="52dp"
             android:layout_marginTop="28dp"
-            android:text="Welcome To Classroom"
+            android:text="Classroom"
             android:textSize="34sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -35,7 +27,7 @@
             android:id="@+id/btnJoinClass"
             android:layout_width="143dp"
             android:layout_height="58dp"
-            android:layout_marginTop="128dp"
+            android:layout_marginTop="100dp"
             android:text="Join Class"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.145"
@@ -46,7 +38,7 @@
             android:id="@+id/btnCreateClass"
             android:layout_width="143dp"
             android:layout_height="58dp"
-            android:layout_marginTop="128dp"
+            android:layout_marginTop="100dp"
             android:text="Create Class"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.839"
