@@ -17,18 +17,17 @@ data class GetUserResponse(val response: StatusResponse, val user: UserWithId?, 
 data class LoginResponse(val success: Boolean, val message: String)
 
 class UserEntity() {
-    private val dataManager = DataManager();
-    private val db = dataManager.db
 
     fun checkCredentials(user: UserLoginEntity): Boolean {
+        val db = DataManager.conn()
+
         try {
-            val statement = db.createStatement()
+            val statement = db!!.createStatement()
             val selectStatement = "SELECT * FROM User WHERE username = '${user.username}' AND password = '${user.password}'";
             val result = statement.executeQuery(selectStatement);
             if(result.next()) {
                 return true;
             }
-
             return false;
         } catch (e: Exception) {
             e.printStackTrace();
@@ -37,9 +36,11 @@ class UserEntity() {
     }
 
     fun createUser(user: CreateUserEntity): CreateUserResponse {
+        val db = DataManager.conn()
+
         try {
             val data = user.user
-            val statement = db.createStatement()
+            val statement = db!!.createStatement()
             val insertStatement = """
                 INSERT INTO User (username, first_name, last_name, email, password, phone_number)
                 VALUES(
@@ -48,7 +49,6 @@ class UserEntity() {
                 )
             """.trimIndent()
             val result = statement.executeUpdate(insertStatement)
-
             return CreateUserResponse(StatusResponse.Success, "User created successfully")
         } catch(e: Exception) {
             e.printStackTrace();
@@ -57,9 +57,11 @@ class UserEntity() {
     }
 
     fun getUser(username: String): GetUserResponse {
+        val db = DataManager.conn()
+
         try {
             val selectStatement = "SELECT * FROM User WHERE username = '$username'"
-            val statement = db.createStatement();
+            val statement = db!!.createStatement();
             val result = statement.executeQuery(selectStatement)
 
             return if(result.next()) {
@@ -71,7 +73,6 @@ class UserEntity() {
                     email = result.getString("email"),
                     phone_number = result.getString("phone_number")
                 )
-
                 GetUserResponse(StatusResponse.Success, user, "User found successfully")
             } else {
                 GetUserResponse(StatusResponse.Failure, null, "Unable to find user with username $username");

@@ -19,11 +19,12 @@ data class GetSetsResponse(val response: StatusResponse, val sets: List<String>)
 data class GetDataForSetResponse(val response: StatusResponse, val data: List<String>)
 
 class CardSetEntity() {
-    private val db = DataManager().db
+
 
     fun createCardSet(set: CreateCardSetEntity) : CreateCardSetResponse {
+        val db = DataManager.conn()
         try {
-            val statement = db.createStatement()
+            val statement = db!!.createStatement()
             val query = """
                 INSERT INTO CardSet(creator_id, title, type)
                 VALUES (${set.creator_id}, '${set.title}', '${set.type}');
@@ -37,8 +38,9 @@ class CardSetEntity() {
     }
 
     fun addCardToSet(card: AddCardToSetRequest) : AddCardToSetResponse {
+        val db = DataManager.conn()
         try {
-            val statement = db.createStatement()
+            val statement = db!!.createStatement()
             val query = """
                 INSERT INTO CardInSet([set_id], card_id)
                 VALUES (${card.set_id}, ${card.card_id});
@@ -52,8 +54,9 @@ class CardSetEntity() {
     }
 
     fun deleteCardFromSet(card: DeleteCardFromSetRequest) : DeleteCardFromSetResponse {
+        val db = DataManager.conn()
         try {
-            val statement = db.createStatement()
+            val statement = db!!.createStatement()
             val query = """
                 DELETE FROM CardInSet
                 WHERE [set_id] = ${card.set_id} AND card_id = ${card.card_id};
@@ -67,8 +70,9 @@ class CardSetEntity() {
     }
 
     fun getDataForSet(request: GetDataForSetRequest) : GetDataForSetResponse {
+        val db = DataManager.conn()
         try {
-            val statement = db.createStatement()
+            val statement = db!!.createStatement()
             val query = """
                 SELECT * FROM CardSet
                 WHERE [set_id] = ${request.set_id};
@@ -92,8 +96,10 @@ class CardSetEntity() {
     }
 
     fun getTotalCardsFromSet(set: GetCardsInSetRequest) : GetCardsInSetResponse {
+        val db = DataManager.conn()
+
         try {
-            val statement = db.createStatement()
+            val statement = db!!.createStatement()
             val query = """
                 SELECT card_id FROM CardInSet
                 WHERE [set_id] = ${set.set_id}
@@ -107,17 +113,21 @@ class CardSetEntity() {
                 cardIdList.add(cardId)
             }
             resultSet.close()
+
             return GetCardsInSetResponse(StatusResponse.Success, cardIdList.toList())
 
         } catch (e: Exception) {
+
             val errMsg: String = "Failed to get cards: ${e.message ?: "Unknown error"}"
             return GetCardsInSetResponse(StatusResponse.Failure, emptyList())
         }
     }
 
     fun getSets() : GetSetsResponse {
+        val db = DataManager.conn()
+
         try {
-            val statement = db.createStatement()
+            val statement = db!!.createStatement()
             val query = "SELECT [set_id] FROM CardSet"
             val resultSet = statement.executeQuery(query)
             val setList = mutableListOf<String>()
@@ -128,7 +138,6 @@ class CardSetEntity() {
                 setList.add(setId)
             }
             resultSet.close()
-
             return GetSetsResponse(StatusResponse.Success, setList.toList())
         } catch (e: Exception) {
             return GetSetsResponse(StatusResponse.Failure, emptyList())

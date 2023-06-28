@@ -14,11 +14,11 @@ data class EvaluateResponse(val response: StatusResponse, val score: Int)
 
 
 class CardEntity() {
-    private val db = DataManager().db
 
     fun createCard(card: CreateCardEntity) : CreateCardResponse {
+        val db = DataManager.conn()
         try {
-            val statement = db.createStatement()
+            val statement = db!!.createStatement()
             val query = """
                 INSERT OR IGNORE INTO Card(phrase, title)
                 VALUES ('${card.phrase}', '${card.title}');

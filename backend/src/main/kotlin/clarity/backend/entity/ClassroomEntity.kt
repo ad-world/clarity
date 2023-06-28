@@ -16,12 +16,12 @@ data class JoinClassroomResponse(val response: StatusResponse, val id: String)
 data class GetClassroomResponse(val response: StatusResponse, val id: List<String>)
 
 class ClassroomEntity() {
-    private val dataManager = DataManager()
-    private val db = dataManager.db
+
 
     fun joinClass(classroom : JoinClassroomEntity) : JoinClassroomResponse {
+        val db = DataManager.conn()
         try {
-            val statement = db.createStatement()
+            val statement = db!!.createStatement()
             val insertStatement = """
                 INSERT INTO ClassroomStudents (class_id, user_id)
                 VALUES(
@@ -29,7 +29,6 @@ class ClassroomEntity() {
                 )
             """.trimIndent()
             val result = statement.executeUpdate(insertStatement)
-
             return JoinClassroomResponse(StatusResponse.Success, "Classroom Joined")
         } catch(e: Exception) {
             e.printStackTrace();
@@ -38,8 +37,9 @@ class ClassroomEntity() {
     }
 
     fun createClass(classroom: CreateClassroomEntity) : CreateClassroomResponse {
+        val db = DataManager.conn()
         try {
-            val statement = db.createStatement()
+            val statement = db!!.createStatement()
             val newUUID = UUID.randomUUID().toString()
             val insertStatement = """
                 INSERT INTO Classroom (private_code, name, teacher)
@@ -48,7 +48,6 @@ class ClassroomEntity() {
                 )
             """.trimIndent()
             val result = statement.executeUpdate(insertStatement)
-
             return CreateClassroomResponse(StatusResponse.Success, newUUID)
         } catch(e: Exception) {
             e.printStackTrace();
@@ -57,8 +56,10 @@ class ClassroomEntity() {
     }
 
     fun getClasses(userId: Int) : GetClassroomResponse{
+        val db = DataManager.conn()
+
         try {
-            val statement = db.createStatement()
+            val statement = db!!.createStatement()
             val selectStatement = """
                 SELECT * FROM Classroom WHERE teacher = $userId
             """.trimIndent()
@@ -68,7 +69,6 @@ class ClassroomEntity() {
                 var className = result.getString("name")
                 classNames.add(className)
             }
-
             return GetClassroomResponse(StatusResponse.Success, classNames)
         } catch(e: Exception) {
             e.printStackTrace();
@@ -78,8 +78,10 @@ class ClassroomEntity() {
     }
 
     fun getClassesStudent(userId: Int) : GetClassroomResponse{
+        val db = DataManager.conn()
+
         try {
-            val statement = db.createStatement()
+            val statement = db!!.createStatement()
             val selectStatement = """
                 SELECT * FROM ClassroomStudents WHERE user_id = $userId
             """.trimIndent()
@@ -89,7 +91,6 @@ class ClassroomEntity() {
                 var className = result.getString("class_id")
                 classNames.add(className)
             }
-
             return GetClassroomResponse(StatusResponse.Success, classNames)
         } catch(e: Exception) {
             e.printStackTrace();

@@ -5,8 +5,20 @@ import java.nio.charset.Charset
 import java.sql.Connection
 import java.sql.DriverManager
 class DataManager {
-    val db: Connection = DriverManager.getConnection("jdbc:sqlite:data.sqlite")
 
+    companion object {
+        private var db: Connection? = null;
+
+        fun conn(): Connection? {
+            if(db == null) {
+                Class.forName("org.sqlite.JDBC");
+                db = DriverManager.getConnection("jdbc:sqlite:data.sqlite");
+                return db;
+            }
+
+            return db
+        }
+    }
     fun createTables() {
         createDbFile()
         executeSqlFile("ddl/CREATE_USER.sql");
@@ -33,9 +45,9 @@ class DataManager {
         if(sqlFile.exists()) {
             try {
                 val contents = sqlFile.readText(Charset.defaultCharset());
-                val statement = db.createStatement()
-                statement.executeUpdate(contents)
-                statement.close()
+                val statement = conn()?.createStatement()
+                statement?.executeUpdate(contents)
+                statement?.close()
             } catch (e: Exception) {
                 e.printStackTrace();
             }
