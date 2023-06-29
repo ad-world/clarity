@@ -12,6 +12,7 @@ import com.example.clarity.sdk.ClaritySDK
 import com.example.clarity.sdk.LoginRequest
 import com.example.clarity.sdk.LoginResponse
 import com.example.clarity.sdk.StatusResponse
+import androidx.preference.PreferenceManager
 import kotlinx.coroutines.runBlocking
 import retrofit2.Response
 
@@ -57,6 +58,9 @@ class FirstFragment : Fragment() {
             }
 
             if (valid) {
+                PreferenceManager.getDefaultSharedPreferences(requireContext()).edit()
+                    .putString("username", username).apply()
+
                 val intent = Intent(activity, IndexActivity::class.java)
                 startActivity(intent)
             } else {
