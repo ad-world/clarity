@@ -17,10 +17,12 @@ class LoginController {
         val password = user.password
         val userEntity = UserEntity()
 
-        if(username.isNotEmpty() && password.isNotEmpty() && userEntity.checkCredentials(user)) {
-            return ResponseEntity.ok(LoginResponse(true, "Login successful"))
+        val newUser = userEntity.checkCredentials(user)
+
+        if(username.isNotEmpty() && password.isNotEmpty() && newUser != null ) {
+            return ResponseEntity.ok(LoginResponse(StatusResponse.Success, "Login successful", newUser))
         }
-        return ResponseEntity.badRequest().body(LoginResponse(false, "Invalid credentials"))
+        return ResponseEntity.badRequest().body(LoginResponse(StatusResponse.Failure, "Invalid credentials", null))
     }
 
     @PostMapping("/createUser")

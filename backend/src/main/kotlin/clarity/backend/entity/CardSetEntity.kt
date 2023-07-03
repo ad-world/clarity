@@ -2,6 +2,7 @@ package clarity.backend.entity
 
 import clarity.backend.DataManager
 import java.lang.Exception
+import javax.xml.crypto.Data
 
 // Request Formats.
 data class CreateCardSetEntity(val creator_id: Int, val title: String, val type: String)
@@ -9,6 +10,7 @@ data class AddCardToSetRequest(val card_id: Int, val set_id: Int)
 data class DeleteCardFromSetRequest(val card_id: Int, val set_id: Int)
 data class GetCardsInSetRequest(val set_id: Int)
 data class GetDataForSetRequest(val set_id: Int)
+data class GetSetsByUsername(val username: String)
 
 // Response Formats.
 data class CreateCardSetResponse(val response: StatusResponse, val msg: String)
@@ -17,7 +19,10 @@ data class DeleteCardFromSetResponse(val response: StatusResponse, val msg: Stri
 data class GetCardsInSetResponse(val response: StatusResponse, val cards: List<String>)
 data class GetSetsResponse(val response: StatusResponse, val sets: List<String>)
 data class GetDataForSetResponse(val response: StatusResponse, val data: List<String>)
+data class GetSetsByUsernameResponse(val response: StatusResponse, val data: List<SetMetadata>)
 
+// Util Formats
+data class SetMetadata(val set_id: Int, val title: String, val type: String)
 class CardSetEntity() {
 
 
@@ -141,6 +146,27 @@ class CardSetEntity() {
             return GetSetsResponse(StatusResponse.Success, setList.toList())
         } catch (e: Exception) {
             return GetSetsResponse(StatusResponse.Failure, emptyList())
+        }
+    }
+
+    fun getSetsByUsername(request: GetSetsByUsername): GetSetsByUsernameResponse {
+        val db = DataManager.conn()!!;
+        val username = request.username
+        try {
+            val statement = db.createStatement();
+            val query = "SELECT c.[set_id], c.title, c.type FROM CardSet c, User u WHERE u.username = '$username' AND u.user_id = c.creator_id"
+            val resultSet = statement.executeQuery(query);
+
+            val setList = mutableListOf<SetMetadata>()
+            while(resultSet.next()) {
+                val set = SetMetadata(set_id = resultSet.getInt("set_id"), title = resultSet.getString("title"), type = resultSet.getString("type"))
+                setList.add(set)
+            }
+            resultSet.close()
+
+            return GetSetsByUsernameResponse(StatusResponse.Success, setList)
+        } catch (e: Exception) {
+            return GetSetsByUsernameResponse(StatusResponse.Failure, emptyList())
         }
     }
 }
