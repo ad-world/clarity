@@ -12,7 +12,7 @@
 | Create Android App Template | 15 mins | 7:00 PM | 7:15 PM | June 3rd, 2023 | [Creating template app](https://github.com/ad-world/clarity/commit/588dff3410809337c95ed25f946832247fde76ff) |
 | D2 Discussion | 1 hour | 6:00 PM | 7:00 PM | June 12th, 2023 | N/A |
 | D2 Paragraph Write-up| 0.5 hours | 6:00 PM | 6:30 PM | June 14th, 2023 | N/A |
-| D3 + Project Architecture Dicussion | 2 hours | 10:30 AM | 12:30 PM | June 17th, 2023| N/A |
+| D3 + Project Architecture Discussion | 2 hours | 10:30 AM | 12:30 PM | June 17th, 2023| N/A |
 | Backend Springboot App Template | 15 mins | 12:30 PM | 12:45 PM | June 17th, 2023 | [Creating template backend](https://github.com/ad-world/clarity/commit/9201e7c11e4b8752e8ecf1d60b8c044f829c8827) |
 | Worked on User UML | 15 mins | 7:00 PM | 7:15 PM | June 18th, 2023 | N/A |
 | Created basic SQLite data source | 30 mins | 10:00 PM | 10:30 PM | June 18th, 2023 | [Create basic DataSource](https://github.com/ad-world/clarity/commit/b32ff5b8b618aa7c61e52f258264f28f991d725d) |
@@ -23,5 +23,6 @@
 | Create "Get user" endpoint | 15 mins | 7:30 PM | 7:45 PM | June 24th, 2023 | [Create 'get user' endpoint](https://github.com/ad-world/clarity/commit/9fed2accbb8af046971f8195e8d75c7c862d6089) | 
 | Create small SDK for interacting with backend | 1 hour | 2:00 PM | 3:00 PM | June 27th, 2023 | [Create SDK](https://github.com/ad-world/clarity/pull/9) |
 | Fix too many db connections bug | 30 mins | 9:30 AM | 10:00 AM| June 28th, 2023 | [Fix db conn](https://github.com/ad-world/clarity/pull/22/commits/52f50331477ab12e761035f55b686d1bf5f8067a) | 
+| Refactor login endpoint, refactor SDK data classes | 45 min | 12:00 AM | 12:45 AM | July 3rd, 2023 | [Refactor login endpoint, refactor SDK data classses](https://github.com/ad-world/clarity/commit/6ef3563eebc4fb7043ec19a049ea85dd3d87f37e) |
 
-Total time spent as of May 26th, 2023: 17.25 hours
+Total time spent as of May 26th, 2023: 18.5 hours
