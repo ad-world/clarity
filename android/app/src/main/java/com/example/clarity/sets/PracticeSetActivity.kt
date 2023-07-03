@@ -13,9 +13,9 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.core.app.ActivityCompat
-import com.example.clarity.ClaritySDK
-import com.example.clarity.GetDataForSetRequest
-import com.example.clarity.GetDataForSetResponse
+import com.example.clarity.sdk.ClaritySDK
+import com.example.clarity.sdk.GetDataForSetRequest
+import com.example.clarity.sdk.GetDataForSetResponse
 import com.example.clarity.R
 import com.example.clarity.sets.audio.AndroidAudioPlayer
 import com.example.clarity.sets.audio.AndroidAudioRecorder

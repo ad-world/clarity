@@ -3,13 +3,14 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
-import android.widget.EditText
-import android.widget.TextView
 import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
 import com.example.clarity.databinding.FragmentFirstBinding
 import android.app.AlertDialog
+import com.example.clarity.sdk.ClaritySDK
+import com.example.clarity.sdk.LoginRequest
+import com.example.clarity.sdk.LoginResponse
 import kotlinx.coroutines.runBlocking
 import retrofit2.Response
 
@@ -42,16 +43,18 @@ class FirstFragment : Fragment() {
             val password = binding.editTextPassword.text.toString()
 
             //check if the username/password is valid
-            /*val req = LoginRequest(username, password)
+            val req = LoginRequest(username, password)
             val response : Response<LoginResponse> = runBlocking {
                 return@runBlocking api.login(req)
             }
-            println(response.body())*/
+            println(response.body())
 
-            var valid = true
-            //if (response.isSuccessful) {
-             //   valid = true
-            //}
+            var valid = false
+
+            if (response.isSuccessful) {
+                valid = true
+            }
+
             if (valid) {
                 val intent = Intent(activity, IndexActivity::class.java)
                 startActivity(intent)

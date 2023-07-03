@@ -9,10 +9,9 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.clarity.ClaritySDK
-import com.example.clarity.CreateCardSetEntity
-import com.example.clarity.CreateCardSetResponse
-import com.example.clarity.GetSetsResponse
+import com.example.clarity.sdk.ClaritySDK
+import com.example.clarity.sdk.CreateCardSetEntity
+import com.example.clarity.sdk.CreateCardSetResponse
 import com.example.clarity.R
 import com.google.android.material.textfield.TextInputEditText
 import kotlinx.coroutines.runBlocking

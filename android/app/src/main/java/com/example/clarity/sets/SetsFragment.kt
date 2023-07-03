@@ -10,12 +10,10 @@ import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.clarity.ClaritySDK
-import com.example.clarity.GetDataForSetRequest
-import com.example.clarity.GetDataForSetResponse
-import com.example.clarity.GetSetsResponse
-import com.example.clarity.LoginRequest
-import com.example.clarity.LoginResponse
+import com.example.clarity.sdk.ClaritySDK
+import com.example.clarity.sdk.GetDataForSetRequest
+import com.example.clarity.sdk.GetDataForSetResponse
+import com.example.clarity.sdk.GetSetsResponse
 import com.example.clarity.databinding.FragmentSetsBinding
 import kotlinx.coroutines.runBlocking
 import retrofit2.Response

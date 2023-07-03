@@ -9,8 +9,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
 import com.example.clarity.databinding.FragmentSecondBinding
-import kotlinx.coroutines.runBlocking
-import retrofit2.Response
+import com.example.clarity.sdk.ClaritySDK
+import com.example.clarity.sdk.User
 
 /**
  * A simple [Fragment] subclass as the default destination in the navigation.
