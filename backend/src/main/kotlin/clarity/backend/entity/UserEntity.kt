@@ -14,11 +14,11 @@ data class CreateUserEntity(val user: User)
 data class CreateUserResponse(val response: StatusResponse, val message: String)
 data class GetUserResponse(val response: StatusResponse, val user: UserWithId?, val message: String)
 
-data class LoginResponse(val success: Boolean, val message: String)
+data class LoginResponse(val response: StatusResponse, val message: String)
 
 class UserEntity() {
 
-    fun checkCredentials(user: UserLoginEntity): Boolean {
+    fun checkCredentials(user: UserLoginEntity): StatusResponse {
         val db = DataManager.conn()
 
         try {
@@ -26,12 +26,12 @@ class UserEntity() {
             val selectStatement = "SELECT * FROM User WHERE username = '${user.username}' AND password = '${user.password}'";
             val result = statement.executeQuery(selectStatement);
             if(result.next()) {
-                return true;
+                return StatusResponse.Success;
             }
-            return false;
+            return StatusResponse.Failure;
         } catch (e: Exception) {
             e.printStackTrace();
-            return false;
+            return StatusResponse.Failure;
         }
     }
 

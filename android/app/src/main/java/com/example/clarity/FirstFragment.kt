@@ -11,6 +11,7 @@ import android.app.AlertDialog
 import com.example.clarity.sdk.ClaritySDK
 import com.example.clarity.sdk.LoginRequest
 import com.example.clarity.sdk.LoginResponse
+import com.example.clarity.sdk.StatusResponse
 import kotlinx.coroutines.runBlocking
 import retrofit2.Response
 
@@ -51,7 +52,7 @@ class FirstFragment : Fragment() {
 
             var valid = false
 
-            if (response.isSuccessful) {
+            if (response.body()?.response == StatusResponse.Success) {
                 valid = true
             }
 
