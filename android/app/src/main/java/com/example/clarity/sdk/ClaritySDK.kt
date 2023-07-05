@@ -66,4 +66,10 @@ interface API {
 
     @GET
     suspend fun getSetsByUsername(@Query("username") username: String): Response<GetSetsByUsernameResponse>
+
+    @POST("getProgressForSet")
+    suspend fun getProgressForSet(@Body req: GetProgressForSetRequest) : Response<GetProgressForSetResponse>
+
+    @POST("updateProgressForSet")
+    suspend fun updateProgressForSet(@Body req: UpdateProgressForSetRequest) : Response<UpdateProgressForSetResponse>
 }

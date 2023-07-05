@@ -15,3 +15,5 @@ data class LoginResponse(val response: StatusResponse, val message: String, val 
 data class JoinClassroomResponse(val response: StatusResponse, val id: String)
 data class GetClassroomResponse(val response: StatusResponse, val id: List<String>)
 data class GetDataForSetResponse(val response: StatusResponse, val data: List<String>)
+data class GetProgressForSetResponse(val response: StatusResponse, val progress: Int)
+data class UpdateProgressForSetResponse(val response: StatusResponse, val msg: String)
