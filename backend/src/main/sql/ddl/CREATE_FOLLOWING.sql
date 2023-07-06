@@ -1,3 +1,5 @@
+PRAGMA foreign_keys = ON;
+
 CREATE TABLE IF NOT EXISTS Following (
     following_id INTEGER NOT NULL,
     follower_id INTEGER NOT NULL,
