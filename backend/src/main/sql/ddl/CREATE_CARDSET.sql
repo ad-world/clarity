@@ -6,6 +6,9 @@ CREATE TABLE IF NOT EXISTS CardSet (
     creator_id INTEGER NOT NULL,
     title TEXT NOT NULL,
     type VARCHAR(10) NOT NULL,
-    progress INTEGER NOT NULL,
+    is_public_ind INTEGER NOT NULL,
+    likes INTEGER NOT NULL,
+    CHECK ( is_public_ind = 0 OR is_public_ind = 1 ),
+    CHECK ( likes >= 0),
     FOREIGN KEY (creator_id) REFERENCES User(user_id)
 )
