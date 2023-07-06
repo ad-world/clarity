@@ -82,23 +82,23 @@ class CardController {
         }
     }
 
-    @PostMapping("/getProgressForSet")
-    fun getProgressForSet(@RequestBody request: GetProgressForSetRequest) : ResponseEntity<GetProgressForSetResponse> {
-        val resp = CardSetEntity().getProgressForSet(request)
-        return if (resp.response == StatusResponse.Success) {
-            ResponseEntity.ok(resp)
-        } else {
-            ResponseEntity.badRequest().body(resp)
-        }
-    }
+//    @PostMapping("/getProgressForSet")
+//    fun getProgressForSet(@RequestBody request: GetProgressForSetRequest) : ResponseEntity<GetProgressForSetResponse> {
+//        val resp = CardSetEntity().getProgressForSet(request)
+//        return if (resp.response == StatusResponse.Success) {
+//            ResponseEntity.ok(resp)
+//        } else {
+//            ResponseEntity.badRequest().body(resp)
+//        }
+//    }
 
-    @PostMapping("/updateProgressForSet")
-    fun updateProgressForSet(@RequestBody request: UpdateProgressForSetRequest) : ResponseEntity<UpdateProgressForSetResponse> {
-        val resp = CardSetEntity().updateProgressForSet(request)
-        return if (resp.response == StatusResponse.Success) {
-            ResponseEntity.ok(resp)
-        } else {
-            ResponseEntity.badRequest().body(resp)
-        }
-    }
+//    @PostMapping("/updateProgressForSet")
+//    fun updateProgressForSet(@RequestBody request: UpdateProgressForSetRequest) : ResponseEntity<UpdateProgressForSetResponse> {
+//        val resp = CardSetEntity().updateProgressForSet(request)
+//        return if (resp.response == StatusResponse.Success) {
+//            ResponseEntity.ok(resp)
+//        } else {
+//            ResponseEntity.badRequest().body(resp)
+//        }
+//    }
 }
