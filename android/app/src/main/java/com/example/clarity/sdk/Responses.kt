@@ -1,6 +1,6 @@
 package com.example.clarity.sdk
 
-data class CreateUserResponse(val response: StatusResponse, val message: String)
+data class CreateUserResponse(val response: StatusResponse, val message: String, val userId: Int?, val username: String?)
 data class GetUserResponse(val response: StatusResponse, val user: UserWithId?, val message: String)
 data class CreateClassroomResponse(val response: StatusResponse, val id: String)
 data class DeleteCardFromSetResponse(val response: StatusResponse, val msg: String)

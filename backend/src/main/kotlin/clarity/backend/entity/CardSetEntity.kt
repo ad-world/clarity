@@ -35,8 +35,8 @@ class CardSetEntity() {
         try {
             val statement = db!!.createStatement()
             val query = """
-                INSERT INTO CardSet(creator_id, title, type, progress)
-                VALUES (${set.creator_id}, '${set.title}', '${set.type}', ${set.progress});
+                INSERT INTO CardSet(creator_id, title, type, is_public_ind, likes)
+                VALUES (${set.creator_id}, '${set.title}', '${set.type}', 0, 0);
             """.trimIndent()
             statement.executeUpdate(query)
         } catch (e: Exception) {
@@ -51,8 +51,8 @@ class CardSetEntity() {
         try {
             val statement = db!!.createStatement()
             val query = """
-                INSERT INTO CardInSet([set_id], card_id)
-                VALUES (${card.set_id}, ${card.card_id});
+                INSERT INTO CardInSet([set_id], card_id, completion_date)
+                VALUES (${card.set_id}, ${card.card_id}, NULL);
             """.trimIndent()
             statement.executeUpdate(query)
         } catch (e: Exception) {
@@ -172,36 +172,36 @@ class CardSetEntity() {
         }
     }
 
-    fun getProgressForSet(request: GetProgressForSetRequest) : GetProgressForSetResponse {
-        val db = DataManager.conn();
-        val set_id = request.set_id;
-        var progress: Int = 0;
-        try {
-            val stmt = db!!.createStatement();
-            val query = "SELECT progress FROM CardSet WHERE [set_id] = $set_id";
-            val result = stmt.executeQuery(query);
-            if (result.next()) {
-                progress = result.getInt("progress")
-            }
-            return GetProgressForSetResponse(StatusResponse.Success, progress)
-        } catch (e: Exception) {
-            return GetProgressForSetResponse(StatusResponse.Failure, 0)
-        }
-    }
+//    fun getProgressForSet(request: GetProgressForSetRequest) : GetProgressForSetResponse {
+//        val db = DataManager.conn();
+//        val set_id = request.set_id;
+//        var progress: Int = 0;
+//        try {
+//            val stmt = db!!.createStatement();
+//            val query = "SELECT progress FROM CardSet WHERE [set_id] = $set_id";
+//            val result = stmt.executeQuery(query);
+//            if (result.next()) {
+//                progress = result.getInt("progress")
+//            }
+//            return GetProgressForSetResponse(StatusResponse.Success, progress)
+//        } catch (e: Exception) {
+//            return GetProgressForSetResponse(StatusResponse.Failure, 0)
+//        }
+//    }
 
-    fun updateProgressForSet(request: UpdateProgressForSetRequest) : UpdateProgressForSetResponse {
-        val db = DataManager.conn()
-        val set_id = request.set_id
-        val progress = request.progress
-
-        try {
-            val stmt = db!!.createStatement()
-            val query = "UPDATE CardSet SET progress = $progress WHERE [set_id] = $set_id"
-            stmt.executeUpdate(query); 
-        } catch (e: Exception) {
-            val err: String = e.message ?: "Unknown error when updating progress for set $set_id"
-            return UpdateProgressForSetResponse(StatusResponse.Failure, err)
-        }
-        return UpdateProgressForSetResponse(StatusResponse.Success, "")
-    }
+//    fun updateProgressForSet(request: UpdateProgressForSetRequest) : UpdateProgressForSetResponse {
+//        val db = DataManager.conn()
+//        val set_id = request.set_id
+//        val progress = request.progress
+//
+//        try {
+//            val stmt = db!!.createStatement()
+//            val query = "UPDATE CardSet SET progress = $progress WHERE [set_id] = $set_id"
+//            stmt.executeUpdate(query);
+//        } catch (e: Exception) {
+//            val err: String = e.message ?: "Unknown error when updating progress for set $set_id"
+//            return UpdateProgressForSetResponse(StatusResponse.Failure, err)
+//        }
+//        return UpdateProgressForSetResponse(StatusResponse.Success, "")
+//    }
 }
