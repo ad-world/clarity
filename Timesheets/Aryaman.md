@@ -25,5 +25,6 @@
 | Fix too many db connections bug | 30 mins | 9:30 AM | 10:00 AM| June 28th, 2023 | [Fix db conn](https://github.com/ad-world/clarity/pull/22/commits/52f50331477ab12e761035f55b686d1bf5f8067a) | 
 | Refactor login endpoint, refactor SDK data classes | 45 min | 12:00 AM | 12:45 AM | July 3rd, 2023 | [Refactor login endpoint, refactor SDK data classses](https://github.com/ad-world/clarity/commit/6ef3563eebc4fb7043ec19a049ea85dd3d87f37e) |
 | Change schemas based on discussion, add new user functionality | 1 hour | 12:00 AM | 1:00 AM | July 6th, 2023 | [Chage schemas, add new user functionality](https://github.com/ad-world/clarity/commit/fc3cbb8ca4a2553c3f4f9becf103858283503310) |
+| Create new schemas based on discussion | 30 mins | 3:30 PM | 4:00 PM | July 6th, 2023 | [Create new schemas](https://github.com/ad-world/clarity/commit/2093c00e7e9e2f2587ae1187c3ddec20eb0cba17) |
 
-Total time spent as of May 26th, 2023: 19.5 hours
+Total time spent as of May 26th, 2023: 20 hours
