@@ -13,25 +13,19 @@ data class AttemptMetadata(
     val fluencyScore: Int, val completenessScore: Int)
 
 data class GetUserAverageAttemptsRequest(val user_id: Int)
-data class GetUserAverageAttemptsResponse(val response: StatusResponse, val user_id: Int, val pronounciationScore: Double? = null, val accuracyScore: Double? = null,
+data class GetUserAverageAttemptsResponse(val response: StatusResponse, val user_id: Int, val pronunciationScore: Double? = null, val accuracyScore: Double? = null,
                                           val fluencyScore: Double? = null, val completenessScore: Double? = null, val message: String)
 
 
-class AttempsEntity {
+class AttemptsEntity {
+    private val db = DataManager.conn();
+
     fun createAttempt(attempt: CreateAttemptEntity): CreateAttemptResponse {
-        val db = DataManager.conn();
         val statement = db!!.createStatement();
         try {
             val (set_id, user_id, card_id, audio) = attempt;
 
-            val getPhraseSql = "SELECT phrase, title FROM Card WHERE card_id = $card_id";
-            val phraseSet = statement.executeQuery(getPhraseSql);
-
-            if(!phraseSet.next()) {
-                throw Exception("Could not find card_id $card_id")
-            }
-
-            val phrase = phraseSet.getString("phrase");
+            val card = CardEntity().getCard(card_id)
 
             /*
             HERE, we call the Microsoft API with the phrase, and the audio recording
@@ -50,7 +44,7 @@ class AttempsEntity {
 
             val insertAttempt =
                 "INSERT INTO Attempts " +
-                "(user_id, set_id, card_id, pronunciation, accuracy, fluency, completeness, attempt_date) VALUES" +
+                "(user_id, set_id, card_id, pronunciation, accuracy, fluency, completeness, attempt_date) VALUES " +
                 "($user_id, $set_id, $card_id, $pronunciationScore, $accuracyScore, $fluencyScore, $completenessScore, '$currentDate')"
 
             val insertedAttempts = statement.executeUpdate(insertAttempt);
@@ -68,7 +62,6 @@ class AttempsEntity {
     }
 
     fun getUserAverages(request: GetUserAverageAttemptsRequest): GetUserAverageAttemptsResponse {
-        val db = DataManager.conn();
         val statement = db!!.createStatement();
         try {
             val user = request.user_id
@@ -79,7 +72,7 @@ class AttempsEntity {
                 GetUserAverageAttemptsResponse(
                     response = StatusResponse.Success,
                     user_id = user,
-                    pronounciationScore = averagesResult.getDouble(0),
+                    pronunciationScore = averagesResult.getDouble(0),
                     accuracyScore = averagesResult.getDouble(1),
                     fluencyScore = averagesResult.getDouble(2,),
                     completenessScore = averagesResult.getDouble(3),

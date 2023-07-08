@@ -82,6 +82,26 @@ class CardController {
         }
     }
 
+    @PostMapping("/createCard")
+    fun createCard(@RequestBody request: CreateCardEntity): ResponseEntity<CreateCardResponse> {
+        val resp = CardEntity().createCard(request)
+        return if (resp.response == StatusResponse.Success) {
+            ResponseEntity.ok(resp)
+        } else {
+            ResponseEntity.badRequest().body(resp)
+        }
+    }
+
+    @GetMapping("/searchPhrases")
+    fun searchPhrases(@RequestParam phrase: PhraseSearchEntity): ResponseEntity<PhraseSearchResponse> {
+        val resp = CardEntity().phraseSearch(phrase)
+        return if(resp.response == StatusResponse.Success) {
+            ResponseEntity.ok(resp)
+        } else {
+            ResponseEntity.badRequest().body(resp)
+        }
+    }
+
 //    @PostMapping("/getProgressForSet")
 //    fun getProgressForSet(@RequestBody request: GetProgressForSetRequest) : ResponseEntity<GetProgressForSetResponse> {
 //        val resp = CardSetEntity().getProgressForSet(request)

@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 class AttemptsController {
     // record an attempt
-    val attemptEntity = AttempsEntity();
+    val attemptEntity = AttemptsEntity();
 
     @PostMapping("/attemptCard")
     fun attemptCard(@RequestBody attempt: CreateAttemptEntity): ResponseEntity<CreateAttemptResponse> {

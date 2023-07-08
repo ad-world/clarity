@@ -2,6 +2,6 @@ PRAGMA foreign_keys = ON;
 
 CREATE TABLE IF NOT EXISTS Card (
     card_id INTEGER PRIMARY KEY AUTOINCREMENT,
-    phrase TEXT NOT NULL,
+    phrase TEXT NOT NULL UNIQUE,
     title TEXT NOT NULL
 )

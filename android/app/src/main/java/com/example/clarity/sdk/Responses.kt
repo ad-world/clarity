@@ -17,3 +17,10 @@ data class GetClassroomResponse(val response: StatusResponse, val id: List<Strin
 data class GetDataForSetResponse(val response: StatusResponse, val data: List<String>)
 data class GetProgressForSetResponse(val response: StatusResponse, val progress: Int)
 data class UpdateProgressForSetResponse(val response: StatusResponse, val msg: String)
+data class CreateClassroomAttemptResponse(val response: StatusResponse, val metadata: ClassroomAttemptMetadata?, val message: String)
+data class GetUserAverageAttemptsResponse(val response: StatusResponse, val user_id: Int, val pronunciationScore: Double? = null, val accuracyScore: Double? = null,
+                                          val fluencyScore: Double? = null, val completenessScore: Double? = null, val message: String)
+data class CreateAttemptResponse(val response: StatusResponse, val metadata: AttemptMetadata?, val message: String)
+
+data class PhraseSearchResponse(val response: StatusResponse, val cards: List<Card>)
+
