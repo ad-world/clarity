@@ -34,7 +34,6 @@ class CardController {
     @PostMapping("/addSet")
     fun addSet(@RequestBody cardSetEntity: CreateCardSetEntity) : ResponseEntity<CreateCardSetResponse> {
         val resp = CardSetEntity().createCardSet(cardSetEntity)
-        println(resp)
         return if (resp.response == StatusResponse.Success) {
             ResponseEntity.ok(resp)
         } else {
@@ -72,7 +71,7 @@ class CardController {
         }
     }
 
-    @GetMapping("/getSetByUsername")
+    @GetMapping("/getSetsByUsername")
     fun getSetByUsername(@RequestParam username: String): ResponseEntity<GetSetsByUsernameResponse> {
         val resp = CardSetEntity().getSetsByUsername(GetSetsByUsername(username));
         return if (resp.response == StatusResponse.Success) {

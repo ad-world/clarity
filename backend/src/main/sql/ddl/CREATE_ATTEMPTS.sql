@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS Attempts (
     accuracy INTEGER NOT NULL,
     fluency INTEGER NOT NULL,
     completeness INTEGER NOT NULL,
-    attempt_date INTEGER NOT NULL,
+    attempt_date TEXT NOT NULL,
     FOREIGN KEY(user_id) REFERENCES User(user_id),
     FOREIGN KEY(set_id) REFERENCES CardSet(set_id),
     FOREIGN KEY(card_id) REFERENCES Card(card_id)
