@@ -18,7 +18,7 @@ data class UpdateProgressForSetRequest(val set_id: Int, val progress: Int)
 data class CreateCardSetResponse(val response: StatusResponse, val msg: String)
 data class AddCardToSetResponse(val response: StatusResponse, val msg: String)
 data class DeleteCardFromSetResponse(val response: StatusResponse, val msg: String)
-data class GetCardsInSetResponse(val response: StatusResponse, val cards: List<String>)
+data class GetCardsInSetResponse(val response: StatusResponse, val cards: List<Card>)
 data class GetSetsResponse(val response: StatusResponse, val sets: List<String>)
 data class GetDataForSetResponse(val response: StatusResponse, val data: List<String>)
 data class GetSetsByUsernameResponse(val response: StatusResponse, val data: List<SetMetadata>)
@@ -110,16 +110,21 @@ class CardSetEntity() {
         try {
             val statement = db!!.createStatement()
             val query = """
-                SELECT card_id FROM CardInSet
-                WHERE [set_id] = ${set.set_id}
+                SELECT c.card_id, ca.phrase, ca.title FROM CardInSet c, Card ca
+                WHERE c.[set_id] = ${set.set_id} AND ca.card_id = c.card_id
             """.trimIndent()
             val resultSet = statement.executeQuery(query)
-            val cardIdList = mutableListOf<String>()
+            val cardIdList = mutableListOf<Card>()
 
             // Extract the card ids and convert to a list of strings.
             while (resultSet.next()) {
-                val cardId = resultSet.getString("card_id")
-                cardIdList.add(cardId)
+                cardIdList.add(
+                    Card(
+                        card_id = resultSet.getInt("card_id"),
+                        phrase = resultSet.getString("phrase"),
+                        title = resultSet.getString("title")
+                    )
+                )
             }
             resultSet.close()
 

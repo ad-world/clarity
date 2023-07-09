@@ -24,9 +24,13 @@ val requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), fil
 use requestBody for audio in CreateClassroomAttemptEntity and CreateAttemptEntity
  */
 
-data class CreateClassroomAttemptEntity(val task_id: Int, val user_id: Int, val card_id: Int, val audio: Part)
-data class CreateAttemptEntity(val set_id: Int, val user_id: Int, val card_id: Int, val audio: Part)
+data class CreateClassroomAttemptEntity(val task_id: Int, val user_id: Int, val card_id: Int, val audio: Int)
+// audio is Int for now, will change once we figure out what it needs to be
+
+data class CreateAttemptEntity(val set_id: Int, val user_id: Int, val card_id: Int, val audio: Int)
+// audio is Int for now, will change once we figure out what it needs to be
 data class GetUserAverageAttemptsRequest(val user_id: Int)
 data class PhraseSearchEntity(val phrase: String)
+data class GetAttemptsForSetEntity(val user: Int, val set: Int)
 
 
