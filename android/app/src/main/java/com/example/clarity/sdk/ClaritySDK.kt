@@ -64,12 +64,41 @@ interface API {
     @POST("getDataForSet")
     suspend fun  getDataForSet(@Body set: GetDataForSetRequest) : Response<GetDataForSetResponse>
 
-    @GET
+    @GET("getSetByUsername")
     suspend fun getSetsByUsername(@Query("username") username: String): Response<GetSetsByUsernameResponse>
 
-    @POST("getProgressForSet")
-    suspend fun getProgressForSet(@Body req: GetProgressForSetRequest) : Response<GetProgressForSetResponse>
+    @POST("attemptCard")
+    suspend fun attemptCard(@Body attempt: CreateAttemptEntity): Response<CreateAttemptResponse>
 
-    @POST("updateProgressForSet")
-    suspend fun updateProgressForSet(@Body req: UpdateProgressForSetRequest) : Response<UpdateProgressForSetResponse>
+    @POST("getAttemptAverage")
+    suspend fun getUserAverageAttempts(@Body request: GetUserAverageAttemptsRequest): Response<GetUserAverageAttemptsResponse>
+
+    @POST("searchPhrases")
+    suspend fun searchPhrases(@Query("phrase") phrase: PhraseSearchEntity): Response<PhraseSearchResponse>
+
+    @POST("createCard")
+    suspend fun createCard(@Body request: CreateCardEntity): Response<CreateCardResponse>
+
+    @GET("getUserAttempts")
+    suspend fun getUserAttempts(@Query("user") user: Int): Response<GetUserAttemptsResponse>
+
+    @POST("getUserAttemptsForSet")
+    suspend fun getUserAttemptsForSet(@Body request: GetAttemptsForSetEntity): Response<GetAttemptsForSetResponse>
+
+    @POST("classroom/attemptCard")
+    suspend fun attemptClassroomCard(@Body request: CreateClassroomAttemptEntity): Response<CreateClassroomAttemptResponse>
+
+    @GET("classroom/getTaskAttempts")
+    suspend fun getTaskAttempts(@Query("task") task: Int): Response<GetTaskAttemptsResponse>
+
+    @GET("classroom/getClassAttempts")
+    suspend fun getClassAttempts(@Query("classroom") classroom: String): Response<GetClassAttemptsResponse>
+
+
+
+//    @POST("getProgressForSet")
+//    suspend fun getProgressForSet(@Body req: GetProgressForSetRequest) : Response<GetProgressForSetResponse>
+//
+//    @POST("updateProgressForSet")
+//    suspend fun updateProgressForSet(@Body req: UpdateProgressForSetRequest) : Response<UpdateProgressForSetResponse>
 }

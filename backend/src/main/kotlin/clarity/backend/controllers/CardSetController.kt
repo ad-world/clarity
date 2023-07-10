@@ -34,7 +34,6 @@ class CardController {
     @PostMapping("/addSet")
     fun addSet(@RequestBody cardSetEntity: CreateCardSetEntity) : ResponseEntity<CreateCardSetResponse> {
         val resp = CardSetEntity().createCardSet(cardSetEntity)
-        println(resp)
         return if (resp.response == StatusResponse.Success) {
             ResponseEntity.ok(resp)
         } else {
@@ -72,10 +71,30 @@ class CardController {
         }
     }
 
-    @GetMapping("/getSetByUsername")
+    @GetMapping("/getSetsByUsername")
     fun getSetByUsername(@RequestParam username: String): ResponseEntity<GetSetsByUsernameResponse> {
         val resp = CardSetEntity().getSetsByUsername(GetSetsByUsername(username));
         return if (resp.response == StatusResponse.Success) {
+            ResponseEntity.ok(resp)
+        } else {
+            ResponseEntity.badRequest().body(resp)
+        }
+    }
+
+    @PostMapping("/createCard")
+    fun createCard(@RequestBody request: CreateCardEntity): ResponseEntity<CreateCardResponse> {
+        val resp = CardEntity().createCard(request)
+        return if (resp.response == StatusResponse.Success) {
+            ResponseEntity.ok(resp)
+        } else {
+            ResponseEntity.badRequest().body(resp)
+        }
+    }
+
+    @GetMapping("/searchPhrases")
+    fun searchPhrases(@RequestParam phrase: PhraseSearchEntity): ResponseEntity<PhraseSearchResponse> {
+        val resp = CardEntity().phraseSearch(phrase)
+        return if(resp.response == StatusResponse.Success) {
             ResponseEntity.ok(resp)
         } else {
             ResponseEntity.badRequest().body(resp)
