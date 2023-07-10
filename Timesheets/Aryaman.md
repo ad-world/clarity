@@ -1,6 +1,8 @@
 ## Aryaman Dhingra's Timesheet
 ### Quest ID: a23dhing
 
+Entries with start time and end times that span multiple days with have exactly how much time was spent on the work (between the start and end time) in the 'Time Spent' column.
+
 | Description | Time Spent | Start Time | End Time | Date(s) | Commits |
 | ----- | ----- | ----- | ----- | ----- | ----- | 
 | Project Idea Discussion | 2 hours | 2:00 PM | 4:00 PM | May 26th, 2023 | N/A |
@@ -26,5 +28,6 @@
 | Refactor login endpoint, refactor SDK data classes | 45 min | 12:00 AM | 12:45 AM | July 3rd, 2023 | [Refactor login endpoint, refactor SDK data classses](https://github.com/ad-world/clarity/commit/6ef3563eebc4fb7043ec19a049ea85dd3d87f37e) |
 | Change schemas based on discussion, add new user functionality | 1 hour | 12:00 AM | 1:00 AM | July 6th, 2023 | [Chage schemas, add new user functionality](https://github.com/ad-world/clarity/commit/fc3cbb8ca4a2553c3f4f9becf103858283503310) |
 | Create new schemas based on discussion | 30 mins | 3:30 PM | 4:00 PM | July 6th, 2023 | [Create new schemas](https://github.com/ad-world/clarity/commit/2093c00e7e9e2f2587ae1187c3ddec20eb0cba17) |
+| Create Attempts and ClassroomAttempts functionality | ~6 hours | July 7th, 12:00 PM | July 9th, 4:45 PM | July 7th - July 9th, 2023| [Create Attempts and ClassroomAttempts functionality](https://github.com/ad-world/clarity/commit/e8291f5bdcb77be1d3cf642411da9eb08f6bac8d) |
 
-Total time spent as of May 26th, 2023: 20 hours
+Total time spent as of May 26th, 2023: 26 hours
