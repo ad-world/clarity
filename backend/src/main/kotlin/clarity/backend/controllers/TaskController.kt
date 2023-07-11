@@ -8,7 +8,8 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 class TaskController {
-    @PostMapping
+
+    @PostMapping("/createTask")
     fun createTask(task: CreateTaskEntity) : ResponseEntity<CreateTaskResponse> {
         val taskEntity = TaskEntity()
         var response = taskEntity.createTask(task)
@@ -19,7 +20,7 @@ class TaskController {
         }
     }
 
-    @PostMapping
+    @PostMapping("/getTasksList")
     fun getTasks(classId: GetTasksEntity) : ResponseEntity<GetTasksResponse> {
         val taskEntity = TaskEntity()
         var response = taskEntity.getAllTasksList(classId)
