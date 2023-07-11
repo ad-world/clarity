@@ -7,11 +7,23 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.multipart.MultipartFile
 
 @RestController
 class AttemptsController {
     // record an attempt
     private val attemptEntity = AttemptsEntity();
+
+    @PostMapping("/testEndpoint")
+    fun testEndpoint(@RequestParam("file") file: MultipartFile, @RequestParam body: String): ResponseEntity<String> {
+
+        // This is how speech works rn, will make it better later.
+        // If you wanna try it out, record yourself speaking some phrase. Make sure it's a .wav file.
+        // Send the file and the phrase in the post request, and you'll get the result
+
+        val analysis = SpeechAnalysis().analyzeAudio(file, body)
+        return ResponseEntity.ok(analysis)
+    }
 
     @PostMapping("/attemptCard")
     fun attemptCard(@RequestBody attempt: CreateAttemptEntity): ResponseEntity<CreateAttemptResponse> {

@@ -6,6 +6,7 @@ build/
 !**/src/test/**/build/
 data.sqlite
 local.properties
+.env
 
 ### STS ###
 .apt_generated
