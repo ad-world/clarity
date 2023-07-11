@@ -29,5 +29,6 @@ Entries with start time and end times that span multiple days with have exactly 
 | Change schemas based on discussion, add new user functionality | 1 hour | 12:00 AM | 1:00 AM | July 6th, 2023 | [Chage schemas, add new user functionality](https://github.com/ad-world/clarity/commit/fc3cbb8ca4a2553c3f4f9becf103858283503310) |
 | Create new schemas based on discussion | 30 mins | 3:30 PM | 4:00 PM | July 6th, 2023 | [Create new schemas](https://github.com/ad-world/clarity/commit/2093c00e7e9e2f2587ae1187c3ddec20eb0cba17) |
 | Create Attempts and ClassroomAttempts functionality | ~6 hours | July 7th, 12:00 PM | July 9th, 4:45 PM | July 7th - July 9th, 2023| [Create Attempts and ClassroomAttempts functionality](https://github.com/ad-world/clarity/commit/e8291f5bdcb77be1d3cf642411da9eb08f6bac8d) |
+| Create initial Speech API implementation | 1.5 hours | 3:00 PM | 4:30 PM | July 11th, 2023 | [Create initial Speech API implementation](https://github.com/ad-world/clarity/commit/aa5122b14f7c84c56985414cbc3005d3d8e2bae7) |
 
-Total time spent as of May 26th, 2023: 26 hours
+Total time spent as of May 26th, 2023: 27.5 hours
