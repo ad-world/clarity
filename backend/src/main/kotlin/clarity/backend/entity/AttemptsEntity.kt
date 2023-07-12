@@ -1,16 +1,19 @@
 package clarity.backend.entity
 
+import SpeechAPIResponse
 import clarity.backend.DataManager
+import clarity.backend.controllers.SpeechAnalysis
+import org.springframework.web.multipart.MultipartFile
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
-data class CreateAttemptEntity(val set_id: Int, val user_id: Int, val card_id: Int, val audio: Int)
+data class CreateAttemptEntity(val set_id: Int, val user_id: Int, val card_id: Int, val audio: MultipartFile)
 // audio is Int for now, will change once we figure out what it needs to be
 data class CreateAttemptResponse(val response: StatusResponse, val metadata: AttemptMetadata?, val message: String)
 data class AttemptMetadata(
     val set_id: Int, val user_id: Int, val card_id: Int, val mispronunciations: List<String>,
-    val omissions: List<String>, val insertions: List<String>, val pronunciationScore: Int, val accuracyScore: Int,
-    val fluencyScore: Int, val completenessScore: Int)
+    val omissions: List<String>, val insertions: List<String>, val pronunciationScore: Double, val accuracyScore: Double,
+    val fluencyScore: Double, val completenessScore: Double, val speechAPIResponse: SpeechAPIResponse)
 data class GetUserAverageAttemptsResponse(val response: StatusResponse, val user_id: Int, val pronunciationScore: Double? = null, val accuracyScore: Double? = null,
                                           val fluencyScore: Double? = null, val completenessScore: Double? = null, val message: String)
 data class CardAttempt(val user_id: Int, val card_id: Int, val set_id: Int, val pronunciationScore: Double? = null, val accuracyScore: Double? = null,
@@ -21,7 +24,7 @@ data class GetAttemptsForSetResponse(val user_id: Int, val set_id: Int, val atte
 
 class AttemptsEntity {
     private val db = DataManager.conn();
-
+    private val speechAnalyzer = SpeechAnalysis()
     fun createAttempt(attempt: CreateAttemptEntity): CreateAttemptResponse {
         val statement = db!!.createStatement();
         try {
@@ -29,18 +32,20 @@ class AttemptsEntity {
 
             val card = CardEntity().getCard(card_id)
 
-            /*
-            HERE, we call the Microsoft API with the phrase, and the audio recording
-            Assume it gets called here, and we retrieve the following four attributes.
-             */
+            val analysis = card?.let { speechAnalyzer.analyzeAudio(audio, it.phrase) }
+                ?: throw Exception("Speech analysis returned null - unknown error")
 
-            val pronunciationScore: Int = 92
-            val accuracyScore: Int = 93
-            val fluencyScore: Int = 82
-            val completenessScore: Int = 1
+            val json = analysis.json
+            val result = analysis.assessmentResult
+                ?: throw Exception("Speech analaysis result was null - don't record this attempt")
+
+            val pronunciationScore = result.pronunciationScore
+            val fluencyScore = result.fluencyScore
+            val accuracyScore = result.accuracyScore
+            val completenessScore = result.completenessScore
 
             val attemptMetadata = AttemptMetadata(set_id, user_id, card_id, listOf(), listOf(), listOf(),
-                pronunciationScore, accuracyScore, fluencyScore, completenessScore)
+                pronunciationScore, accuracyScore, fluencyScore, completenessScore, json)
 
             val currentDate = LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME);
 

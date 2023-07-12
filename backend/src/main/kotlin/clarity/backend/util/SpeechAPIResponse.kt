@@ -1,54 +1,87 @@
-package clarity.backend.util
+import com.google.gson.annotations.SerializedName
 
 data class PronunciationAssessment(
-    val AccuracyScore: Int?,
-    val FluencyScore: Int?,
-    val CompletenessScore: Int?,
-    val PronScore: Int?,
-    val ErrorType: String?
-
+    @SerializedName("AccuracyScore")
+    val accuracyScore: Double?,
+    @SerializedName("FluencyScore")
+    val fluencyScore: Double?,
+    @SerializedName("CompletenessScore")
+    val completenessScore: Double?,
+    @SerializedName("PronScore")
+    val pronScore: Double?,
+    @SerializedName("ErrorType")
+    val errorType: String? // Add ErrorType field
 )
 
 data class Syllable(
-    val Syllable: String,
-    val PronunciationAssessment: PronunciationAssessment,
-    val Offset: Int,
-    val Duration: Int
+    @SerializedName("Syllable")
+    val syllable: String,
+    @SerializedName("PronunciationAssessment")
+    val pronunciationAssessment: PronunciationAssessment,
+    @SerializedName("Offset")
+    val offset: Int,
+    @SerializedName("Duration")
+    val duration: Int
 )
 
 data class Phoneme(
-    val Phoneme: String,
-    val PronunciationAssessment: PronunciationAssessment,
-    val Offset: Int,
-    val Duration: Int
+    @SerializedName("Phoneme")
+    val phoneme: String,
+    @SerializedName("PronunciationAssessment")
+    val pronunciationAssessment: PronunciationAssessment,
+    @SerializedName("Offset")
+    val offset: Int,
+    @SerializedName("Duration")
+    val duration: Int
 )
 
 data class Word(
-    val Word: String,
-    val Offset: Int,
-    val Duration: Int,
-    val PronunciationAssessment: PronunciationAssessment,
-    val Syllables: List<Syllable>,
-    val Phonemes: List<Phoneme>,
+    @SerializedName("Word")
+    val word: String,
+    @SerializedName("Offset")
+    val offset: Int,
+    @SerializedName("Duration")
+    val duration: Int,
+    @SerializedName("PronunciationAssessment")
+    val pronunciationAssessment: PronunciationAssessment,
+    @SerializedName("Syllables")
+    val syllables: List<Syllable>,
+    @SerializedName("Phonemes")
+    val phonemes: List<Phoneme>,
+    @SerializedName("ErrorType") // Add ErrorType field
+    val errorType: String?
 )
 
 data class NBest(
-    val Confidence: Double,
-    val Lexical: String,
-    val ITN: String,
-    val MaskedITN: String,
-    val Display: String,
-    val PronunciationAssessment: PronunciationAssessment,
-    val Words: List<Word>
+    @SerializedName("Confidence")
+    val confidence: Double,
+    @SerializedName("Lexical")
+    val lexical: String,
+    @SerializedName("ITN")
+    val itn: String,
+    @SerializedName("MaskedITN")
+    val maskedItn: String,
+    @SerializedName("Display")
+    val display: String,
+    @SerializedName("PronunciationAssessment")
+    val pronunciationAssessment: PronunciationAssessment,
+    @SerializedName("Words")
+    val words: List<Word>
 )
 
-data class SpeechRecognitionResult(
-    val Id: String,
-    val RecognitionStatus: Int,
-    val Offset: Int,
-    val Duration: Int,
-    val Channel: Int,
-    val DisplayText: String,
-    val SNR: Double,
-    val NBest: List<NBest>
+data class SpeechAPIResponse(
+    @SerializedName("Id")
+    val id: String,
+    @SerializedName("RecognitionStatus")
+    val recognitionStatus: String? = null,
+    @SerializedName("Offset")
+    val offset: Int? = null,
+    @SerializedName("Duration")
+    val duration: Int? = null,
+    @SerializedName("DisplayText")
+    val displayText: String? = null,
+    @SerializedName("SNR")
+    val snr: Double? = null,
+    @SerializedName("NBest")
+    val nBest: List<NBest>? = null
 )

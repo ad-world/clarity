@@ -1,16 +1,19 @@
 package clarity.backend.entity
 
+import SpeechAPIResponse
 import clarity.backend.DataManager
+import clarity.backend.controllers.SpeechAnalysis
+import org.springframework.web.multipart.MultipartFile
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
-data class CreateClassroomAttemptEntity(val task_id: Int, val user_id: Int, val card_id: Int, val audio: Int)
+data class CreateClassroomAttemptEntity(val task_id: Int, val user_id: Int, val card_id: Int, val audio: MultipartFile)
 data class CreateClassroomAttemptResponse(val response: StatusResponse, val metadata: ClassroomAttemptMetadata?, val message: String)
 
 data class ClassroomAttemptMetadata(
     val task_id: Int, val user_id: Int, val card_id: Int, val mispronunciations: List<String>,
-    val omissions: List<String>, val insertions: List<String>, val pronunciationScore: Int, val accuracyScore: Int,
-    val fluencyScore: Int, val completenessScore: Int)
+    val omissions: List<String>, val insertions: List<String>, val pronunciationScore: Double, val accuracyScore: Double,
+    val fluencyScore: Double, val completenessScore: Double, val speechAPIResponse: SpeechAPIResponse)
 
 data class TaskAttemptWithName(val task_id: Int, val user_id: Int, val card_id: Int, val pronunciationScore: Int,
                         val accuracyScore: Int, val fluencyScore: Int, val completenessScore: Int, val attempt_date: String,
@@ -26,24 +29,27 @@ class ClassroomAttemptsEntity {
 
     fun createClassroomAttempts(attempt: CreateClassroomAttemptEntity): CreateClassroomAttemptResponse {
         val statement = db!!.createStatement()
+        val speechAnalyzer = SpeechAnalysis()
+
 
         try {
-            val (task_id, user_id, card_id, _) = attempt;
+            val (task_id, user_id, card_id, audio) = attempt;
 
             val card = CardEntity().getCard(card_id)
 
-            /*
-            HERE, we call the Microsoft API with the phrase, and the audio recording
-            Assume it gets called here, and we retrieve the following four attributes.
-             */
+            val analysis = card?.let { speechAnalyzer.analyzeAudio(audio, it.phrase) }
+                ?: throw Exception("Speech analysis returned null - unknown error")
 
-            val pronunciationScore: Int = 91
-            val accuracyScore: Int = 92
-            val fluencyScore: Int = 22
-            val completenessScore: Int = 80
+            val json = analysis.json
+            val result = analysis.assessmentResult ?: throw Exception("Speech analysis result was null - don't record this attempt")
+
+            val pronunciationScore = result.pronunciationScore
+            val fluencyScore = result.fluencyScore
+            val accuracyScore = result.accuracyScore
+            val completenessScore = result.completenessScore
 
             val attemptMetadata = ClassroomAttemptMetadata(task_id, user_id, card_id, listOf(), listOf(), listOf(),
-                pronunciationScore, accuracyScore, fluencyScore, completenessScore)
+                pronunciationScore, accuracyScore, fluencyScore, completenessScore, json)
 
             val currentDate = LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME)
 
