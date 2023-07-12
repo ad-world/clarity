@@ -14,18 +14,37 @@ import java.util.concurrent.TimeUnit
 data class SpeechAnalysisResult(val json: SpeechAPIResponse, val assessmentResult: PronunciationAssessmentResult?)
 
 class SpeechAnalysis {
-    private val dotenv: Dotenv = dotenv()
-    private val speechRegion = dotenv["SPEECH_REGION"]
-    private val speechKey = dotenv["SPEECH_KEY"]
-    private val speechConfig = SpeechConfig.fromSubscription(speechKey, speechRegion)
+    private var dotenv: Dotenv = dotenv {
+        ignoreIfMissing = true
+    }
+    private var speechRegion: String
+    private var speechKey: String
+    private var speechConfig: SpeechConfig?
+    init {
+        try {
+            dotenv = dotenv {
+                ignoreIfMissing = true
+            }
+            speechRegion = dotenv["SPEECH_REGION"]?: ""
+            speechKey = dotenv["SPEECH_KEY"]?: ""
+            speechConfig = SpeechConfig.fromSubscription(speechKey, speechRegion)
+        } catch (e: Exception) {
+            speechKey = ""
+            speechRegion = ""
+            speechConfig = null
+            println(e.message)
+            e.printStackTrace()
+        }
+    }
+
 
     fun analyzeAudio(file: MultipartFile, phrase: String): SpeechAnalysisResult? {
         try {
             val tempFile = TemporaryFileStorage();
             val filePath = tempFile.storeFile(file)
             val config: AudioConfig = AudioConfig.fromWavFileInput(filePath)
-            speechConfig.setProperty(PropertyId.SpeechServiceConnection_InitialSilenceTimeoutMs, "5000")
-            speechConfig.setProperty(PropertyId.SpeechServiceConnection_EndSilenceTimeoutMs, "5000");
+            speechConfig?.setProperty(PropertyId.SpeechServiceConnection_InitialSilenceTimeoutMs, "5000")
+            speechConfig?.setProperty(PropertyId.SpeechServiceConnection_EndSilenceTimeoutMs, "5000");
 
             val speechRecognizer = SpeechRecognizer(speechConfig, config)
             val assessmentConfig = PronunciationAssessmentConfig(
@@ -47,7 +66,7 @@ class SpeechAnalysis {
             val parsedResponse: SpeechAPIResponse = gson.fromJson(pronunciationAssessmentResultJson, SpeechAPIResponse::class.java)
 
             speechRecognizer.close()
-            speechConfig.close()
+            speechConfig?.close()
             config.close()
             assessmentConfig.close()
             result.close()
