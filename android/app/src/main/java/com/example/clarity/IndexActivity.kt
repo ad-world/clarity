@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import androidx.preference.PreferenceManager
 import com.example.clarity.classroompage.ClassroomFragment
 import com.example.clarity.databinding.IndexActivityBinding
 import com.example.clarity.sets.SetsFragment
@@ -23,9 +22,6 @@ class IndexActivity : AppCompatActivity() {
         binding = IndexActivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
         replaceFragment(ProfileFragment())
-
-        val username = PreferenceManager.getDefaultSharedPreferences(applicationContext).getString("username", "")
-        Log.d("Username", username.toString())
 
         binding.bottomNav.setOnItemSelectedListener {
             when(it.itemId){

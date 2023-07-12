@@ -8,11 +8,13 @@ import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
 import com.example.clarity.databinding.FragmentFirstBinding
 import android.app.AlertDialog
+import androidx.lifecycle.lifecycleScope
 import com.example.clarity.sdk.ClaritySDK
 import com.example.clarity.sdk.LoginRequest
 import com.example.clarity.sdk.LoginResponse
 import com.example.clarity.sdk.StatusResponse
-import androidx.preference.PreferenceManager
+import kotlinx.coroutines.launch
+// import androidx.preference.PreferenceManager
 import kotlinx.coroutines.runBlocking
 import retrofit2.Response
 
@@ -22,6 +24,8 @@ class FirstFragment : Fragment() {
     private val api = ClaritySDK().apiService
 
     private var _binding: FragmentFirstBinding? = null
+
+    private val sessionManager: SessionManager by lazy { SessionManager(requireContext()) }
 
     private val binding get() = _binding!!
 
@@ -58,8 +62,10 @@ class FirstFragment : Fragment() {
             }
 
             if (valid) {
-                PreferenceManager.getDefaultSharedPreferences(requireContext()).edit()
-                    .putString("username", username).apply()
+                lifecycleScope.launch {
+                    sessionManager.setUserName(username)
+                    sessionManager.setUserId(response.body()!!.user!!.user_id)
+                }
 
                 val intent = Intent(activity, IndexActivity::class.java)
                 startActivity(intent)

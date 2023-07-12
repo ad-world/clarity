@@ -1,5 +1,6 @@
 package com.example.clarity.sets
 
+import com.example.clarity.SessionManager
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -9,14 +10,19 @@ import android.view.View
 import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.clarity.sdk.ClaritySDK
 import com.example.clarity.sdk.GetDataForSetRequest
 import com.example.clarity.sdk.GetDataForSetResponse
 import com.example.clarity.sdk.GetSetsResponse
 import com.example.clarity.databinding.FragmentSetsBinding
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import retrofit2.Response
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.flowOn
 
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 private const val USER_ID = "userId"
@@ -31,7 +37,11 @@ class SetsFragment : Fragment() {
     private var _binding: FragmentSetsBinding? = null
     private lateinit var setAdapter: SetAdapter
     private lateinit var sets: MutableList<Set>
+    private lateinit var username: String
+    private var uid: Int = 0
+
     private val api = ClaritySDK().apiService
+    private val sessionManager: SessionManager by lazy { SessionManager(requireContext()) }
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
@@ -89,13 +99,18 @@ class SetsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        lifecycleScope.launch {
+            username = sessionManager.getUserName()
+            uid = sessionManager.getUserId()
+            Log.d("Username is: ", username)
+        }
         sets = mutableListOf()
         // TODO: Replace following lines with a query for all sets with our userId, and then parse
         //  through the object returned, creating a set data class for each set, and appending it
         //  to the sets array
 
 
-        val response : Response<GetSetsResponse> = runBlocking {
+        /*val response : Response<GetSetsResponse> = runBlocking {
             return@runBlocking api.getAllSets()
         }
         println(response.body())
@@ -117,17 +132,17 @@ class SetsFragment : Fragment() {
                 set.cards.add(Card(counter, card, false))
             }
             sets.add(set)
-        }
+        }*/
 
         // TEST DATA, will be removed when database is connected
-        /*sets.add(Set(0, "Animals", 4,
+        sets.add(Set(0, username, 4,
             mutableListOf(Card(0, "Dog", false),
                 Card(1, "Cat", false),
                 Card(2, "Zebra", false),
                 Card(3, "Kangaroo", false)),
             0, SetCategory.DEFAULT_SET))
 
-        sets.add(Set(1, "Countries", 3,
+        sets.add(Set(1, "$uid", 3,
             mutableListOf(Card(0, "Canada", false),
                 Card(1, "Russia", false),
                 Card(2, "Japan", false)),
@@ -139,8 +154,9 @@ class SetsFragment : Fragment() {
                 Card(2, "Computer", false),
                 Card(3, "Television", false),
                 Card(4, "Tablet", false)),
-            0, SetCategory.COMMUNITY_SET))*/
+            0, SetCategory.COMMUNITY_SET))
         Log.d("myTag", "SET SIZE: " + sets.size)
+        Log.d("Username2", username)
         setAdapter = SetAdapter(sets) { position -> onSetClick(position) }
         binding.rvSets.adapter = setAdapter
         binding.rvSets.layoutManager = LinearLayoutManager(context)
