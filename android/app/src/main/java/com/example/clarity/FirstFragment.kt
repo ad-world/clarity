@@ -14,7 +14,6 @@ import com.example.clarity.sdk.LoginRequest
 import com.example.clarity.sdk.LoginResponse
 import com.example.clarity.sdk.StatusResponse
 import kotlinx.coroutines.launch
-// import androidx.preference.PreferenceManager
 import kotlinx.coroutines.runBlocking
 import retrofit2.Response
 
