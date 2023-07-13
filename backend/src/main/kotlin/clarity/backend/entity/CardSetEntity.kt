@@ -40,6 +40,7 @@ class CardSetEntity() {
             """.trimIndent()
             statement.executeUpdate(query)
         } catch (e: Exception) {
+            e.printStackTrace()
             val errMsg: String = "Failed to create card set: ${e.message ?: "Unknown error"}"
             return CreateCardSetResponse(StatusResponse.Failure, errMsg)
         }
@@ -56,6 +57,7 @@ class CardSetEntity() {
             """.trimIndent()
             statement.executeUpdate(query)
         } catch (e: Exception) {
+            e.printStackTrace()
             val errMsg: String = "Failed to add card to set: ${e.message ?: "Unknown error"}"
             return AddCardToSetResponse(StatusResponse.Failure, errMsg)
         }
@@ -72,6 +74,7 @@ class CardSetEntity() {
             """.trimIndent()
             statement.executeUpdate(query)
         } catch (e: Exception) {
+            e.printStackTrace()
             val errMsg: String = "Failed to delete card from set: ${e.message ?: "Unknown error"}"
             return DeleteCardFromSetResponse(StatusResponse.Failure, errMsg)
         }
@@ -100,6 +103,7 @@ class CardSetEntity() {
             }
             return GetDataForSetResponse(StatusResponse.Success, resultList.toList())
         } catch (e: Exception) {
+            e.printStackTrace()
             return GetDataForSetResponse(StatusResponse.Failure, listOf(e.message ?: "Unknown error"))
         }
     }
@@ -131,6 +135,7 @@ class CardSetEntity() {
             return GetCardsInSetResponse(StatusResponse.Success, cardIdList.toList())
 
         } catch (e: Exception) {
+            e.printStackTrace()
             return GetCardsInSetResponse(StatusResponse.Failure, emptyList())
         }
     }
@@ -152,6 +157,7 @@ class CardSetEntity() {
             resultSet.close()
             return GetSetsResponse(StatusResponse.Success, setList.toList())
         } catch (e: Exception) {
+            e.printStackTrace()
             return GetSetsResponse(StatusResponse.Failure, emptyList())
         }
     }
@@ -173,6 +179,7 @@ class CardSetEntity() {
 
             return GetSetsByUsernameResponse(StatusResponse.Success, setList)
         } catch (e: Exception) {
+            e.printStackTrace()
             return GetSetsByUsernameResponse(StatusResponse.Failure, emptyList())
         }
     }

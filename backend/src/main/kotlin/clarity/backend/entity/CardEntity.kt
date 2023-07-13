@@ -1,17 +1,18 @@
 package clarity.backend.entity
 
 import clarity.backend.DataManager
+import java.sql.Statement
 import kotlin.random.Random
 import kotlin.Exception
 
 // Request Formats.
-data class CreateCardEntity(val phrase: String, val title: String)
+data class CreateCardEntity(val phrase: String, val title: String, val setId: Int? = null)
 
 data class PhraseSearchEntity(val phrase: String)
 data class Evaluate(val user_recording: String) // Just wrote it as string for now.
 
 // Response Formats.
-data class CreateCardResponse(val response: StatusResponse, val msg: String)
+data class CreateCardResponse(val response: StatusResponse, val msg: String, val card: Card?)
 data class EvaluateResponse(val response: StatusResponse, val score: Int)
 
 data class PhraseSearchResponse(val response: StatusResponse, val cards: List<Card>)
@@ -22,19 +23,55 @@ data class Card(val card_id: Int, val phrase: String, val title: String)
 class CardEntity() {
 
     fun createCard(card: CreateCardEntity) : CreateCardResponse {
+        var newCard: Card? = null
         val db = DataManager.conn()
+        val cardSet = CardSetEntity()
+
         try {
             val statement = db!!.createStatement()
             val query = """
                 INSERT OR IGNORE INTO Card(phrase, title)
                 VALUES ('${card.phrase}', '${card.title}');
             """.trimIndent()
-            statement.executeUpdate(query)
+            val insertedRows = statement.executeUpdate(query, Statement.RETURN_GENERATED_KEYS)
+
+            if(insertedRows == 0) {
+                // Card already exists, do a search and set newCard = search result
+                val searchQuery = """
+                    SELECT * FROM Card WHERE phrase = '${card.phrase}'
+                """.trimIndent()
+                val searchResult = statement.executeQuery(searchQuery)
+
+                if(searchResult.next()) {
+                    newCard = Card(
+                        card_id = searchResult.getInt("card_id"),
+                        phrase = searchResult.getString("phrase"),
+                        title = searchResult.getString("title")
+                    )
+                }
+            } else {
+                // Card does not exist, new card was created and key was returned
+                val keys = statement.generatedKeys
+                keys.next()
+                newCard = Card(
+                    card_id = keys.getInt(1),
+                    phrase = card.phrase,
+                    title = card.title
+                )
+            }
+
+            // Add the newCard to the set
+            if(card.setId != null && newCard != null) {
+                val request = AddCardToSetRequest(card_id = newCard.card_id, set_id = card.setId)
+                cardSet.addCardToSet(request)
+            }
+
         } catch (e: Exception) {
+            e.printStackTrace()
             val errMsg: String = "Failed to create card: ${e.message ?: "Unknown error"}"
-            return CreateCardResponse(StatusResponse.Failure, errMsg)
+            return CreateCardResponse(StatusResponse.Failure, errMsg, newCard)
         }
-        return CreateCardResponse(StatusResponse.Success, "Successfully created a new card.")
+        return CreateCardResponse(StatusResponse.Success, "Successfully created / found card.", newCard)
     }
 
     fun getCard(id: Int): Card? {

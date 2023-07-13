@@ -7,7 +7,7 @@ data class DeleteCardFromSetResponse(val response: StatusResponse, val msg: Stri
 data class CreateCardSetResponse(val response: StatusResponse, val msg: String)
 data class GetCardsInSetResponse(val response: StatusResponse, val cards: List<Card>)
 data class GetSetsResponse(val response: StatusResponse, val sets: List<String>)
-data class CreateCardResponse(val response: StatusResponse, val msg: String)
+data class CreateCardResponse(val response: StatusResponse, val msg: String, val card: Card?)
 data class EvaluateResponse(val response: StatusResponse, val score: Int)
 data class AddCardToSetResponse(val response: StatusResponse, val msg: String)
 data class GetSetsByUsernameResponse(val response: StatusResponse, val data: List<SetMetadata>)
