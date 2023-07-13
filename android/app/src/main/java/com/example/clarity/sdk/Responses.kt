@@ -4,7 +4,7 @@ data class CreateUserResponse(val response: StatusResponse, val message: String,
 data class GetUserResponse(val response: StatusResponse, val user: UserWithId?, val message: String)
 data class CreateClassroomResponse(val response: StatusResponse, val id: String)
 data class DeleteCardFromSetResponse(val response: StatusResponse, val msg: String)
-data class CreateCardSetResponse(val response: StatusResponse, val msg: String)
+data class CreateCardSetResponse(val response: StatusResponse, val msg: String, val set: SetMetadata? = null)
 data class GetCardsInSetResponse(val response: StatusResponse, val cards: List<Card>)
 data class GetSetsResponse(val response: StatusResponse, val sets: List<String>)
 data class CreateCardResponse(val response: StatusResponse, val msg: String, val card: Card?)
