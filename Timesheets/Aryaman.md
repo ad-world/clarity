@@ -39,4 +39,4 @@ Entries with start time and end times that span multiple days with have exactly 
 | Attach speech functionality to attempts controller, parse json | ~4 hours | 8:00 AM | 4:00 PM | July 13th, 2023 | [Attach speech functionality, json](https://github.com/ad-world/clarity/commit/d7d688d9ab07e0d8f312a5709f622981ef3b145a) |
 
 
-Total time spent as of May 26th, 2023: 40 hours
+Total time spent as of July 13th, 2023: 40 hours
