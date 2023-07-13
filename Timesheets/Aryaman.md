@@ -36,7 +36,7 @@ Entries with start time and end times that span multiple days with have exactly 
 | Create Attempts and ClassroomAttempts functionality | ~6 hours | July 7th, 12:00 PM | July 9th, 4:45 PM | July 7th - July 9th, 2023| [Create Attempts and ClassroomAttempts functionality](https://github.com/ad-world/clarity/commit/e8291f5bdcb77be1d3cf642411da9eb08f6bac8d) |
 | Create initial Speech API implementation | 1.5 hours | 3:00 PM | 4:30 PM | July 11th, 2023 | [Create initial Speech API implementation](https://github.com/ad-world/clarity/commit/aa5122b14f7c84c56985414cbc3005d3d8e2bae7) |
 | D4 Meeting | 1 hour | 10:00 PM | 11:00 PM | July 11th, 2023 | N/A |
-| Attach speech functionality to attempts controller, parse json | ~4 hours | 8:00 AM | 4:00 PM | July 13th, 2023 | [Attach speech functionality, json](https://github.com/ad-world/clarity/commit/d7d688d9ab07e0d8f312a5709f622981ef3b145a) |
+| Attach speech functionality to attempts controller, parse json | ~4 hours | 8:00 AM | 4:00 PM | July 12th, 2023 | [Attach speech functionality, json](https://github.com/ad-world/clarity/commit/d7d688d9ab07e0d8f312a5709f622981ef3b145a) |
 
 
 Total time spent as of July 13th, 2023: 40 hours
