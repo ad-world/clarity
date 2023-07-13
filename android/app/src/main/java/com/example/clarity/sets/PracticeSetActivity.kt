@@ -14,13 +14,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.core.app.ActivityCompat
 import com.example.clarity.sdk.ClaritySDK
-import com.example.clarity.sdk.GetDataForSetRequest
-import com.example.clarity.sdk.GetDataForSetResponse
 import com.example.clarity.R
 import com.example.clarity.sets.audio.AndroidAudioPlayer
 import com.example.clarity.sets.audio.AndroidAudioRecorder
-import kotlinx.coroutines.runBlocking
-import retrofit2.Response
+import com.google.gson.Gson
 import java.io.File
 
 class PracticeSetActivity() : AppCompatActivity() {
@@ -46,56 +43,9 @@ class PracticeSetActivity() : AppCompatActivity() {
         setContentView(R.layout.activity_practice_set)
 
         val intent = intent
-        val setId: Int = intent.getIntExtra("setId", 0)
-        val userId: Int = intent.getIntExtra("userId", 0)
-        // TODO: Backend query to search for set with given userId and setId
-        //  for now we use our hard coded sets
-        val setRes : Response<GetDataForSetResponse> = runBlocking {
-            return@runBlocking api.getDataForSet(GetDataForSetRequest(setId))
-        }
-        val progress = setRes.body()?.data?.get(1)!!.toInt()
-        val setTitle = setRes.body()?.data!![2]
-        val setCards = setRes.body()?.data?.get(3)
-        val cardArray: List<String> = setCards!!.split(",")
-
-        val set = Set(setId, setTitle, 0, mutableListOf<Card>(), progress, SetCategory.CREATED_SET)
-        for ((counter, card) in cardArray.withIndex()) {
-            set.cards.add(Card(counter, card, false))
-        }
-
-        /*
-        var set = Set(0, "Animals", 4,
-            mutableListOf(Card(0, "Dog", false),
-                Card(1, "Cat", false),
-                Card(2, "Zebra", false),
-                Card(3, "Kangaroo", false)),
-            0, SetCategory.DEFAULT_SET)
-        when (setId) {
-            0 -> {
-                set = Set(0, "Animals", 4,
-                    mutableListOf(Card(0, "Dog", false),
-                        Card(1, "Cat", false),
-                        Card(2, "Zebra", false),
-                        Card(3, "Kangaroo", false)),
-                    0, SetCategory.DEFAULT_SET)
-            }
-            1 -> {
-                set = Set(1, "Countries", 3,
-                    mutableListOf(Card(0, "Canada", false),
-                        Card(1, "Russia", false),
-                        Card(2, "Japan", false)),
-                    0, SetCategory.DOWNLOADED_SET)
-            }
-            2 -> {
-                set = Set(2, "Devices", 5,
-                    mutableListOf(Card(0, "Phone", false),
-                        Card(1, "Laptop", false),
-                        Card(2, "Computer", false),
-                        Card(3, "Television", false),
-                        Card(4, "Tablet", false)),
-                    0, SetCategory.COMMUNITY_SET)
-            }
-        }*/
+        val setJson = intent.getStringExtra("set")
+        val gson = Gson()
+        val set = gson.fromJson(setJson, Set::class.java)
 
         val tvTitle = findViewById<TextView>(R.id.tvTitle)
         val iBtnClose = findViewById<ImageButton>(R.id.iBtnClose)
@@ -122,7 +72,7 @@ class PracticeSetActivity() : AppCompatActivity() {
                 cvPopUp.visibility = View.GONE
                 iBtnMic.setBackgroundResource(R.drawable.setclosebutton)
                 iBtnMic.setImageResource(R.drawable.baseline_mic_24_white)
-                File(cacheDir, "audio.mp3").also {
+                File(cacheDir, "audio.wav").also {
                     recorder.start(it)
                     audioFile = it
                 }
@@ -133,7 +83,7 @@ class PracticeSetActivity() : AppCompatActivity() {
                 iBtnMic.setImageResource(R.drawable.baseline_mic_24)
                 recorder.stop()
 
-                val score = getAccuracyScore(File(cacheDir, "audio.mp3"))
+                val score = getAccuracyScore(File(cacheDir, "audio.wav"))
                 displayMessagePopup(score)
                 iBtnNext.isEnabled = true
                 iBtnPrev.isEnabled = true
