@@ -64,7 +64,7 @@ interface API {
     @POST("getDataForSet")
     suspend fun  getDataForSet(@Body set: GetDataForSetRequest) : Response<GetDataForSetResponse>
 
-    @GET("getSetByUsername")
+    @GET("getSetsByUsername")
     suspend fun getSetsByUsername(@Query("username") username: String): Response<GetSetsByUsernameResponse>
 
     @POST("attemptCard")
