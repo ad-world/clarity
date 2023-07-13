@@ -2,7 +2,7 @@ package clarity.backend.entity
 
 import clarity.backend.DataManager
 import java.lang.Exception
-import javax.xml.crypto.Data
+import java.sql.Statement
 
 // Request Formats.
 data class CreateCardSetEntity(val creator_id: Int, val title: String, val type: String, val progress: Int)
@@ -15,7 +15,7 @@ data class GetProgressForSetRequest(val set_id: Int)
 data class UpdateProgressForSetRequest(val set_id: Int, val progress: Int)
 
 // Response Formats.
-data class CreateCardSetResponse(val response: StatusResponse, val msg: String)
+data class CreateCardSetResponse(val response: StatusResponse, val msg: String, val set: SetMetadata? = null)
 data class AddCardToSetResponse(val response: StatusResponse, val msg: String)
 data class DeleteCardFromSetResponse(val response: StatusResponse, val msg: String)
 data class GetCardsInSetResponse(val response: StatusResponse, val cards: List<Card>)
@@ -26,24 +26,39 @@ data class GetProgressForSetResponse(val response: StatusResponse, val progress:
 data class UpdateProgressForSetResponse(val response: StatusResponse, val msg: String)
 
 // Util Formats
-data class SetMetadata(val set_id: Int, val title: String, val type: String)
+data class SetMetadata(val set_id: Int, val title: String, val type: String, val is_public: Boolean, val likes: Int)
 class CardSetEntity() {
 
 
     fun createCardSet(set: CreateCardSetEntity) : CreateCardSetResponse {
         val db = DataManager.conn()
+        var newSet: SetMetadata? = null
         try {
             val statement = db!!.createStatement()
             val query = """
                 INSERT INTO CardSet(creator_id, title, type, is_public_ind, likes)
                 VALUES (${set.creator_id}, '${set.title}', '${set.type}', 0, 0);
             """.trimIndent()
-            statement.executeUpdate(query)
+            val insertedRows = statement.executeUpdate(query, Statement.RETURN_GENERATED_KEYS)
+
+            if(insertedRows > 0) {
+                val keys = statement.generatedKeys
+                keys.next()
+
+                newSet = SetMetadata(
+                    set_id =  keys.getInt(1),
+                    title = set.title,
+                    type = set.type,
+                    false,
+                    0
+                )
+            }
         } catch (e: Exception) {
+            e.printStackTrace()
             val errMsg: String = "Failed to create card set: ${e.message ?: "Unknown error"}"
             return CreateCardSetResponse(StatusResponse.Failure, errMsg)
         }
-        return CreateCardSetResponse(StatusResponse.Success, "Created Card Set!")
+        return CreateCardSetResponse(StatusResponse.Success, "Created Card Set!", newSet)
     }
 
     fun addCardToSet(card: AddCardToSetRequest) : AddCardToSetResponse {
@@ -56,6 +71,7 @@ class CardSetEntity() {
             """.trimIndent()
             statement.executeUpdate(query)
         } catch (e: Exception) {
+            e.printStackTrace()
             val errMsg: String = "Failed to add card to set: ${e.message ?: "Unknown error"}"
             return AddCardToSetResponse(StatusResponse.Failure, errMsg)
         }
@@ -72,6 +88,7 @@ class CardSetEntity() {
             """.trimIndent()
             statement.executeUpdate(query)
         } catch (e: Exception) {
+            e.printStackTrace()
             val errMsg: String = "Failed to delete card from set: ${e.message ?: "Unknown error"}"
             return DeleteCardFromSetResponse(StatusResponse.Failure, errMsg)
         }
@@ -100,6 +117,7 @@ class CardSetEntity() {
             }
             return GetDataForSetResponse(StatusResponse.Success, resultList.toList())
         } catch (e: Exception) {
+            e.printStackTrace()
             return GetDataForSetResponse(StatusResponse.Failure, listOf(e.message ?: "Unknown error"))
         }
     }
@@ -131,6 +149,7 @@ class CardSetEntity() {
             return GetCardsInSetResponse(StatusResponse.Success, cardIdList.toList())
 
         } catch (e: Exception) {
+            e.printStackTrace()
             return GetCardsInSetResponse(StatusResponse.Failure, emptyList())
         }
     }
@@ -152,6 +171,7 @@ class CardSetEntity() {
             resultSet.close()
             return GetSetsResponse(StatusResponse.Success, setList.toList())
         } catch (e: Exception) {
+            e.printStackTrace()
             return GetSetsResponse(StatusResponse.Failure, emptyList())
         }
     }
@@ -166,13 +186,20 @@ class CardSetEntity() {
 
             val setList = mutableListOf<SetMetadata>()
             while(resultSet.next()) {
-                val set = SetMetadata(set_id = resultSet.getInt("set_id"), title = resultSet.getString("title"), type = resultSet.getString("type"))
+                val set = SetMetadata(
+                    set_id = resultSet.getInt("set_id"),
+                    title = resultSet.getString("title"),
+                    type = resultSet.getString("type"),
+                    is_public = resultSet.getInt("is_public_ind") == 1,
+                    likes = resultSet.getInt("likes")
+                )
                 setList.add(set)
             }
             resultSet.close()
 
             return GetSetsByUsernameResponse(StatusResponse.Success, setList)
         } catch (e: Exception) {
+            e.printStackTrace()
             return GetSetsByUsernameResponse(StatusResponse.Failure, emptyList())
         }
     }
