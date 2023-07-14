@@ -3,7 +3,9 @@ package com.example.clarity.sets
 import android.Manifest
 import android.annotation.SuppressLint
 import android.graphics.Color
+import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.Button
@@ -13,14 +15,26 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.core.app.ActivityCompat
+import androidx.lifecycle.lifecycleScope
 import com.example.clarity.sdk.ClaritySDK
 import com.example.clarity.R
+import com.example.clarity.SessionManager
+import com.example.clarity.sdk.CreateAttemptEntity
+import com.example.clarity.sdk.CreateAttemptResponse
+import com.example.clarity.sdk.GetSetsByUsernameResponse
 import com.example.clarity.sets.audio.AndroidAudioPlayer
 import com.example.clarity.sets.audio.AndroidAudioRecorder
 import com.google.gson.Gson
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import okhttp3.MediaType
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import retrofit2.Response
 import java.io.File
 
 class TestSetActivity() : AppCompatActivity() {
+
 
     private val recorder by lazy {
         AndroidAudioRecorder(applicationContext)
@@ -37,8 +51,11 @@ class TestSetActivity() : AppCompatActivity() {
     private var isRecording = false
     private var recordingCompleted = false
     private val api = ClaritySDK().apiService
+    private val sessionManager: SessionManager by lazy { SessionManager(this) }
 
+    var userid = 0
     var index = 0
+    var set: Set = Set(0, "", 0, mutableListOf<Card>(), 0, SetCategory.COMMUNITY_SET)
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,7 +65,7 @@ class TestSetActivity() : AppCompatActivity() {
         val intent = intent
         val setJson = intent.getStringExtra("set")
         val gson = Gson()
-        val set = gson.fromJson(setJson, Set::class.java)
+        set = gson.fromJson(setJson, Set::class.java)
 
         val tvTitle = findViewById<TextView>(R.id.tvTitle)
         val iBtnClose = findViewById<ImageButton>(R.id.iBtnClose)
@@ -57,6 +74,10 @@ class TestSetActivity() : AppCompatActivity() {
         val cvPopUp = findViewById<CardView>(R.id.cvPopUp)
         val cvCompletedScreen = findViewById<CardView>(R.id.cvCompletedScreen)
         val btnReturn = findViewById<Button>(R.id.btnReturn)
+
+        lifecycleScope.launch {
+            userid = sessionManager.getUserId()
+        }
 
         tvTitle.text = set.title
         iBtnClose.setOnClickListener {
@@ -131,7 +152,16 @@ class TestSetActivity() : AppCompatActivity() {
 
     private fun getAccuracyScore(file: File): Int {
         // TODO: make this work later
-        return 100
+        val inputStream = contentResolver.openInputStream(Uri.fromFile(file))
+        val requestFile = RequestBody.create(MediaType.parse("audio.wav"), file)
+
+        val part = MultipartBody.Part.createFormData("file", file.name, requestFile)
+
+        val response : Response<CreateAttemptResponse> = runBlocking {
+            return@runBlocking api.attemptCard(CreateAttemptEntity(set.id, userid, set.cards[index].id, part))
+        }
+        Log.d("accuracy score: ", "${response.body()!!.metadata!!.accuracyScore}")
+        return response.body()!!.metadata!!.accuracyScore.toInt()
     }
 
     @SuppressLint("SetTextI18n")
