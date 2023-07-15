@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -27,7 +27,7 @@
             android:id="@+id/btnJoinClass"
             android:layout_width="143dp"
             android:layout_height="58dp"
-            android:layout_marginTop="100dp"
+            android:layout_marginTop="96dp"
             android:text="Join Class"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.145"
@@ -38,7 +38,7 @@
             android:id="@+id/btnCreateClass"
             android:layout_width="143dp"
             android:layout_height="58dp"
-            android:layout_marginTop="100dp"
+            android:layout_marginTop="96dp"
             android:text="Create Class"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.839"
@@ -49,7 +49,7 @@
             android:id="@+id/toggleClasses"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
+            android:layout_marginTop="16dp"
             android:textOff="Show Joined Classes"
             android:textOn="Show Created Classes"
             app:layout_constraintEnd_toEndOf="parent"
@@ -60,27 +60,41 @@
             android:id="@+id/tvClassHeader"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="8dp"
             android:text="Classes"
             android:textAppearance="@style/TextAppearance.AppCompat.Display1"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.054"
+            app:layout_constraintHorizontal_bias="0.013"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/toggleClasses" />
+
+        <TextView
+            android:id="@+id/blankSpace"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:layout_marginTop="580dp"
+            android:text=""
+            android:textSize="34sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvClasses"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:layout_marginTop="10dp"
             android:divider="@android:color/darker_gray"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tvClassHeader"
             android:dividerHeight="1dp"
-            android:nestedScrollingEnabled="false"/>
+            android:nestedScrollingEnabled="false"
+            app:layout_constraintBottom_toTopOf="@+id/blankSpace"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvClassHeader" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-</ScrollView>
+</FrameLayout>
 
 
     <!--old code (starting code)-->

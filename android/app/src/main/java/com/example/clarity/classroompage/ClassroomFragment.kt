@@ -10,39 +10,35 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.clarity.IndexActivity
 import com.example.clarity.R
-
-
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
+import com.example.clarity.SessionManager
+import com.example.clarity.sdk.ClaritySDK
+import com.example.clarity.sdk.GetClassroomResponse
+import com.example.clarity.sdk.JoinClassroomEntity
+import com.example.clarity.sdk.JoinClassroomResponse
+import com.example.clarity.sdk.StatusResponse
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import retrofit2.Response
 
 /**
  * A simple [Fragment] subclass.
- * Use the [ClassroomFragment.newInstance] factory method to
- * create an instance of this fragment.
  */
 class ClassroomFragment : Fragment() {
 
         // placeholder listview data
         private lateinit var recyclerView: RecyclerView
         private lateinit var classAdapter: ClassAdapter
-
-
-        // TODO: Rename and change types of parameters
-        private var param1: String? = null
-        private var param2: String? = null
+        private var uid: Int = 0
+        private val api = ClaritySDK().apiService
+        private val sessionManager: SessionManager by lazy { SessionManager(requireContext()) }
 
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
-            arguments?.let {
-                param1 = it.getString(ARG_PARAM1)
-                param2 = it.getString(ARG_PARAM2)
-            }
         }
 
         override fun onCreateView(
@@ -52,13 +48,46 @@ class ClassroomFragment : Fragment() {
             // Inflate the layout for this fragment
             val view = inflater.inflate(R.layout.fragment_classroom, container, false)
 
+            // connect the classroom list with the frontend design and set its layout
             recyclerView = view.findViewById(R.id.rvClasses)
             recyclerView.layoutManager = LinearLayoutManager(requireContext())
+
+            //get the userID from the global session manager
+            lifecycleScope.launch {
+                uid = sessionManager.getUserId()
+            }
+
+            // declare a list to show the different classrooms user is currently enrolled in
+            val classes = arrayOf<String>()
+
+            // make api call to get the list of class names from the backend
+            var classesResponse : Response<GetClassroomResponse> = runBlocking {
+                return@runBlocking api.getClasses(uid.toString())
+            }
+
+            // confirm if response was received
+            if (classesResponse.body()?.response == StatusResponse.Success) {
+                val retrievedClassList = classesResponse.body()?.id // list of class names
+
+                if (retrievedClassList != null) {
+                    // loop over each class name item and add it to the classes list
+                    for (className in retrievedClassList) {
+                        classes.plus(className)
+                    }
+                }
+            }
+
+            /*
+            TODO
+            Replace dummyData with classes list data
+             */
 
             // adding dummy data to the list of classrooms
             val dummyData = arrayOf(
                 Pair("ENGL 100", "Instructor: Arshpreet Chabbewal"),
-                Pair("ENGL 200", "Instructor: Dhir Patel")
+                Pair("ENGL 200", "Instructor: Dhir Patel"),
+                Pair("ENGL 300", "Instructor: Talin Sharma"),
+                Pair("ENGL 400", "Instructor: Aryaman Dhingra")
             )
 
             // adding the list classes to the recycler view (with recycler custom ClassAdapter)
@@ -75,7 +104,7 @@ class ClassroomFragment : Fragment() {
                 showJoinClassDialog()
             }
 
-            // creating a listener action for the join class button
+            // creating a listener action for the create class button
             val createClassButton = view.findViewById<Button>(R.id.btnCreateClass)
             createClassButton.setOnClickListener {
                 val intent = Intent(activity, Classroom::class.java)
@@ -91,15 +120,32 @@ class ClassroomFragment : Fragment() {
             val dialogBuilder = AlertDialog.Builder(requireContext())
             dialogBuilder.setTitle("Join Class")
             val input = EditText(requireContext())
-            dialogBuilder.setView(input)
-
+            input.hint = "Enter the classroom code" // add placeholder text to the textfield
+            dialogBuilder.setView(input) // add textfeild to the dialog box
             // setting input type to text (allow the user to enter any textual data)
             input.inputType = InputType.TYPE_CLASS_TEXT
 
+            // take action if user joins a class
             dialogBuilder.setPositiveButton("Join") { dialog, _ ->
-                val className = input.text.toString()
-                // Perform join class operation here (want to switch to the class' page)
-                dialog.dismiss()
+                val classCode = input.text.toString() // get user's class code input
+
+                // create request body for join classroom api
+                var req = JoinClassroomEntity(classCode, uid.toString())
+                // get response from join classroom api
+                var response : Response<JoinClassroomResponse> = runBlocking {
+                    return@runBlocking api.joinClass(req)
+                }
+                println(response.body())
+
+                // check if the user entered the correct code (i.e. if backend returned the correct response)
+                if (response.body()?.response == StatusResponse.Success) {
+                    // add to list of joined classroom
+                    // TODO
+
+                    // switch screen and switch to the class page
+                    val intent = Intent(activity, Classroom::class.java)
+                    startActivity(intent)
+                }
             }
 
             dialogBuilder.setNegativeButton("Cancel") { dialog, _ ->
@@ -108,25 +154,5 @@ class ClassroomFragment : Fragment() {
 
             val dialog = dialogBuilder.create()
             dialog.show()
-        }
-
-        companion object {
-            /**
-             * Use this factory method to create a new instance of
-             * this fragment using the provided parameters.
-             *
-             * @param param1 Parameter 1.
-             * @param param2 Parameter 2.
-             * @return A new instance of fragment ClassroomFragment.
-             */
-            // TODO: Rename and change types and number of parameters
-            @JvmStatic
-            fun newInstance(param1: String, param2: String) =
-                ClassroomFragment().apply {
-                    arguments = Bundle().apply {
-                        putString(ARG_PARAM1, param1)
-                        putString(ARG_PARAM2, param2)
-                    }
-                }
         }
 }
