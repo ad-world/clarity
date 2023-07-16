@@ -27,34 +27,46 @@ import kotlinx.coroutines.runBlocking
 import retrofit2.Response
 
 class CreateSetActivity : AppCompatActivity() {
+    // CardAdapter that keeps track of all cards being created in recyclerview
     private lateinit var cardAdapter: CardAdapter
+    // ClaritySDK api for endpoint calls
     private val api = ClaritySDK().apiService
+    // sessionManager to interact with global datastore
     private val sessionManager: SessionManager by lazy { SessionManager(this) }
 
-    private var userid = 0
-
-    fun HideKeyboard() {
+    // Temporary function to hide keyboard upon clicking enter
+    private fun hideKeyboard() {
         val inputMethodManager = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
         inputMethodManager.hideSoftInputFromWindow(View(this).windowToken, 0)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // Set View
         setContentView(R.layout.activity_create_set)
-        cardAdapter = CardAdapter(mutableListOf()){ HideKeyboard() }
+
+        // Create Card Adapter, and update RecyclerView properties
+        cardAdapter = CardAdapter(mutableListOf()){ hideKeyboard() }
         val rvCards = findViewById<RecyclerView>(R.id.rvCards)
         rvCards.adapter = cardAdapter
         rvCards.layoutManager = LinearLayoutManager(this)
 
+        // Store userid from global datastore
+        var userid = -1
         lifecycleScope.launch {
             userid = sessionManager.getUserId()
         }
 
-        val btnAddSet = findViewById<Button>(R.id.btnAddSet)
+        // Define interactive components
         val etSetTitle = findViewById<TextInputEditText>(R.id.etSetTitle)
+        val btnAddSet = findViewById<Button>(R.id.btnAddSet)
+        val btnAddCard = findViewById<Button>(R.id.btnAddCard)
 
+        // Handles logic to add set to database
         btnAddSet.setOnClickListener {
+            // Get title from editText
             val setTitle = etSetTitle.text.toString()
+            // Check that there are no empty cards
             var allCardsFull = true
             for (card in cardAdapter.getCards()) {
                 if (card.phrase == "") {
@@ -62,24 +74,30 @@ class CreateSetActivity : AppCompatActivity() {
                     break
                 }
             }
+            // Verify that there is a title, there is at least one card, and there are no empty cards
             if (setTitle.isNotEmpty() && cardAdapter.getCards().size > 0 && allCardsFull) {
-                var title = setTitle
-                var type = ""
-
-                val response : Response<CreateCardSetResponse> = runBlocking {
-                    return@runBlocking api.addSet(CreateCardSetEntity(userid, title, type))
+                // Create Set
+                val newSet : Response<CreateCardSetResponse> = runBlocking {
+                    return@runBlocking api.addSet(CreateCardSetEntity(userid, setTitle, ""))
                 }
 
-                for (card in cardAdapter.getCards().withIndex()) {
-                    runBlocking {
-                        return@runBlocking api.createCard(CreateCardEntity(card.value.phrase, card.value.phrase, response.body()!!.set!!.set_id))
+                if (newSet.isSuccessful) {
+                    // Create all Cards
+                    for (card in cardAdapter.getCards().withIndex()) {
+                        runBlocking {
+                            return@runBlocking api.createCard(CreateCardEntity(card.value.phrase, card.value.phrase, newSet.body()!!.set!!.set_id))
+                        }
                     }
+                    // Finish activity, and return to SetsFragment
+                    finish()
+                } else {
+                    // TODO: Display some error message
                 }
-                finish()
+
             }
         }
 
-        val btnAddCard = findViewById<Button>(R.id.btnAddCard)
+        // Add new empty card
         btnAddCard.setOnClickListener {
             cardAdapter.addCard()
         }

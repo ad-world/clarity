@@ -22,31 +22,39 @@ import java.io.File
 
 class PracticeSetActivity() : AppCompatActivity() {
 
-    private val recorder by lazy {
-        AndroidAudioRecorder(applicationContext)
-    }
+    // Recorder and Player
+    private val recorder by lazy { AndroidAudioRecorder(applicationContext) }
+    private val player by lazy { AndroidAudioPlayer(applicationContext) }
 
-    private val player by lazy {
-        AndroidAudioPlayer(applicationContext)
-    }
-
+    // Audio File
     private var audioFile: File? = null
 
+    // Toggle to check if we are currently recording
     private var isRecording = false
+
+    // ClaritySDK api for endpoint calls
     private val api = ClaritySDK().apiService
 
+    // Index that stores the current card being displayed
     var index = 0
+
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Request permission to record
         ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.RECORD_AUDIO), 0)
+
+        // Set View
         setContentView(R.layout.activity_practice_set)
 
+        // Get Set that was started
         val intent = intent
         val setJson = intent.getStringExtra("set")
         val gson = Gson()
         val set = gson.fromJson(setJson, Set::class.java)
 
+        // Get all view components
         val tvTitle = findViewById<TextView>(R.id.tvTitle)
         val iBtnClose = findViewById<ImageButton>(R.id.iBtnClose)
         val iBtnMic = findViewById<ImageButton>(R.id.iBtnMic)
@@ -55,42 +63,61 @@ class PracticeSetActivity() : AppCompatActivity() {
         val cvPopUp = findViewById<CardView>(R.id.cvPopUp)
         val progressBar = findViewById<ProgressBar>(R.id.progressBar)
         val tvCompletedCount = findViewById<TextView>(R.id.tvCompletedPhrases)
+
+        // Initialize Progress Bar, Completed Count, and Title
         progressBar.progress = ((index + 1) * 100) / set.cards.size
         tvCompletedCount.text = "Phrase ${index + 1} / ${set.cards.size}"
-
         tvTitle.text = set.title
+
+        // Handle Close button, which automatically closes practice session
         iBtnClose.setOnClickListener {
             finish()
         }
 
+        // Handle Mic button click
         iBtnMic.setOnClickListener {
+            // CASE 1: Not Recording -> Recording
             if (!isRecording) {
-                // TODO: Change UI of button to reflect ongoing recording
-                //  ...
+                // Disable Navigation Buttons
                 iBtnNext.isEnabled = false
                 iBtnPrev.isEnabled = false
+
+                // Ensure Result Pop up is Gone
                 cvPopUp.visibility = View.GONE
+
+                // Change UI of button
                 iBtnMic.setBackgroundResource(R.drawable.setclosebutton)
                 iBtnMic.setImageResource(R.drawable.baseline_mic_24_white)
+
+                // Create file, and start recording, while storing recording in file
                 File(cacheDir, "audio.wav").also {
                     recorder.start(it)
                     audioFile = it
                 }
+
+            // CASE 2: Recording -> Not Recording
             } else {
-                // TODO Change UI of button to reflect recording stopped
-                //  ...
+                // Change UI of button
                 iBtnMic.setBackgroundResource(R.drawable.roundcorner)
                 iBtnMic.setImageResource(R.drawable.baseline_mic_24)
+
+                // Stop Recording
                 recorder.stop()
 
+                // Return Accuracy Score and Display Popup
                 val score = getAccuracyScore(File(cacheDir, "audio.wav"))
                 displayMessagePopup(score)
+
+                // Enable Navigation Buttons
                 iBtnNext.isEnabled = true
                 iBtnPrev.isEnabled = true
             }
+
+            // Toggle isRecording Value
             isRecording = !isRecording
         }
 
+        // Handle Forward Navigation
         iBtnNext.setOnClickListener {
             if (index < set.cards.size - 1) {
                 index++
@@ -106,6 +133,7 @@ class PracticeSetActivity() : AppCompatActivity() {
             }
         }
 
+        // Handle Backward Navigation
         iBtnPrev.setOnClickListener {
             if (index > 0) {
                 index--
@@ -121,19 +149,23 @@ class PracticeSetActivity() : AppCompatActivity() {
             }
         }
 
+        // Load Initial Card
         loadCard(set.cards[index])
     }
 
+    // Handles setting the UI for the current card
     private fun loadCard(card: Card) {
         val tvCardPhrase = findViewById<TextView>(R.id.tvCardPhrase)
         tvCardPhrase.text = card.phrase
     }
 
+    // Returns accuracy score
     private fun getAccuracyScore(file: File): Int {
         // TODO: make this work later
         return 100
     }
 
+    // Display popup
     @SuppressLint("SetTextI18n")
     private fun displayMessagePopup(score: Int)  {
         val cvPopUp = findViewById<CardView>(R.id.cvPopUp)
@@ -147,6 +179,5 @@ class PracticeSetActivity() : AppCompatActivity() {
         }
 
         cvPopUp.visibility = View.VISIBLE
-        // Log.d("Tag Visibility 1", cvPopUp.visibility.toString())
     }
 }
