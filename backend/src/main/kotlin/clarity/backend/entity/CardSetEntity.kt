@@ -181,7 +181,7 @@ class CardSetEntity() {
         val username = request.username
         try {
             val statement = db!!.createStatement();
-            val query = "SELECT c.[set_id], c.title, c.type FROM CardSet c, User u WHERE u.username = '$username' AND u.user_id = c.creator_id"
+            val query = "SELECT c.[set_id], c.title, c.type, c.is_public_ind, c.likes FROM CardSet c, User u WHERE u.username = '$username' AND u.user_id = c.creator_id"
             val resultSet = statement.executeQuery(query);
 
             val setList = mutableListOf<SetMetadata>()

@@ -27,7 +27,14 @@ class AttemptsController {
     }
 
     @PostMapping("/attemptCard")
-    fun attemptCard(@RequestBody attempt: CreateAttemptEntity): ResponseEntity<CreateAttemptResponse> {
+    fun attemptCard(@RequestParam("user_id") user_id: Int, @RequestParam("card_id") card_id: Int, @RequestParam("set_id") set_id: Int, @RequestParam("audio") audio: MultipartFile): ResponseEntity<CreateAttemptResponse> {
+        val attempt = CreateAttemptEntity(
+            user_id = user_id,
+            set_id = set_id,
+            card_id = card_id,
+            audio = audio
+        )
+
         val attemptResponse = attemptEntity.createAttempt(attempt);
 
         return if(attemptResponse.response == StatusResponse.Success) {

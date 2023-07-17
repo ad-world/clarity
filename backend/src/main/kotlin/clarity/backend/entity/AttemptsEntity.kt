@@ -2,6 +2,7 @@ package clarity.backend.entity
 
 import SpeechAPIResponse
 import clarity.backend.DataManager
+import clarity.backend.controllers.ErrorType
 import clarity.backend.controllers.SpeechAnalysis
 import org.springframework.web.multipart.MultipartFile
 import java.time.LocalDateTime
@@ -37,14 +38,18 @@ class AttemptsEntity {
 
             val json = analysis.json
             val result = analysis.assessmentResult
-                ?: throw Exception("Speech analaysis result was null - don't record this attempt")
+                ?: throw Exception("Speech analysis result was null - don't record this attempt")
 
             val pronunciationScore = result.pronunciationScore
             val fluencyScore = result.fluencyScore
             val accuracyScore = result.accuracyScore
             val completenessScore = result.completenessScore
 
-            val attemptMetadata = AttemptMetadata(set_id, user_id, card_id, listOf(), listOf(), listOf(),
+            val omissions = speechAnalyzer.findErrorType(json, ErrorType.Omission)
+            val mispronunciations = speechAnalyzer.findErrorType(json, ErrorType.Mispronunciation)
+            val insertions = speechAnalyzer.findErrorType(json, ErrorType.Insertion)
+
+            val attemptMetadata = AttemptMetadata(set_id, user_id, card_id, mispronunciations, omissions, insertions,
                 pronunciationScore, accuracyScore, fluencyScore, completenessScore, json)
 
             val currentDate = LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME);

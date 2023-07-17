@@ -1,12 +1,14 @@
 package com.example.clarity.sdk
 
 
+import okhttp3.MultipartBody
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.Part
 import retrofit2.http.Query
 
 enum class StatusResponse {
@@ -68,7 +70,7 @@ interface API {
     suspend fun getSetsByUsername(@Query("username") username: String): Response<GetSetsByUsernameResponse>
 
     @POST("attemptCard")
-    suspend fun attemptCard(@Body attempt: CreateAttemptEntity): Response<CreateAttemptResponse>
+    suspend fun attemptCard(@Part("user_id") userId: Int, @Part("card_id") cardId: Int, @Part("set_id") setId: Int, @Part audio: MultipartBody.Part): Response<CreateAttemptResponse>
 
     @POST("getAttemptAverage")
     suspend fun getUserAverageAttempts(@Body request: GetUserAverageAttemptsRequest): Response<GetUserAverageAttemptsResponse>
@@ -86,7 +88,7 @@ interface API {
     suspend fun getUserAttemptsForSet(@Body request: GetAttemptsForSetEntity): Response<GetAttemptsForSetResponse>
 
     @POST("classroom/attemptCard")
-    suspend fun attemptClassroomCard(@Body request: CreateClassroomAttemptEntity): Response<CreateClassroomAttemptResponse>
+    suspend fun attemptClassroomCard(@Part("user_id") userId: Int, @Part("card_id") cardId: Int, @Part("task_id") task_id: Int, @Part audio: MultipartBody.Part): Response<CreateClassroomAttemptResponse>
 
     @GET("classroom/getTaskAttempts")
     suspend fun getTaskAttempts(@Query("task") task: Int): Response<GetTaskAttemptsResponse>
