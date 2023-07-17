@@ -39,6 +39,8 @@ Entries with start time and end times that span multiple days with have exactly 
 | D4 Work (pipe and filter) | 1 hour | 11:30 AM | 12:30 AM | July 12th, 2023 | N/A |
 | Attach speech functionality to attempts controller, parse json | ~4 hours | 8:00 AM | 4:00 PM | July 12th, 2023 | [Attach speech functionality, json](https://github.com/ad-world/clarity/commit/d7d688d9ab07e0d8f312a5709f622981ef3b145a) |
 | Refactor create card and create card set | 1 hour | 11:00 PM | 12:00 AM | July 12-13th, 2023 | [Refactor create card and create card set](https://github.com/ad-world/clarity/commit/64cbbae91372c0faab580681b93122dbf485675c) |
+| Architecture meeting | 1 hour | 2:30 PM | 3:30 PM | July 17th, 2023 | N/A |
+| Find words with errors (omission, insertion, pronunciation) and refactor attempts endpoint | 2 hours | July 16th, 4:00 PM | July 17th, 4:00 PM | July 16th - July 17th, 2023 | [Find words w/ errors, refactor attemps](https://github.com/ad-world/clarity/commit/90a8089b212eebbd385544cd1c5b7e880099efec) |
 
 
-Total time spent as of July 13th, 2023: 42 hours
+Total time spent as of July 13th, 2023: 45 hours
