@@ -1,7 +1,6 @@
 package clarity.backend.entity
 
 import clarity.backend.DataManager
-import java.util.UUID
 
 // request formats
 data class JoinClassroomEntity(val privateCode: String, val userID: String)
@@ -16,8 +15,12 @@ data class JoinClassroomResponse(val response: StatusResponse, val id: String)
 data class GetClassroomResponse(val response: StatusResponse, val id: List<String>)
 
 class ClassroomEntity() {
-
-
+    private fun getRandomString(length: Int) : String {
+        val charset = "ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz0123456789"
+        return (1..length)
+            .map { charset.random() }
+            .joinToString("")
+    }
     fun joinClass(classroom : JoinClassroomEntity) : JoinClassroomResponse {
         val db = DataManager.conn()
         try {
@@ -40,15 +43,28 @@ class ClassroomEntity() {
         val db = DataManager.conn()
         try {
             val statement = db!!.createStatement()
-            val newUUID = UUID.randomUUID().toString()
+            // must check if new string already exists in the table
+            var newId = getRandomString(6)
+            val selectStatement = """
+                SELECT private_code FROM Classroom
+            """.trimIndent()
+            val ids = mutableListOf<String>()
+            val resultCheck = statement.executeQuery(selectStatement)
+            if (resultCheck.next()) {
+                var className = resultCheck.getString("private_code")
+                ids.add(className)
+            }
+            while (newId in ids) {
+                newId = getRandomString(6)
+            }
             val insertStatement = """
                 INSERT INTO Classroom (private_code, name, teacher)
                 VALUES(
-                '${newUUID}', '${classroom.name}', '${classroom.teacher}'
+                '${newId}', '${classroom.name}', '${classroom.teacher}'
                 )
             """.trimIndent()
             val result = statement.executeUpdate(insertStatement)
-            return CreateClassroomResponse(StatusResponse.Success, newUUID)
+            return CreateClassroomResponse(StatusResponse.Success, newId)
         } catch(e: Exception) {
             e.printStackTrace();
             return CreateClassroomResponse(StatusResponse.Failure, "Failed to create class")

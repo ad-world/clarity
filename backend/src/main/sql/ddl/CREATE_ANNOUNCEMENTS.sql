@@ -5,6 +5,6 @@ CREATE TABLE IF NOT EXISTS Announcements (
     class_id TEXT NOT NULL,
     text TEXT NOT NULL,
     description TEXT NOT NULL,
-    date TEXT NOT NULL,
+    dateCreated TEXT NOT NULL,
     FOREIGN KEY (class_id) REFERENCES Classroom(private_code)
 )
