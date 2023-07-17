@@ -50,7 +50,7 @@ class ClassroomEntity() {
             """.trimIndent()
             val ids = mutableListOf<String>()
             val resultCheck = statement.executeQuery(selectStatement)
-            while (resultCheck.next()) {
+            if (resultCheck.next()) {
                 var className = resultCheck.getString("private_code")
                 ids.add(className)
             }

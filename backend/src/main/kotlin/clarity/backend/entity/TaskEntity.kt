@@ -21,9 +21,7 @@ class TaskEntity() {
                 '${task.classId}', ${task.sets.toInt()}, '${task.name}', '${task.description}', '${task.dueDate}'
                 )
             """.trimIndent()
-            println("about to exec")
             val result = statement.executeUpdate(insertStatement)
-            println(result)
             return CreateTaskResponse(StatusResponse.Success, "Task Created")
         } catch(e: Exception) {
             e.printStackTrace();
