@@ -2,6 +2,7 @@ package clarity.backend.entity
 
 import SpeechAPIResponse
 import clarity.backend.DataManager
+import clarity.backend.controllers.ErrorType
 import clarity.backend.controllers.SpeechAnalysis
 import org.springframework.web.multipart.MultipartFile
 import java.time.LocalDateTime
@@ -48,7 +49,11 @@ class ClassroomAttemptsEntity {
             val accuracyScore = result.accuracyScore
             val completenessScore = result.completenessScore
 
-            val attemptMetadata = ClassroomAttemptMetadata(task_id, user_id, card_id, listOf(), listOf(), listOf(),
+            val omissions = speechAnalyzer.findErrorType(json, ErrorType.Omission)
+            val mispronunciations = speechAnalyzer.findErrorType(json, ErrorType.Mispronunciation)
+            val insertions = speechAnalyzer.findErrorType(json, ErrorType.Insertion)
+
+            val attemptMetadata = ClassroomAttemptMetadata(task_id, user_id, card_id, mispronunciations, omissions, insertions,
                 pronunciationScore, accuracyScore, fluencyScore, completenessScore, json)
 
             val currentDate = LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME)

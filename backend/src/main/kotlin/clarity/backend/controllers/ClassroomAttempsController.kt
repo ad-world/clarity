@@ -3,6 +3,7 @@ package clarity.backend.controllers
 import clarity.backend.entity.*
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.multipart.MultipartFile
 
 @RestController
 @RequestMapping("/classroom")
@@ -10,7 +11,14 @@ class ClassroomAttemptsController {
     private val classroomAttemptsEntity = ClassroomAttemptsEntity()
 
     @PostMapping("/attemptCard")
-    fun attemptCard(@RequestBody attempt: CreateClassroomAttemptEntity): ResponseEntity<CreateClassroomAttemptResponse> {
+    fun attemptCard(@RequestParam("user_id") user_id: Int, @RequestParam("card_id") card_id: Int, @RequestParam("task_id") task_id: Int, @RequestParam("audio") audio: MultipartFile): ResponseEntity<CreateClassroomAttemptResponse> {
+        val attempt = CreateClassroomAttemptEntity(
+            task_id = task_id,
+            user_id = user_id,
+            card_id = card_id,
+            audio = audio
+        )
+
         val attemptResponse = classroomAttemptsEntity.createClassroomAttempts(attempt);
 
         return if(attemptResponse.response == StatusResponse.Success) {

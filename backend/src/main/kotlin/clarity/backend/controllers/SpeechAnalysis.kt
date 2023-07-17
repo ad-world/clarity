@@ -10,6 +10,11 @@ import io.github.cdimascio.dotenv.dotenv
 import org.springframework.web.multipart.MultipartFile
 import java.util.concurrent.TimeUnit
 
+enum class ErrorType {
+    Mispronunciation,
+    Insertion,
+    Omission
+}
 
 data class SpeechAnalysisResult(val json: SpeechAPIResponse, val assessmentResult: PronunciationAssessmentResult?)
 
@@ -43,8 +48,6 @@ class SpeechAnalysis {
             val tempFile = TemporaryFileStorage();
             val filePath = tempFile.storeFile(file)
             val config: AudioConfig = AudioConfig.fromWavFileInput(filePath)
-            speechConfig?.setProperty(PropertyId.SpeechServiceConnection_InitialSilenceTimeoutMs, "5000")
-            speechConfig?.setProperty(PropertyId.SpeechServiceConnection_EndSilenceTimeoutMs, "5000");
 
             val speechRecognizer = SpeechRecognizer(speechConfig, config)
             val assessmentConfig = PronunciationAssessmentConfig(
@@ -66,7 +69,6 @@ class SpeechAnalysis {
             val parsedResponse: SpeechAPIResponse = gson.fromJson(pronunciationAssessmentResultJson, SpeechAPIResponse::class.java)
 
             speechRecognizer.close()
-            speechConfig?.close()
             config.close()
             assessmentConfig.close()
             result.close()
@@ -78,5 +80,23 @@ class SpeechAnalysis {
             e.printStackTrace();
             return null;
         }
+    }
+
+    fun findErrorType(response: SpeechAPIResponse, errorType: ErrorType): List<String> {
+        val mispronounced = mutableListOf<String>()
+
+        if(response.nBest.isNullOrEmpty()) {
+            return mispronounced;
+        }
+
+        val words = response.nBest[0].words;
+        for (wordObject in words) {
+            val assessment = wordObject.pronunciationAssessment;
+            if(assessment.errorType != null && assessment.errorType == errorType.name) {
+                mispronounced.add(wordObject.word)
+            }
+        }
+
+        return mispronounced
     }
 }
