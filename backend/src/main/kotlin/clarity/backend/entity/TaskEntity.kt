@@ -4,7 +4,7 @@ import clarity.backend.DataManager
 import java.util.Date
 
 data class Task(val taskId: Int, val classId: String, val setId: Int, val name: String, val description: String, val dueDate: String?)
-data class CreateTaskEntity(val classId: String, val setId: Int, val name: String, val description: String, val dueDate: String?)
+data class CreateTaskEntity(val classId: String, val sets: String, val name: String, val description: String, val dueDate: String)
 
 data class GetTasksEntity(val classId: String)
 
@@ -16,12 +16,14 @@ class TaskEntity() {
         try {
             val statement = db!!.createStatement()
             val insertStatement = """
-                INSERT INTO Tasks (class_id, set_id, name, description, due_date)
+                INSERT INTO Tasks (class_id, [set_id], name, description, due_date)
                 VALUES(
-                '${task.classId}', '${task.setId}', '${task.name}', '${task.description}', '${task.dueDate}'
+                '${task.classId}', ${task.sets.toInt()}, '${task.name}', '${task.description}', '${task.dueDate}'
                 )
             """.trimIndent()
+            println("about to exec")
             val result = statement.executeUpdate(insertStatement)
+            println(result)
             return CreateTaskResponse(StatusResponse.Success, "Task Created")
         } catch(e: Exception) {
             e.printStackTrace();

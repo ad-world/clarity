@@ -30,6 +30,7 @@ class DataManager {
         executeSqlFile("ddl/CREATE_TASKS.sql")
         executeSqlFile("ddl/CREATE_ATTEMPTS.sql")
         executeSqlFile("ddl/CREATE_CLASSROOM_ATTEMPTS.sql")
+        executeSqlFile("ddl/CREATE_ANNOUNCEMENTS.sql")
         executeSqlFile("ddl/CREATE_FOLLOWING.sql")
     }
 
