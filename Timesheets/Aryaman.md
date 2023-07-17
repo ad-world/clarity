@@ -43,4 +43,4 @@ Entries with start time and end times that span multiple days with have exactly 
 | Find words with errors (omission, insertion, pronunciation) and refactor attempts endpoint | 2 hours | July 16th, 4:00 PM | July 17th, 4:00 PM | July 16th - July 17th, 2023 | [Find words w/ errors, refactor attemps](https://github.com/ad-world/clarity/commit/90a8089b212eebbd385544cd1c5b7e880099efec) |
 
 
-Total time spent as of July 13th, 2023: 45 hours
+Total time spent as of July 17th, 2023: 45 hours
