@@ -35,7 +35,7 @@ class TaskEntity() {
             val db = DataManager.conn()
             val statement = db!!.createStatement()
             val selectStatement = """
-                SELECT * FROM Tasks WHERE class_id = ${classroom.classId}
+                SELECT * FROM Tasks WHERE class_id = '${classroom.classId}'
             """.trimIndent()
             val taskIds = mutableListOf<Task>()
             val result = statement.executeQuery(selectStatement)
@@ -57,5 +57,4 @@ class TaskEntity() {
             return GetTasksResponse(StatusResponse.Failure, resultPlaceholder)
         }
     }
-
 }

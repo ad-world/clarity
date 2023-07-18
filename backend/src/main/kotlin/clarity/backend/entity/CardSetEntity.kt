@@ -24,9 +24,6 @@ data class GetCardsInSetResponse(val response: StatusResponse, val cards: List<C
 data class GetSetsResponse(val response: StatusResponse, val sets: List<String>)
 data class GetDataForSetResponse(val response: StatusResponse, val data: List<String>)
 data class GetSetsByUsernameResponse(val response: StatusResponse, val data: List<SetMetadata>)
-data class GetProgressForSetResponse(val response: StatusResponse, val progress: Int)
-data class UpdateProgressForSetResponse(val response: StatusResponse, val msg: String)
-
 data class CompleteCardRequest(val user_id: Int, val card: Int, val set: Int)
 
 data class CompleteCardResponse(val response: StatusResponse, val msg: String, val card_id: Int, val set_id: Int, val user_id: Int)
@@ -291,7 +288,6 @@ class CardSetEntity() {
     }
 
     fun getUserSetProgress(request: GetUserSetProgressRequest): GetUserSetProgressResponse {
-        val conn = DataManager.conn()
         val (set, user) = request
         try {
             val cards = this.getTotalCardsFromSet(GetCardsInSetRequest(set))
