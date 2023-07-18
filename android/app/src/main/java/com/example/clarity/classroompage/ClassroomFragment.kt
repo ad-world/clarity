@@ -150,35 +150,35 @@ class ClassroomFragment : Fragment() {
             // creating a listener action for the join class button
             val joinClassButton = view.findViewById<Button>(R.id.btnJoinClass)
             joinClassButton.setOnClickListener {
-                // if joining class was a success, showJoinClassDialog should return true-
-                val successfullyJoined = runBlocking { showJoinClassDialog() }
-                if (successfullyJoined) {
-                    println("success here")
-                    // set switch to true to show student classes
-                    materialSwitch.isChecked = true
-                    materialSwitch.text = "Show Your Classes"
-                    // make api call to get the list of student class names from the backend
-                    var classesResponse : Response<GetClassroomResponse> = runBlocking {
-                        return@runBlocking api.getClassesStudent(uid.toString())
-                    }
-                    // confirm if response was received
-                    if (classesResponse != null && classesResponse.body()?.response == StatusResponse.Success) {
-                        val retrievedClassList = classesResponse.body()?.id // list of class names
-                        if (retrievedClassList != null) {
-                            classes.clear()
-                            // loop over each class name item and add it to the classes list
-                            for (className in retrievedClassList) {
-                                classes.add(Pair(className.name, className.code))
+                // if joining class was a success, showJoinClassDialog should return true
+                showJoinClassDialog { successfullyJoined ->
+                    if (successfullyJoined) {
+                        // set switch to true to show student classes
+                        materialSwitch.isChecked = true
+                        materialSwitch.text = "Show Your Classes"
+                        // make api call to get the list of student class names from the backend
+                        var classesResponse : Response<GetClassroomResponse> = runBlocking {
+                            return@runBlocking api.getClassesStudent(uid.toString())
+                        }
+                        // confirm if response was received
+                        if (classesResponse != null && classesResponse.body()?.response == StatusResponse.Success) {
+                            val retrievedClassList = classesResponse.body()?.id // list of class names
+                            if (retrievedClassList != null) {
+                                classes.clear()
+                                // loop over each class name item and add it to the classes list
+                                for (className in retrievedClassList) {
+                                    classes.add(Pair(className.name, className.code))
+                                }
                             }
                         }
+                        // adding the list classes to the recycler view (with recycler custom ClassAdapter)
+                        classAdapter = ClassAdapter(classes) { className ->
+                            val intent = Intent(requireContext(), Classroom::class.java)
+                            intent.putExtra("className", className.first)
+                            startActivity(intent)
+                        }
+                        recyclerView.adapter = classAdapter
                     }
-                    // adding the list classes to the recycler view (with recycler custom ClassAdapter)
-                    classAdapter = ClassAdapter(classes) { className ->
-                        val intent = Intent(requireContext(), Classroom::class.java)
-                        intent.putExtra("className", className.first)
-                        startActivity(intent)
-                    }
-                    recyclerView.adapter = classAdapter
                 }
             }
 
@@ -193,8 +193,7 @@ class ClassroomFragment : Fragment() {
 
         // create a alert dialog when the join class button is pressed. Give the user the option to
         // enter the class code of the class they wish to join.
-        private fun showJoinClassDialog(): Boolean {
-            var success = AtomicBoolean(false)
+        private fun showJoinClassDialog(callback: (Boolean) -> Unit) {
             val dialogBuilder = AlertDialog.Builder(requireContext())
             dialogBuilder.setTitle("Join Class")
             val input = EditText(requireContext())
@@ -206,20 +205,17 @@ class ClassroomFragment : Fragment() {
             // take action if user joins a class
             dialogBuilder.setPositiveButton("Join") { dialog, _ ->
                 val classCode = input.text.toString() // get user's class code input
-
                 // create request body for join classroom api
                 var req = JoinClassroomEntity(classCode, uid.toString())
                 // get response from join classroom api
                 var response : Response<JoinClassroomResponse> = runBlocking {
                     return@runBlocking api.joinClass(req)
                 }
-                println(response.body())
                 // check if the user entered the correct code (i.e. if backend returned the correct response)
                 if (response.body()?.response == StatusResponse.Success &&
                     response.body()?.id == "Classroom Joined") {
                     // add to list of joined classroom
-                    println("success set here")
-                    success.set(true)
+                    callback(true)
                     // switch screen and switch to the class page
 //                    val intent = Intent(activity, Classroom::class.java)
 //                    startActivity(intent)
@@ -227,13 +223,11 @@ class ClassroomFragment : Fragment() {
             }
             // do nothing if user cancels the dialog box
             dialogBuilder.setNegativeButton("Cancel") { dialog, _ ->
-                success.set(false)
+                callback(false)
                 dialog.dismiss()
             }
             // create and sow the dialog
             val dialog = dialogBuilder.create()
             dialog.show()
-            println("printing return: ${success.get()}")
-            return success.get()
         }
 }
