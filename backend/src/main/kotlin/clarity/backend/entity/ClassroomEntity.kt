@@ -104,13 +104,15 @@ class ClassroomEntity() {
         try {
             val statement = db!!.createStatement()
             val selectStatement = """
-                SELECT * FROM ClassroomStudents WHERE user_id = $userId
+                SELECT * FROM ClassroomStudents INNER JOIN Classroom 
+                ON ClassroomStudents.class_id = Classroom.private_code
+                WHERE user_id = $userId
             """.trimIndent()
             val classNames = mutableListOf<ClassroomReturnObject>()
             val result = statement.executeQuery(selectStatement)
             while (result.next()) {
                 var className = ClassroomReturnObject(
-                    result.getString("private_code"),
+                    result.getString("class_id"),
                     result.getString("name")
                 )
                 classNames.add(className)
