@@ -5,11 +5,11 @@ data class UserWithId(val user_id: Int, val username: String, val email: String,
 data class ClassroomAttemptMetadata(
     val task_id: Int, val user_id: Int, val card_id: Int, val mispronunciations: List<String>,
     val omissions: List<String>, val insertions: List<String>, val pronunciationScore: Double, val accuracyScore: Double,
-    val fluencyScore: Double, val completenessScore: Double, val speechAPIResponse: SpeechAPIResponse)
+    val fluencyScore: Double, val completenessScore: Double, val speechAPIResponse: SpeechAPIResponse, val is_complete: Boolean)
 data class AttemptMetadata(
     val set_id: Int, val user_id: Int, val card_id: Int, val mispronunciations: List<String>,
     val omissions: List<String>, val insertions: List<String>, val pronunciationScore: Double, val accuracyScore: Double,
-    val fluencyScore: Double, val completenessScore: Double, val speechAPIResponse: SpeechAPIResponse)
+    val fluencyScore: Double, val completenessScore: Double, val speechAPIResponse: SpeechAPIResponse, val is_complete: Boolean)
 data class CardAttempt(val user_id: Int, val card_id: Int, val set_id: Int, val pronunciationScore: Double? = null, val accuracyScore: Double? = null,
                        val fluencyScore: Double? = null, val completenessScore: Double? = null, val attemptDate: String)
 data class Card(val card_id: Int, val phrase: String, val title: String)
