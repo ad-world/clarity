@@ -15,19 +15,31 @@
         <TextView
             android:id="@+id/welcomeTextView"
             android:layout_width="wrap_content"
-            android:layout_height="52dp"
-            android:layout_marginTop="28dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
             android:text="Classroom"
             android:textSize="34sp"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.497"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <!--        <ToggleButton-->
+<!--            android:id="@+id/toggleClasses"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginTop="16dp"-->
+<!--            android:textOff="Show Joined Classes"-->
+<!--            android:textOn="Show Created Classes"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toBottomOf="@id/btnCreateClass" />-->
 
         <Button
             android:id="@+id/btnJoinClass"
             android:layout_width="143dp"
             android:layout_height="58dp"
-            android:layout_marginTop="96dp"
+            android:layout_marginTop="72dp"
             android:text="Join Class"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.145"
@@ -38,21 +50,21 @@
             android:id="@+id/btnCreateClass"
             android:layout_width="143dp"
             android:layout_height="58dp"
-            android:layout_marginTop="96dp"
+            android:layout_marginTop="72dp"
             android:text="Create Class"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.839"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <ToggleButton
-            android:id="@+id/toggleClasses"
+        <com.google.android.material.materialswitch.MaterialSwitch
+            android:id="@+id/toggleClass"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:textOff="Show Joined Classes"
-            android:textOn="Show Created Classes"
+            android:layout_height="0dp"
+            android:checked="true"
+            android:text="Showing Joined Classes"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.497"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/btnCreateClass" />
 
@@ -60,14 +72,13 @@
             android:id="@+id/tvClassHeader"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
             android:text="Classes"
             android:textAppearance="@style/TextAppearance.AppCompat.Display1"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.013"
+            app:layout_constraintHorizontal_bias="0.498"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/toggleClasses" />
+            app:layout_constraintTop_toBottomOf="@id/toggleClass" />
 
         <TextView
             android:id="@+id/blankSpace"

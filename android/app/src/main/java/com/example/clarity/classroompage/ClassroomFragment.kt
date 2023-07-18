@@ -21,6 +21,7 @@ import com.example.clarity.sdk.GetClassroomResponse
 import com.example.clarity.sdk.JoinClassroomEntity
 import com.example.clarity.sdk.JoinClassroomResponse
 import com.example.clarity.sdk.StatusResponse
+import com.google.android.material.materialswitch.MaterialSwitch
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import retrofit2.Response
@@ -58,21 +59,38 @@ class ClassroomFragment : Fragment() {
             }
 
             // declare a list to show the different classrooms user is currently enrolled in
-            val classes = arrayOf<String>()
+            val classes = mutableListOf<String>()
 
+            // toggle switch between student and teacher classes
+            var materialSwitch = view.findViewById<MaterialSwitch>(R.id.toggleClass)
+
+            // update clas list according to toggle switch
+            materialSwitch.setOnCheckedChangeListener { switch, isChecked ->
+                // if toggle is on, show student classes (i.e. classes user has joined)
+                if (isChecked) {
+                    switch.text = "Showing Joined Classes "
+                }
+                // otherwise show teacher's class (i.e. classes that the user has created)
+                else {
+                    switch.text = "Showing Your Classes"
+                }
+            }
+
+            println("good here1")
             // make api call to get the list of class names from the backend
             var classesResponse : Response<GetClassroomResponse> = runBlocking {
                 return@runBlocking api.getClasses(uid.toString())
             }
+            println("good here2")
 
             // confirm if response was received
-            if (classesResponse.body()?.response == StatusResponse.Success) {
+            if (classesResponse != null && classesResponse.body()?.response == StatusResponse.Success) {
                 val retrievedClassList = classesResponse.body()?.id // list of class names
 
                 if (retrievedClassList != null) {
                     // loop over each class name item and add it to the classes list
                     for (className in retrievedClassList) {
-                        classes.plus(className)
+                        classes.add(className)
                     }
                 }
             }
