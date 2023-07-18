@@ -2,8 +2,8 @@ package clarity.backend.entity
 
 import SpeechAPIResponse
 import clarity.backend.DataManager
-import clarity.backend.controllers.ErrorType
-import clarity.backend.controllers.SpeechAnalysis
+import clarity.backend.util.ErrorType
+import clarity.backend.util.SpeechAnalysis
 import org.springframework.web.multipart.MultipartFile
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -48,6 +48,10 @@ class AttemptsEntity {
             val omissions = speechAnalyzer.findErrorType(json, ErrorType.Omission)
             val mispronunciations = speechAnalyzer.findErrorType(json, ErrorType.Mispronunciation)
             val insertions = speechAnalyzer.findErrorType(json, ErrorType.Insertion)
+
+            val shouldComplete = speechAnalyzer.shouldCompleteCard(result, omissions, mispronunciations, insertions)
+
+            if(shouldComplete) CardSetEntity().completeCardInUserSet(CompleteCardRequest(user_id = user_id, card = card_id, set = set_id))
 
             val attemptMetadata = AttemptMetadata(set_id, user_id, card_id, mispronunciations, omissions, insertions,
                 pronunciationScore, accuracyScore, fluencyScore, completenessScore, json)
