@@ -6,6 +6,7 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Part
@@ -102,7 +103,32 @@ interface API {
     @GET("classroom/getClassAttempts")
     suspend fun getClassAttempts(@Query("classroom") classroom: String): Response<GetClassAttemptsResponse>
 
+    @POST("createTask")
+    suspend fun createTask(@Body task: CreateTaskEntity) : Response<CreateTaskResponse>
 
+    @POST("getTasksList")
+    suspend fun getTasks(@Body classId: GetTasksEntity) : Response<GetTasksResponse>
+
+    @POST("addAnnouncement")
+    suspend fun addAnnouncement(@Body announcement: CreateAnnouncementEntity) : Response<AnnouncementResponse>
+
+    @DELETE("deleteAnnouncement")
+    suspend fun deleteAnnouncement(@Query("id") id: Int) : Response<AnnouncementResponse>
+
+    @GET("getAnnouncements")
+    suspend fun getAnnouncements(@Query("classId") classId: String) : Response<GetAnnouncementsResponse>
+
+    @POST("follow")
+    suspend fun follow(@Body request: FollowingRequestEntity) : Response<FollowingResponse>
+
+    @POST("unfollow")
+    suspend fun unfollow(@Body request: FollowingRequestEntity) : Response<FollowingResponse>
+
+    @GET("getFollowing")
+    suspend fun getFollowing(@Query("userId") userId: Int) : Response<FollowerListResponse>
+
+    @GET("getFollowers")
+    suspend fun getFollowers(@Query("userId") userId: Int) : Response<FollowerListResponse>
 
 //    @POST("getProgressForSet")
 //    suspend fun getProgressForSet(@Body req: GetProgressForSetRequest) : Response<GetProgressForSetResponse>

@@ -23,6 +23,9 @@ data class GetUserSetProgressResponse(val response: StatusResponse, val set_id: 
 data class GetUserAverageAttemptsRequest(val user_id: Int)
 data class PhraseSearchEntity(val phrase: String)
 data class GetAttemptsForSetEntity(val user: Int, val set: Int)
-
+data class CreateTaskEntity(val classId: String, val sets: String, val name: String, val description: String, val dueDate: String)
+data class GetTasksEntity(val classId: String)
+data class CreateAnnouncementEntity(val classId: String, val text: String, val description: String, val date: String)
+data class FollowingRequestEntity(val userId: Int, val followingId: Int)
 
 
