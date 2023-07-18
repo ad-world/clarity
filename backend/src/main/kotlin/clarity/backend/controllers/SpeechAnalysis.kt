@@ -34,7 +34,6 @@ class SpeechAnalysis {
             speechKey = dotenv["SPEECH_KEY"]?: ""
             speechConfig = SpeechConfig.fromSubscription(speechKey, speechRegion)
         } catch (e: Exception) {
-            println("catching exception here")
             speechKey = ""
             speechRegion = ""
             speechConfig = null
