@@ -1,8 +1,10 @@
 package clarity.backend.entity
 
 import clarity.backend.DataManager
-import java.lang.Exception
 import java.sql.Statement
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import kotlin.Exception
 
 // Request Formats.
 data class CreateCardSetEntity(val creator_id: Int, val title: String, val type: String, val progress: Int)
@@ -25,8 +27,20 @@ data class GetSetsByUsernameResponse(val response: StatusResponse, val data: Lis
 data class GetProgressForSetResponse(val response: StatusResponse, val progress: Int)
 data class UpdateProgressForSetResponse(val response: StatusResponse, val msg: String)
 
+data class CompleteCardRequest(val user_id: Int, val card: Int, val set: Int)
+
+data class CompleteCardResponse(val response: StatusResponse, val msg: String, val card_id: Int, val set_id: Int, val user_id: Int)
+
+data class GetCompletedCardsInSetResponse(val response: StatusResponse, val cards: List<CardInSet>)
+
+data class GetUserSetProgressResponse(val response: StatusResponse, val set_id: Int, val user_id: Int, val numCards: Int, val numCompletedCards: Int, val cards: List<Card>, val completedCard: List<CardInSet>)
+
 // Util Formats
 data class SetMetadata(val set_id: Int, val title: String, val type: String, val is_public: Boolean, val likes: Int)
+data class GetUserSetProgressRequest(val set_id: Int, val user_id: Int)
+
+data class CardInSet(val card_id: Int, val set_id: Int, val completion_date: String?)
+
 class CardSetEntity() {
 
 
@@ -204,36 +218,108 @@ class CardSetEntity() {
         }
     }
 
-//    fun getProgressForSet(request: GetProgressForSetRequest) : GetProgressForSetResponse {
-//        val db = DataManager.conn();
-//        val set_id = request.set_id;
-//        var progress: Int = 0;
-//        try {
-//            val stmt = db!!.createStatement();
-//            val query = "SELECT progress FROM CardSet WHERE [set_id] = $set_id";
-//            val result = stmt.executeQuery(query);
-//            if (result.next()) {
-//                progress = result.getInt("progress")
-//            }
-//            return GetProgressForSetResponse(StatusResponse.Success, progress)
-//        } catch (e: Exception) {
-//            return GetProgressForSetResponse(StatusResponse.Failure, 0)
-//        }
-//    }
+    fun completeCardInUserSet(request: CompleteCardRequest): CompleteCardResponse {
+        val db = DataManager.conn()
+        val (user_id, card, set) = request
+        try {
+            val statement = db!!.createStatement()
+            val localTime = LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME)
+            val updateQuery = "UPDATE CardInSet SET completion_date = '$localTime' WHERE [set_id] = $set AND card_id = $card"
 
-//    fun updateProgressForSet(request: UpdateProgressForSetRequest) : UpdateProgressForSetResponse {
-//        val db = DataManager.conn()
-//        val set_id = request.set_id
-//        val progress = request.progress
-//
-//        try {
-//            val stmt = db!!.createStatement()
-//            val query = "UPDATE CardSet SET progress = $progress WHERE [set_id] = $set_id"
-//            stmt.executeUpdate(query);
-//        } catch (e: Exception) {
-//            val err: String = e.message ?: "Unknown error when updating progress for set $set_id"
-//            return UpdateProgressForSetResponse(StatusResponse.Failure, err)
-//        }
-//        return UpdateProgressForSetResponse(StatusResponse.Success, "")
-//    }
+            val updatedRows = statement.executeUpdate(updateQuery)
+
+            return if(updatedRows > 0) {
+                CompleteCardResponse(
+                    set_id = set,
+                    card_id = card,
+                    user_id = user_id,
+                    response = StatusResponse.Success,
+                    msg = "Card completed successfully."
+                )
+            } else {
+                CompleteCardResponse(
+                    set_id = set,
+                    card_id = card,
+                    user_id = user_id,
+                    response = StatusResponse.Failure,
+                    msg = "Could not complete card"
+                )
+            }
+
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return CompleteCardResponse(
+                set_id = set,
+                card_id = card,
+                user_id = user_id,
+                response = StatusResponse.Failure,
+                msg = e.message ?: "Unknown error"
+            )
+        }
+    }
+
+    private fun getCompletedCardsForSet(set: Int): GetCompletedCardsInSetResponse {
+        val conn = DataManager.conn()
+        try {
+            val statement = conn!!.createStatement()
+            val selectQuery = "SELECT * FROM CardInSet WHERE completion_date IS NOT NULL AND [set_id] = $set"
+            val response = statement.executeQuery(selectQuery)
+
+            val cardsInSet = mutableListOf<CardInSet>()
+
+            while(response.next()) {
+                cardsInSet.add(
+                    CardInSet(
+                        card_id = response.getInt("card_id"),
+                        set_id = response.getInt("set_id"),
+                        completion_date = response.getString("completion_date")
+                    )
+                )
+            }
+
+            return GetCompletedCardsInSetResponse(
+                StatusResponse.Success,
+                cardsInSet
+            )
+        } catch (e: Exception) {
+            e.printStackTrace();
+            return GetCompletedCardsInSetResponse(
+                StatusResponse.Failure,
+                mutableListOf()
+            )
+        }
+    }
+
+    fun getUserSetProgress(request: GetUserSetProgressRequest): GetUserSetProgressResponse {
+        val conn = DataManager.conn()
+        val (set, user) = request
+        try {
+            val cards = this.getTotalCardsFromSet(GetCardsInSetRequest(set))
+            val numCards = cards.cards.size
+
+            val completedCards = this.getCompletedCardsForSet(set)
+            val numCompletedCards = completedCards.cards.size
+
+            return GetUserSetProgressResponse(
+                response = StatusResponse.Success,
+                set_id = set,
+                user_id = user,
+                numCards = numCards,
+                numCompletedCards = numCompletedCards,
+                cards = cards.cards,
+                completedCard = completedCards.cards
+            )
+        } catch (e: Exception) {
+            e.printStackTrace();
+            return GetUserSetProgressResponse(
+                response = StatusResponse.Failure,
+                set_id = set,
+                user_id = user,
+                numCards = 0,
+                numCompletedCards = 0,
+                cards = listOf(),
+                completedCard = listOf()
+            )
+        }
+    }
 }
