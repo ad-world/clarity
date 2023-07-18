@@ -12,7 +12,9 @@ data class CreateClassroomResponse(val response: StatusResponse, val id: String)
 
 data class JoinClassroomResponse(val response: StatusResponse, val id: String)
 
-data class GetClassroomResponse(val response: StatusResponse, val id: List<String>)
+data class GetClassroomResponse(val response: StatusResponse, val id: List<ClassroomReturnObject>)
+
+data class ClassroomReturnObject(val code: String, val name: String)
 
 class ClassroomEntity() {
     private fun getRandomString(length: Int) : String {
@@ -79,16 +81,19 @@ class ClassroomEntity() {
             val selectStatement = """
                 SELECT * FROM Classroom WHERE teacher = $userId
             """.trimIndent()
-            val classNames = mutableListOf<String>()
+            val classNames = mutableListOf<ClassroomReturnObject>()
             val result = statement.executeQuery(selectStatement)
             while (result.next()) {
-                var className = result.getString("name")
+                var className = ClassroomReturnObject(
+                    result.getString("private_code"),
+                    result.getString("name")
+                )
                 classNames.add(className)
             }
             return GetClassroomResponse(StatusResponse.Success, classNames)
         } catch(e: Exception) {
             e.printStackTrace();
-            val resultPlaceholder = mutableListOf<String>()
+            val resultPlaceholder = mutableListOf<ClassroomReturnObject>()
             return GetClassroomResponse(StatusResponse.Failure, resultPlaceholder)
         }
     }
@@ -101,16 +106,19 @@ class ClassroomEntity() {
             val selectStatement = """
                 SELECT * FROM ClassroomStudents WHERE user_id = $userId
             """.trimIndent()
-            val classNames = mutableListOf<String>()
+            val classNames = mutableListOf<ClassroomReturnObject>()
             val result = statement.executeQuery(selectStatement)
             while (result.next()) {
-                var className = result.getString("class_id")
+                var className = ClassroomReturnObject(
+                    result.getString("private_code"),
+                    result.getString("name")
+                )
                 classNames.add(className)
             }
             return GetClassroomResponse(StatusResponse.Success, classNames)
         } catch(e: Exception) {
             e.printStackTrace();
-            val resultPlaceholder = mutableListOf<String>()
+            val resultPlaceholder = mutableListOf<ClassroomReturnObject>()
             return GetClassroomResponse(StatusResponse.Failure, resultPlaceholder)
         }
     }
