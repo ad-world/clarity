@@ -2,8 +2,8 @@ package clarity.backend.entity
 
 import SpeechAPIResponse
 import clarity.backend.DataManager
-import clarity.backend.controllers.ErrorType
-import clarity.backend.controllers.SpeechAnalysis
+import clarity.backend.util.ErrorType
+import clarity.backend.util.SpeechAnalysis
 import org.springframework.web.multipart.MultipartFile
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -14,7 +14,7 @@ data class CreateAttemptResponse(val response: StatusResponse, val metadata: Att
 data class AttemptMetadata(
     val set_id: Int, val user_id: Int, val card_id: Int, val mispronunciations: List<String>,
     val omissions: List<String>, val insertions: List<String>, val pronunciationScore: Double, val accuracyScore: Double,
-    val fluencyScore: Double, val completenessScore: Double, val speechAPIResponse: SpeechAPIResponse)
+    val fluencyScore: Double, val completenessScore: Double, val speechAPIResponse: SpeechAPIResponse, val is_complete: Boolean)
 data class GetUserAverageAttemptsResponse(val response: StatusResponse, val user_id: Int, val pronunciationScore: Double? = null, val accuracyScore: Double? = null,
                                           val fluencyScore: Double? = null, val completenessScore: Double? = null, val message: String)
 data class CardAttempt(val user_id: Int, val card_id: Int, val set_id: Int, val pronunciationScore: Double? = null, val accuracyScore: Double? = null,
@@ -49,8 +49,12 @@ class AttemptsEntity {
             val mispronunciations = speechAnalyzer.findErrorType(json, ErrorType.Mispronunciation)
             val insertions = speechAnalyzer.findErrorType(json, ErrorType.Insertion)
 
+            val shouldComplete = speechAnalyzer.shouldCompleteCard(result, omissions, mispronunciations, insertions)
+
+            if(shouldComplete) CardSetEntity().completeCardInUserSet(CompleteCardRequest(user_id = user_id, card = card_id, set = set_id))
+
             val attemptMetadata = AttemptMetadata(set_id, user_id, card_id, mispronunciations, omissions, insertions,
-                pronunciationScore, accuracyScore, fluencyScore, completenessScore, json)
+                pronunciationScore, accuracyScore, fluencyScore, completenessScore, json, shouldComplete)
 
             val currentDate = LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME);
 

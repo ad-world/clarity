@@ -16,21 +16,10 @@ data class CreateCardEntity(val phrase: String, val title: String, val setId: In
 data class AddCardToSetRequest(val card_id: Int, val set_id: Int)
 data class DeleteCardFromSetRequest(val card_id: Int, val set_id: Int)
 data class GetCardsInSetRequest(val set_id: Int)
-data class GetProgressForSetRequest(val set_id: Int)
-data class UpdateProgressForSetRequest(val set_id: Int, val progress: Int)
+data class GetUserSetProgressRequest(val set_id: Int, val user_id: Int)
 
-/*
-val fileToUpload = new File("path/to/file.txt");
-val requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), fileToUpload);
+data class GetUserSetProgressResponse(val response: StatusResponse, val set_id: Int, val user_id: Int, val numCards: Int, val numCompletedCards: Int, val cards: List<Card>, val completedCard: List<CardInSet>)
 
-use requestBody for audio in CreateClassroomAttemptEntity and CreateAttemptEntity
- */
-
-data class CreateClassroomAttemptEntity(val task_id: Int, val user_id: Int, val card_id: Int, val audio: MultipartBody.Part)
-// audio is Int for now, will change once we figure out what it needs to be
-
-data class CreateAttemptEntity(val set_id: Int, val user_id: Int, val card_id: Int, val audio: MultipartBody.Part)
-// audio is Int for now, will change once we figure out what it needs to be
 data class GetUserAverageAttemptsRequest(val user_id: Int)
 data class PhraseSearchEntity(val phrase: String)
 data class GetAttemptsForSetEntity(val user: Int, val set: Int)
@@ -38,4 +27,5 @@ data class CreateTaskEntity(val classId: String, val sets: String, val name: Str
 data class GetTasksEntity(val classId: String)
 data class CreateAnnouncementEntity(val classId: String, val text: String, val description: String, val date: String)
 data class FollowingRequestEntity(val userId: Int, val followingId: Int)
+
 

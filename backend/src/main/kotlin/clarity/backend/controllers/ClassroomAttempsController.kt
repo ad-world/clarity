@@ -49,4 +49,15 @@ class ClassroomAttemptsController {
             ResponseEntity.badRequest().body(attemptResponse);
         }
     }
+
+    @GetMapping("/getTaskProgress")
+    fun getTaskProgress(@RequestParam task_id: Int): ResponseEntity<GetClassroomTaskProgressResponse> {
+        val attemptResponse = classroomAttemptsEntity.getClassroomTaskProgress(GetClassroomTaskProgressRequest(task_id));
+
+        return if(attemptResponse.response == StatusResponse.Success) {
+            ResponseEntity.ok(attemptResponse)
+        } else {
+            ResponseEntity.badRequest().body(attemptResponse)
+        }
+    }
 }

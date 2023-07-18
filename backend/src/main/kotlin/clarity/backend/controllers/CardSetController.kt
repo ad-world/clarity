@@ -101,23 +101,24 @@ class CardController {
         }
     }
 
-//    @PostMapping("/getProgressForSet")
-//    fun getProgressForSet(@RequestBody request: GetProgressForSetRequest) : ResponseEntity<GetProgressForSetResponse> {
-//        val resp = CardSetEntity().getProgressForSet(request)
-//        return if (resp.response == StatusResponse.Success) {
-//            ResponseEntity.ok(resp)
-//        } else {
-//            ResponseEntity.badRequest().body(resp)
-//        }
-//    }
+    @PostMapping("/getSetProgress")
+    fun getSetProgress(@RequestBody request: GetUserSetProgressRequest): ResponseEntity<GetUserSetProgressResponse> {
+        val resp = CardSetEntity().getUserSetProgress(request)
+        return if(resp.response == StatusResponse.Success) {
+            ResponseEntity.ok(resp)
+        } else {
+            ResponseEntity.badRequest().body(resp)
+        }
+    }
 
-//    @PostMapping("/updateProgressForSet")
-//    fun updateProgressForSet(@RequestBody request: UpdateProgressForSetRequest) : ResponseEntity<UpdateProgressForSetResponse> {
-//        val resp = CardSetEntity().updateProgressForSet(request)
-//        return if (resp.response == StatusResponse.Success) {
-//            ResponseEntity.ok(resp)
-//        } else {
-//            ResponseEntity.badRequest().body(resp)
-//        }
-//    }
+    // this endpoint won't be used, just have it here so that I don't need to implement completing algorithm just yet
+    @PostMapping("/completeCard")
+    fun completeCard(@RequestBody request: CompleteCardRequest): ResponseEntity<CompleteCardResponse> {
+        val resp = CardSetEntity().completeCardInUserSet(request)
+        return if(resp.response == StatusResponse.Success) {
+            ResponseEntity.ok(resp)
+        } else {
+            ResponseEntity.badRequest().body(resp)
+        }
+    }
 }

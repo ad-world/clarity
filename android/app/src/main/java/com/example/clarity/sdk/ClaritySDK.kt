@@ -88,11 +88,17 @@ interface API {
     @POST("getUserAttemptsForSet")
     suspend fun getUserAttemptsForSet(@Body request: GetAttemptsForSetEntity): Response<GetAttemptsForSetResponse>
 
+    @POST("getSetProgress")
+    suspend fun getSetProgress(@Body request: GetUserSetProgressRequest): Response<GetUserSetProgressResponse>
+
     @POST("classroom/attemptCard")
     suspend fun attemptClassroomCard(@Part("user_id") userId: Int, @Part("card_id") cardId: Int, @Part("task_id") task_id: Int, @Part audio: MultipartBody.Part): Response<CreateClassroomAttemptResponse>
 
     @GET("classroom/getTaskAttempts")
     suspend fun getTaskAttempts(@Query("task") task: Int): Response<GetTaskAttemptsResponse>
+
+    @GET("classroom/getTaskProgress")
+    suspend fun getTaskProgress(@Query("task_id") task_id: Int): Response<GetClassroomTaskProgressResponse>
 
     @GET("classroom/getClassAttempts")
     suspend fun getClassAttempts(@Query("classroom") classroom: String): Response<GetClassAttemptsResponse>
