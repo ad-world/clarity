@@ -96,6 +96,9 @@ interface API {
     @GET("classroom/getTaskAttempts")
     suspend fun getTaskAttempts(@Query("task") task: Int): Response<GetTaskAttemptsResponse>
 
+    @GET("classroom/getTaskProgress")
+    suspend fun getTaskProgress(@Query("task_id") task_id: Int): Response<GetClassroomTaskProgressResponse>
+
     @GET("classroom/getClassAttempts")
     suspend fun getClassAttempts(@Query("classroom") classroom: String): Response<GetClassAttemptsResponse>
 

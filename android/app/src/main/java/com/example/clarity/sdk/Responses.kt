@@ -8,16 +8,12 @@ data class CreateCardSetResponse(val response: StatusResponse, val msg: String, 
 data class GetCardsInSetResponse(val response: StatusResponse, val cards: List<Card>)
 data class GetSetsResponse(val response: StatusResponse, val sets: List<String>)
 data class CreateCardResponse(val response: StatusResponse, val msg: String, val card: Card?)
-data class EvaluateResponse(val response: StatusResponse, val score: Int)
 data class AddCardToSetResponse(val response: StatusResponse, val msg: String)
 data class GetSetsByUsernameResponse(val response: StatusResponse, val data: List<SetMetadata>)
 data class LoginResponse(val response: StatusResponse, val message: String, val user: UserWithId?)
 data class JoinClassroomResponse(val response: StatusResponse, val id: String)
 data class GetClassroomResponse(val response: StatusResponse, val id: List<String>)
-data class GetDataForSetResponse(val response: StatusResponse, val data: List<String>)
-data class GetProgressForSetResponse(val response: StatusResponse, val progress: Int)
-data class UpdateProgressForSetResponse(val response: StatusResponse, val msg: String)
-data class CreateClassroomAttemptResponse(val response: StatusResponse, val metadata: ClassroomAttemptMetadata?, val message: String)
+data class GetDataForSetResponse(val response: StatusResponse, val data: List<String>)data class CreateClassroomAttemptResponse(val response: StatusResponse, val metadata: ClassroomAttemptMetadata?, val message: String)
 data class GetUserAverageAttemptsResponse(val response: StatusResponse, val user_id: Int, val pronunciationScore: Double? = null, val accuracyScore: Double? = null,
                                           val fluencyScore: Double? = null, val completenessScore: Double? = null, val message: String)
 data class CreateAttemptResponse(val response: StatusResponse, val metadata: AttemptMetadata?, val message: String)
@@ -28,3 +24,4 @@ data class GetAttemptsForSetResponse(val user_id: Int, val set_id: Int, val atte
 data class GetTaskAttemptsResponse(val task_id: Int, val attempts: List<TaskAttemptWithName>, val response: StatusResponse)
 data class GetClassAttemptsResponse(val classroom: String, val attempts: List<TaskAttemptWithNameAndClass>, val response: StatusResponse)
 
+data class GetClassroomTaskProgressResponse(val response: StatusResponse, val task_id: Int, val card_count: Int?, val studentProgress: List<StudentProgress>?, val message: String)

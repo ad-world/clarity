@@ -20,20 +20,9 @@ data class GetUserSetProgressRequest(val set_id: Int, val user_id: Int)
 
 data class GetUserSetProgressResponse(val response: StatusResponse, val set_id: Int, val user_id: Int, val numCards: Int, val numCompletedCards: Int, val cards: List<Card>, val completedCard: List<CardInSet>)
 
-/*
-val fileToUpload = new File("path/to/file.txt");
-val requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), fileToUpload);
-
-use requestBody for audio in CreateClassroomAttemptEntity and CreateAttemptEntity
- */
-
-data class CreateClassroomAttemptEntity(val task_id: Int, val user_id: Int, val card_id: Int, val audio: MultipartBody.Part)
-// audio is Int for now, will change once we figure out what it needs to be
-
-data class CreateAttemptEntity(val set_id: Int, val user_id: Int, val card_id: Int, val audio: MultipartBody.Part)
-// audio is Int for now, will change once we figure out what it needs to be
 data class GetUserAverageAttemptsRequest(val user_id: Int)
 data class PhraseSearchEntity(val phrase: String)
 data class GetAttemptsForSetEntity(val user: Int, val set: Int)
+
 
 
