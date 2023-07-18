@@ -87,6 +87,9 @@ interface API {
     @POST("getUserAttemptsForSet")
     suspend fun getUserAttemptsForSet(@Body request: GetAttemptsForSetEntity): Response<GetAttemptsForSetResponse>
 
+    @POST("getSetProgress")
+    suspend fun getSetProgress(@Body request: GetUserSetProgressRequest): Response<GetUserSetProgressResponse>
+
     @POST("classroom/attemptCard")
     suspend fun attemptClassroomCard(@Part("user_id") userId: Int, @Part("card_id") cardId: Int, @Part("task_id") task_id: Int, @Part audio: MultipartBody.Part): Response<CreateClassroomAttemptResponse>
 

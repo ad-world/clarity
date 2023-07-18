@@ -16,8 +16,9 @@ data class CreateCardEntity(val phrase: String, val title: String, val setId: In
 data class AddCardToSetRequest(val card_id: Int, val set_id: Int)
 data class DeleteCardFromSetRequest(val card_id: Int, val set_id: Int)
 data class GetCardsInSetRequest(val set_id: Int)
-data class GetProgressForSetRequest(val set_id: Int)
-data class UpdateProgressForSetRequest(val set_id: Int, val progress: Int)
+data class GetUserSetProgressRequest(val set_id: Int, val user_id: Int)
+
+data class GetUserSetProgressResponse(val response: StatusResponse, val set_id: Int, val user_id: Int, val numCards: Int, val numCompletedCards: Int, val cards: List<Card>, val completedCard: List<CardInSet>)
 
 /*
 val fileToUpload = new File("path/to/file.txt");
