@@ -13,8 +13,12 @@ import android.widget.PopupMenu
 import android.widget.TextView
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.clarity.databinding.FragmentProfileBinding
+import com.example.clarity.sdk.ClaritySDK
+import com.example.clarity.sdk.GetUserResponse
+import com.example.clarity.sdk.UserWithId
 import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
@@ -26,15 +30,22 @@ import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.tabs.TabLayout
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import retrofit2.Response
 
 
 class ProfileFragment : Fragment() {
 
+    private val api = ClaritySDK().apiService
     private var _binding: FragmentProfileBinding? = null
+
+    private val sessionManager: SessionManager by lazy { SessionManager(requireContext()) }
 
     private val binding get() = _binding!!
     //private lateinit var lineChart: LineChart
     private lateinit var pieChart: PieChart
+    private var username: String = ""
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -48,6 +59,9 @@ class ProfileFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
         //navigation
+        lifecycleScope.launch {
+            username = sessionManager.getUserName()
+        }
 
         val dropdownView: ImageView = binding.dropdown
 
@@ -71,7 +85,8 @@ class ProfileFragment : Fragment() {
             menu.show()
         }
 
-        //followers, following:
+        //do followers and following after
+
 
         val numFollowers = 1
 
@@ -114,8 +129,17 @@ class ProfileFragment : Fragment() {
             //findNavController().navigate(R.id.)
         }
 
+
+        val response : Response<GetUserResponse> = runBlocking {
+            return@runBlocking api.getUser(username)
+        }
+        println(response.body())
+
+        val user = response.body()?.user
+
+
         //streaks
-        val streak = 0
+        val streak = user?.login_streak
         binding.streak.text = "\uD83D\uDD25" + streak.toString() + " Day Streak"
 
         super.onViewCreated(view, savedInstanceState)
@@ -142,27 +166,6 @@ class ProfileFragment : Fragment() {
             override fun onTabReselected(tab: TabLayout.Tab?) {
             }
         })
-
-
-
-
-        //get last week of sets by day
-
-
-        //get last year of sets by month
-
-
-
-//        lineChart = binding.lineChart
-//
-//
-//        //line chart:
-//        //lineChart.description.isEnabled = false
-//        lineChart.setTouchEnabled(true)
-//        lineChart.setPinchZoom(true)
-
-
-
 
     }
 

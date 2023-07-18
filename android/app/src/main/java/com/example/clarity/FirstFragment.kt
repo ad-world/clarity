@@ -48,19 +48,17 @@ class FirstFragment : Fragment() {
             val password = binding.editTextPassword.text.toString()
 
             //check if the username/password is valid
-//            val req = LoginRequest(username, password)
-//            val response : Response<LoginResponse> = runBlocking {
-//                return@runBlocking api.login(req)
-//            }
-//            println(response.body())
+            val req = LoginRequest(username, password)
+            val response : Response<LoginResponse> = runBlocking {
+                return@runBlocking api.login(req)
+            }
+            println(response.body())
 
-//            var valid = false
-//
-//            if (response.body()?.response == StatusResponse.Success) {
-//                valid = true
-//            }
+            var valid = false
 
-            val valid = true
+            if (response.body()?.response == StatusResponse.Success) {
+                valid = true
+            }
             if (valid) {
                 lifecycleScope.launch {
                     sessionManager.setUserName(username)
