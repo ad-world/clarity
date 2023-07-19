@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="MyTitleTextAppearance" parent="@style/TextAppearance.MaterialComponents.Headline6">
+        <item name="android:textSize">28sp</item> <!-- Change the text size as needed -->
+    </style>
+</resources>
