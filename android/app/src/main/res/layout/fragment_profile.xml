@@ -5,7 +5,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
-    tools:context=".ProfileFragment"
+    tools:context=".profile.ProfileFragment"
     android:id = "@+id/parent">
 
         <LinearLayout
@@ -39,141 +39,132 @@
 
         </LinearLayout>
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@android:color/darker_gray" />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@android:color/darker_gray" />
 
-            <TextView
-                android:id="@+id/firstLast"
-                android:layout_width="163dp"
-                android:layout_height="53dp"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="20dp"
-                android:text="First Last"
-                android:textSize="35sp"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
+        <TextView
+            android:id="@+id/firstLast"
+            android:layout_width="163dp"
+            android:layout_height="53dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="20dp"
+            android:text="First Last"
+            android:textSize="35sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
-            <TextView
-                android:id="@+id/followers"
-                android:layout_width="119dp"
-                android:layout_height="38dp"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginStart="20dp"
-                android:text="0 Followers"
-                android:textSize="20sp"
-                app:layout_constraintStart_toEndOf="@id/firstLast" />
+        <TextView
+            android:id="@+id/followers"
+            android:layout_width="119dp"
+            android:layout_height="38dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginStart="20dp"
+            android:text="0 Followers"
+            android:textSize="20sp"
+            app:layout_constraintStart_toEndOf="@id/firstLast" />
 
-            <TextView
-                android:id="@+id/following"
+        <TextView
+            android:id="@+id/following"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginStart="20dp"
+            android:text="0 Following"
+            android:textSize="20sp"
+            app:layout_constraintStart_toEndOf="@id/followers"/>
+
+        <TextView
+            android:id="@+id/streak"
+            android:layout_width="wrap_content"
+            android:layout_height="51dp"
+            android:layout_marginStart="30dp"
+            android:layout_marginTop="20dp"
+            android:text="0 Day Streak"
+            app:layout_constraintStart_toEndOf="@id/following"
+            android:textSize="20sp"
+            android:layout_gravity="center_horizontal"/>
+
+        <com.google.android.material.tabs.TabLayout
+            android:layout_width="500dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/tabs"
+            app:layout_constraintStart_toEndOf="@id/streak">
+
+            <com.google.android.material.tabs.TabItem
                 android:layout_width="wrap_content"
-                android:layout_height="30dp"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginStart="20dp"
-                android:text="0 Following"
-                android:textSize="20sp"
-                app:layout_constraintStart_toEndOf="@id/followers"/>
+                android:layout_height="wrap_content"
+                android:text="Sets"
+                />
 
-            <TextView
-                android:id="@+id/streak"
+            <com.google.android.material.tabs.TabItem
                 android:layout_width="wrap_content"
-                android:layout_height="51dp"
-                android:layout_marginStart="30dp"
-                android:layout_marginTop="20dp"
-                android:text="0 Day Streak"
-                app:layout_constraintStart_toEndOf="@id/following"
-                android:textSize="20sp"
-                android:layout_gravity="center_horizontal"/>
-
-            <com.google.android.material.tabs.TabLayout
-                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/tabs"
-                app:layout_constraintStart_toEndOf="@id/streak">
+                android:text="Cards"
+                />
 
-                <com.google.android.material.tabs.TabItem
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Sets"
-                    />
-
-                <com.google.android.material.tabs.TabItem
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Cards"
-                    />
-
-            </com.google.android.material.tabs.TabLayout>
-            <ScrollView
+        </com.google.android.material.tabs.TabLayout>
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scrollbars="vertical"
+            android:id="@+id/scroll">
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:scrollbars="vertical"
-                android:id="@+id/scroll">
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+                <TextView
+                    android:id="@+id/progress"
+                    android:layout_width="253dp"
+                    android:layout_height="51dp"
+                    android:text="Progress"
+                    android:textSize="26sp"
+                    android:layout_marginStart="30dp"
+                    android:layout_marginTop="20dp"/>
+
+
+
+                <com.github.mikephil.charting.charts.LineChart
+                    android:id="@+id/lineChart"
+                    android:layout_width="300dp"
+                    android:layout_height="200dp"
+                    android:layout_gravity="center_horizontal" />
+
                 <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical">
+                    android:layout_width="400dp"
+                    android:layout_height="40dp"
+                    android:orientation="horizontal"
+                    android:layout_marginStart="40dp"
+                    android:layout_marginTop="40dp">
+
                     <TextView
-                        android:id="@+id/progress"
-                        android:layout_width="253dp"
-                        android:layout_height="51dp"
-                        android:text="Progress"
-                        android:textSize="26sp"
-                        android:layout_marginStart="30dp"
-                        android:layout_marginTop="20dp"/>
+                        android:id="@+id/completedNum"
+                        android:layout_width="47dp"
+                        android:layout_height="70dp"
+                        android:text=""
+                        android:textSize="30sp"
+                        android:textStyle="bold" />
 
-
-
-                    <com.github.mikephil.charting.charts.LineChart
-                        android:id="@+id/lineChart"
-                        android:layout_width="300dp"
-                        android:layout_height="200dp"
-                        android:layout_gravity="center_horizontal" />
-
-                    <LinearLayout
-                        android:layout_width="400dp"
-                        android:layout_height="40dp"
-                        android:orientation="horizontal"
-                        android:layout_marginStart="40dp"
-                        android:layout_marginTop="40dp">
-
-                        <TextView
-                            android:id="@+id/completedNum"
-                            android:layout_width="47dp"
-                            android:layout_height="70dp"
-                            android:text=""
-                            android:textSize="30sp"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:id="@+id/completedText"
-                            android:layout_width="262dp"
-                            android:layout_height="46dp"
-                            android:text="Completed Cards"
-                            android:textSize="18sp" />
-
-                    </LinearLayout>
-
-
-
-                    <com.github.mikephil.charting.charts.PieChart
-                        android:id="@+id/pieChart"
-                        android:layout_width="200dp"
-                        android:layout_height="200dp"
-                        android:layout_marginBottom="50dp"
-                        android:layout_gravity="center_horizontal|bottom" />
+                    <TextView
+                        android:id="@+id/completedText"
+                        android:layout_width="262dp"
+                        android:layout_height="46dp"
+                        android:text="Completed Cards"
+                        android:textSize="18sp" />
 
                 </LinearLayout>
 
+                <com.github.mikephil.charting.charts.PieChart
+                    android:id="@+id/pieChart"
+                    android:layout_width="200dp"
+                    android:layout_height="200dp"
+                    android:layout_marginBottom="50dp"
+                    android:layout_gravity="center_horizontal|bottom" />
 
-            </ScrollView>
-
-
-
-
-
+            </LinearLayout>
+        </ScrollView>
 </LinearLayout>
 
