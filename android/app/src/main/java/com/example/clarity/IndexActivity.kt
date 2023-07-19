@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.example.clarity.classroompage.ClassroomFragment
 import com.example.clarity.databinding.IndexActivityBinding
+import com.example.clarity.profile.ProfileFragment
 import com.example.clarity.sets.SetsFragment
 
 // Just created a blank file for the main content

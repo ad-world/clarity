@@ -1,4 +1,4 @@
-package com.example.clarity
+package com.example.clarity.profile
 
 import android.content.Intent
 import android.graphics.Color
@@ -10,29 +10,31 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.PopupMenu
-import android.widget.TextView
-import androidx.appcompat.app.ActionBarDrawerToggle
-import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
+import com.example.clarity.MainActivity
+import com.example.clarity.R
+import com.example.clarity.SessionManager
 import com.example.clarity.databinding.FragmentProfileBinding
 import com.example.clarity.sdk.ClaritySDK
+import com.example.clarity.sdk.FollowerListResponse
+import com.example.clarity.sdk.GetSetsByUsernameResponse
 import com.example.clarity.sdk.GetUserResponse
-import com.example.clarity.sdk.UserWithId
+import com.example.clarity.sdk.GetUserSetProgressRequest
+import com.example.clarity.sdk.GetUserSetProgressResponse
 import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
-import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
-import com.google.android.material.navigation.NavigationView
 import com.google.android.material.tabs.TabLayout
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import retrofit2.Response
+import java.time.LocalDateTime
+import java.time.temporal.ChronoUnit
 
 
 class ProfileFragment : Fragment() {
@@ -45,7 +47,20 @@ class ProfileFragment : Fragment() {
     private val binding get() = _binding!!
     //private lateinit var lineChart: LineChart
     private lateinit var pieChart: PieChart
+
+
     private var username: String = ""
+    private var userId: Int = 0
+
+    private var totalSets = 0
+    private var totalCards = 0
+    private var completedCards = 0
+    private var completedSets = 0
+    private var incompleteCards = 0
+    private var incompleteSets = 0
+    private var cardDates = mutableListOf<LocalDateTime>()
+    private var setDates = mutableListOf<LocalDateTime>()
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -61,10 +76,13 @@ class ProfileFragment : Fragment() {
         //navigation
         lifecycleScope.launch {
             username = sessionManager.getUserName()
+            userId = sessionManager.getUserId()
         }
+        val user = getUser()?.user
+        val followingList = getFollowing()?.followers
+        val followersList = getFollowers()?.followers
 
         val dropdownView: ImageView = binding.dropdown
-
 
         dropdownView.setOnClickListener {
             val menu = PopupMenu(view.context, dropdownView)
@@ -85,10 +103,10 @@ class ProfileFragment : Fragment() {
             menu.show()
         }
 
-        //do followers and following after
+        binding.firstLast.text = user?.firstname + " " + user?.lastname
 
-
-        val numFollowers = 1
+        //FOLLOWERS
+        val numFollowers = followersList?.size
 
         binding.followers.text = numFollowers.toString() + " Followers"
         val followers = binding.followers
@@ -109,7 +127,10 @@ class ProfileFragment : Fragment() {
         binding.followers.setOnClickListener {
             //findNavController().navigate(R.id.)
         }
-        val numFollowing = 1
+
+        //FOLLOWING
+
+        val numFollowing = followingList?.size
 
         binding.following.text = numFollowing.toString() + " Following"
         val following = binding.following
@@ -130,22 +151,19 @@ class ProfileFragment : Fragment() {
         }
 
 
-        val response : Response<GetUserResponse> = runBlocking {
-            return@runBlocking api.getUser(username)
-        }
-        println(response.body())
-
-        val user = response.body()?.user
-
-
-        //streaks
+        //STREAKS
         val streak = user?.login_streak
         binding.streak.text = "\uD83D\uDD25" + streak.toString() + " Day Streak"
 
         super.onViewCreated(view, savedInstanceState)
 
         var selectedTab = 0
+        updateInfo()
+        println(cardDates)
+        println(setDates)
         sets()
+
+
 
         binding.tabs.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab) {
@@ -153,10 +171,12 @@ class ProfileFragment : Fragment() {
                 if(selectedTab == 0) {
                     binding.lineChart.clear()
                     binding.pieChart.clear()
+                    updateInfo()
                     sets()
                 } else {
                     binding.lineChart.clear()
                     binding.pieChart.clear()
+                    updateInfo()
                     cards()
                 }
             }
@@ -176,20 +196,29 @@ class ProfileFragment : Fragment() {
     private fun cards() {
         binding.progress.text = "Cards Progress"
         binding.completedText.text = "Completed Cards"
-        val totalSavedCards = 100
-        var completedCards = 40
-        var incompleteCards = 20
-        var notStartedCards = 60
         binding.completedNum.text = completedCards.toString()
         //get cards
 
 
-        val attempts = listOf(
-            Entry(0f, 10f),
-            Entry(1f, 20f),
-            Entry(2f, 15f),
-            Entry(3f, 30f),
-        )
+
+//        val attempts = listOf(
+//            Entry(0f, 10f),
+//            Entry(1f, 20f),
+//            Entry(2f, 15f),
+//            Entry(3f, 30f),
+//        )
+
+        val earliest = cardDates.minOrNull()
+        val range = getRanges(earliest)
+
+        val attempts = ArrayList<Entry>()
+        for (i in range.indices) {
+            val range = range[i]
+            val entry = range.second?.let { Entry(i.toFloat(), it.toFloat()) }
+            if (entry != null) {
+                attempts.add(entry)
+            }
+        }
 
         val lineDataSet = LineDataSet(attempts, "Data Set")
         val lineData = LineData(lineDataSet)
@@ -206,14 +235,14 @@ class ProfileFragment : Fragment() {
 
         pieChart = binding.pieChart
         val entries = mutableListOf<PieEntry>()
-        entries.add(PieEntry(completedCards.toFloat() / totalSavedCards, "Completed"))
-        entries.add(PieEntry((incompleteCards.toFloat() / totalSavedCards), "Incomplete"))
-        entries.add(PieEntry((notStartedCards.toFloat() / totalSavedCards), "Not Started"))
+        entries.add(PieEntry(completedCards.toFloat() / totalCards, "Completed"))
+        entries.add(PieEntry((incompleteCards.toFloat() / totalCards), "Incomplete"))
+        //entries.add(PieEntry((notStartedCards.toFloat() / totalSavedCards), "Not Started"))
         val dataSet = PieDataSet(entries, "")
         val colourList = listOf(
             Color.parseColor("#C6C6C6"), //light grey
             Color.parseColor("#74ABFF"), //light blue
-            Color.parseColor("#3546D9") //blue
+            //Color.parseColor("#3546D9") //blue
         )
         dataSet.colors = colourList
         val data = PieData(dataSet)
@@ -227,23 +256,41 @@ class ProfileFragment : Fragment() {
         //number of sets completed
         binding.completedNum.text = completedCards.toString()
     }
+    private fun getRanges(earliest: LocalDateTime?): List<Pair<String, Long?>> {
+        val now = LocalDateTime.now()
+        val years = earliest?.until(now, ChronoUnit.YEARS)
+        val months = earliest?.until(now, ChronoUnit.MONTHS)?.rem(12)
+        val days = earliest?.until(now, ChronoUnit.DAYS)?.rem(30)
+
+        return listOf(
+            Pair("Years", years),
+            Pair("Months", months),
+            Pair("Days", days)
+        )
+    }
     private fun sets(){
         binding.completedText.text = "Completed Sets"
         binding.progress.text = "Saved Sets Progress"
 
-
-        val totalSavedSets = 100
-        var completedSets = 40
-        var incompleteSets = 20
-        var notStartedSets = 60
         binding.completedNum.text = completedSets.toString()
 
-        val attempts = listOf(
-            Entry(0f, 10f),
-            Entry(1f, 20f),
-            Entry(2f, 15f),
-            Entry(3f, 30f),
-        )
+        val earliest = setDates.minOrNull()
+        val range = getRanges(earliest)
+
+        val attempts = ArrayList<Entry>()
+        for (i in range.indices) {
+            val range = range[i]
+            val entry = range.second?.let { Entry(i.toFloat(), it.toFloat()) }
+            if (entry != null) {
+                attempts.add(entry)
+            }
+        }
+//        val attempts = listOf(
+//            Entry(0f, 10f),
+//            Entry(1f, 20f),
+//            Entry(2f, 15f),
+//            Entry(3f, 30f),
+//        )
 
         val lineDataSet = LineDataSet(attempts, "Data Set")
         val lineData = LineData(lineDataSet)
@@ -260,14 +307,14 @@ class ProfileFragment : Fragment() {
 
         pieChart = binding.pieChart
         val entries = mutableListOf<PieEntry>()
-        entries.add(PieEntry(completedSets.toFloat() / totalSavedSets, "Completed"))
-        entries.add(PieEntry((incompleteSets.toFloat() / totalSavedSets), "Incomplete"))
-        entries.add(PieEntry((notStartedSets.toFloat() / totalSavedSets), "Not Started"))
+        entries.add(PieEntry(completedSets.toFloat() / totalSets, "Completed"))
+        entries.add(PieEntry((incompleteSets.toFloat() / totalSets), "Incomplete"))
+        //entries.add(PieEntry((notStartedSets.toFloat() / totalSavedSets), "Not Started"))
         val dataSet = PieDataSet(entries, "")
         val colourList = listOf(
             Color.parseColor("#C6C6C6"), //light grey
             Color.parseColor("#74ABFF"), //light blue
-            Color.parseColor("#3546D9") //blue
+            //Color.parseColor("#3546D9") //blue
         )
         dataSet.colors = colourList
         val data = PieData(dataSet)
@@ -282,8 +329,80 @@ class ProfileFragment : Fragment() {
         binding.completedNum.text = completedSets.toString()
         //get sets
     }
+    private fun getFollowers(): FollowerListResponse? {
+        val response : Response<FollowerListResponse> = runBlocking {
+            return@runBlocking api.getFollowers(userId)
+        }
+        return response.body()
+    }
+    private fun getFollowing(): FollowerListResponse? {
+        val response : Response<FollowerListResponse> = runBlocking {
+            return@runBlocking api.getFollowing(userId)
+        }
+        return response.body()
+    }
+    private fun getUser(): GetUserResponse? {
+        val response : Response<GetUserResponse> = runBlocking {
+            return@runBlocking api.getUser(username)
+        }
+        return response.body()
+    }
+    private fun updateInfo() {
+        println("gdifugdnj")
+        val response : Response<GetSetsByUsernameResponse> = runBlocking {
+            return@runBlocking api.getSetsByUsername(username)
+        }
+        val sets = response.body()?.data
+        totalSets = sets?.size!!
+        totalCards = 0
+        completedCards = 0
+        completedSets = 0
+        incompleteCards = 0
+        incompleteSets = 0
+
+
+        if (sets != null) {
+            for (s in sets){
+                val setReq = GetUserSetProgressRequest(s.set_id, userId)
+                val res : Response<GetUserSetProgressResponse> = runBlocking {
+                    return@runBlocking api.getSetProgress(setReq)
+                }
+                val currentSet = res.body()
+                totalCards += currentSet?.numCards!!
+                completedCards += currentSet?.numCompletedCards!!
+
+                val completedList = currentSet?.completedCard
+
+                //can check all cards that are completed and enter in their dates
+//                val allCardsReq = GetCardsInSetRequest(s.set_id)
+//                val allCardsRes : Response<GetCardsInSetResponse> = runBlocking {
+//                    return@runBlocking api.getCards(allCardsReq)
+//                }
+//                val allCards = allCardsRes.body()?.cards
+                var latestDate = LocalDateTime.of(-999_999_999, 1, 1, 0, 0, 0)
+                if (completedList != null) {
+                    for (c in completedList) {
+                        //get card id and then check the completed date
+                        val date = LocalDateTime.parse(c.completion_date)
+                        cardDates.add(date)
+                        if(date > latestDate) {
+                            latestDate = date
+                        }
+                    }
+                }
+                if(currentSet?.numCards!! == currentSet?.numCompletedCards!!) {
+                    completedSets += 1
+                    setDates.add(latestDate)
+                    //now check the last completion date which will give the date that the set was completed
+                }
+            }
+        }
+        incompleteCards = totalCards - completedCards
+        incompleteSets = totalSets?.minus(completedSets)!!
+    }
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
+
 }
