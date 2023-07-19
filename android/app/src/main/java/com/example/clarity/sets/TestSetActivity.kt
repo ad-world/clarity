@@ -19,9 +19,7 @@ import androidx.lifecycle.lifecycleScope
 import com.example.clarity.sdk.ClaritySDK
 import com.example.clarity.R
 import com.example.clarity.SessionManager
-import com.example.clarity.sdk.CreateAttemptEntity
 import com.example.clarity.sdk.CreateAttemptResponse
-import com.example.clarity.sdk.GetSetsByUsernameResponse
 import com.example.clarity.sets.audio.AndroidAudioPlayer
 import com.example.clarity.sets.audio.AndroidAudioRecorder
 import com.google.gson.Gson
@@ -158,7 +156,7 @@ class TestSetActivity() : AppCompatActivity() {
         val part = MultipartBody.Part.createFormData("file", file.name, requestFile)
 
         val response : Response<CreateAttemptResponse> = runBlocking {
-            return@runBlocking api.attemptCard(CreateAttemptEntity(set.id, userid, set.cards[index].id, part))
+            return@runBlocking api.attemptCard(set.id, userid, set.cards[index].id, part)
         }
         Log.d("accuracy score: ", "${response.body()!!.metadata!!.accuracyScore}")
         return response.body()!!.metadata!!.accuracyScore.toInt()
