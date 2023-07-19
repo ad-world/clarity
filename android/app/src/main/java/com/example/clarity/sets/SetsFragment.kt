@@ -117,58 +117,15 @@ class SetsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        lifecycleScope.launch {
-            username = sessionManager.getUserName()
-            userid = sessionManager.getUserId()
-            Log.d("Username is: ", username)
-        }
-        sets = mutableListOf()
-        // TODO: Replace following lines with a query for all sets with our userId, and then parse
-        //  through the object returned, creating a set data class for each set, and appending it
-        //  to the sets array
-
-
-        val response : Response<GetSetsByUsernameResponse> = runBlocking {
-            return@runBlocking api.getSetsByUsername(username)
-        }
-        println(response.body())
-        Log.d("IsSuccessful is: ", response.isSuccessful.toString())
-        Log.d("Message is: ", response.message())
-        Log.d("Body is: ", response.body().toString())
-
-        if (response.isSuccessful) {
-            val size = response.body()!!.data.size
-
-            for(i in 0 until size) {
-                val setData = response.body()?.data?.get(i)!!
-                val setId = setData.set_id
-                val setTitle = setData.title
-                val progress = 0
-                val set = Set(setId, setTitle, userid, mutableListOf<Card>(), progress, SetCategory.CREATED_SET)
-
-                val cards : Response<GetCardsInSetResponse> = runBlocking {
-                    return@runBlocking api.getCards(GetCardsInSetRequest(setId))
-                }
-                if (cards.isSuccessful) {
-                    for (card in cards.body()!!.cards) {
-                        set.cards.add(Card(card.card_id, card.phrase, false))
-                    }
-                }
-                sets.add(set)
-            }
-        }
-
-        setAdapter = SetAdapter(sets) { position -> onSetClick(position) }
-        binding.rvSets.adapter = setAdapter
-        binding.rvSets.layoutManager = LinearLayoutManager(context)
-        binding.btnCreateSet.setOnClickListener {
-            val intent = Intent(activity, CreateSetActivity::class.java)
-            startActivity(intent)
-        }
+        fillLayout()
     }
 
     override fun onResume() {
         super.onResume()
+        fillLayout()
+    }
+
+    private fun fillLayout() {
         lifecycleScope.launch {
             username = sessionManager.getUserName()
             userid = sessionManager.getUserId()
@@ -184,9 +141,6 @@ class SetsFragment : Fragment() {
             return@runBlocking api.getSetsByUsername(username)
         }
         println(response.body())
-        Log.d("IsSuccessful is: ", response.isSuccessful.toString())
-        Log.d("Message is: ", response.message())
-        Log.d("Body is: ", response.body().toString())
 
         if (response.isSuccessful) {
             val size = response.body()!!.data.size
