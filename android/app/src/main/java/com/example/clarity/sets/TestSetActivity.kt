@@ -5,6 +5,7 @@ import android.annotation.SuppressLint
 import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
+import android.speech.tts.TextToSpeech
 import android.util.Log
 import android.view.View.GONE
 import android.view.View.VISIBLE
@@ -30,6 +31,7 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Response
 import java.io.File
+import java.util.Locale
 
 class TestSetActivity() : AppCompatActivity() {
 
@@ -40,11 +42,12 @@ class TestSetActivity() : AppCompatActivity() {
 
     // TODO: Not sure if they can hear the correct recording after answering?
     //  added this here in case they can
-    private val player by lazy {
+    /* private val player by lazy {
         AndroidAudioPlayer(applicationContext)
-    }
+    }*/
 
     private var audioFile: File? = null
+    private var player: TextToSpeech? = null
 
     private var isRecording = false
     private var recordingCompleted = false
@@ -60,6 +63,15 @@ class TestSetActivity() : AppCompatActivity() {
         ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.RECORD_AUDIO), 0)
         setContentView(R.layout.activity_test_set)
 
+        // Create TTS Object
+        player = TextToSpeech(this, TextToSpeech.OnInitListener {
+            if (it == TextToSpeech.SUCCESS) {
+                player!!.language = Locale.ENGLISH
+            } else {
+                Log.d("TTS ERROR", it.toString())
+            }
+        })
+
         val intent = intent
         val setJson = intent.getStringExtra("set")
         val gson = Gson()
@@ -68,6 +80,7 @@ class TestSetActivity() : AppCompatActivity() {
         val tvTitle = findViewById<TextView>(R.id.tvTitle)
         val iBtnClose = findViewById<ImageButton>(R.id.iBtnClose)
         val iBtnMic = findViewById<ImageButton>(R.id.iBtnMic)
+        val iBtnSpeaker = findViewById<ImageButton>(R.id.iBtnSpeaker)
         val iBtnNext = findViewById<ImageButton>(R.id.iBtnNext)
         val cvPopUp = findViewById<CardView>(R.id.cvPopUp)
         val cvCompletedScreen = findViewById<CardView>(R.id.cvCompletedScreen)
@@ -80,6 +93,11 @@ class TestSetActivity() : AppCompatActivity() {
         tvTitle.text = set.title
         iBtnClose.setOnClickListener {
             finish()
+        }
+
+        // Handle Speaker button click
+        iBtnSpeaker.setOnClickListener {
+            player!!.speak(set.cards[index].phrase, TextToSpeech.QUEUE_ADD, null, null)
         }
 
         iBtnMic.setOnClickListener {

@@ -4,6 +4,8 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.graphics.Color
 import android.os.Bundle
+import android.speech.tts.TextToSpeech
+import android.util.Log
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
@@ -18,13 +20,16 @@ import com.example.clarity.R
 import com.example.clarity.sets.audio.AndroidAudioPlayer
 import com.example.clarity.sets.audio.AndroidAudioRecorder
 import com.google.gson.Gson
+import org.w3c.dom.Text
 import java.io.File
+import java.util.Locale
 
 class PracticeSetActivity() : AppCompatActivity() {
 
     // Recorder and Player
     private val recorder by lazy { AndroidAudioRecorder(applicationContext) }
-    private val player by lazy { AndroidAudioPlayer(applicationContext) }
+    private var player: TextToSpeech? = null
+    // private val player by lazy { AndroidAudioPlayer(applicationContext) }
 
     // Audio File
     private var audioFile: File? = null
@@ -42,6 +47,15 @@ class PracticeSetActivity() : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        // Create TTS Object
+        player = TextToSpeech(this, TextToSpeech.OnInitListener {
+            if (it == TextToSpeech.SUCCESS) {
+                player!!.language = Locale.ENGLISH
+            } else {
+                Log.d("TTS ERROR", it.toString())
+            }
+        })
+
         // Request permission to record
         ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.RECORD_AUDIO), 0)
 
@@ -58,6 +72,7 @@ class PracticeSetActivity() : AppCompatActivity() {
         val tvTitle = findViewById<TextView>(R.id.tvTitle)
         val iBtnClose = findViewById<ImageButton>(R.id.iBtnClose)
         val iBtnMic = findViewById<ImageButton>(R.id.iBtnMic)
+        val iBtnSpeaker = findViewById<ImageButton>(R.id.iBtnSpeaker)
         val iBtnNext = findViewById<ImageButton>(R.id.iBtnNext)
         val iBtnPrev = findViewById<ImageButton>(R.id.iBtnPrev)
         val cvPopUp = findViewById<CardView>(R.id.cvPopUp)
@@ -72,6 +87,11 @@ class PracticeSetActivity() : AppCompatActivity() {
         // Handle Close button, which automatically closes practice session
         iBtnClose.setOnClickListener {
             finish()
+        }
+
+        // Handle Speaker button click
+        iBtnSpeaker.setOnClickListener {
+            player!!.speak(set.cards[index].phrase, TextToSpeech.QUEUE_ADD, null, null)
         }
 
         // Handle Mic button click
