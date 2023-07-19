@@ -168,16 +168,18 @@ class TestSetActivity() : AppCompatActivity() {
 
     private fun getAccuracyScore(file: File): Int {
         // TODO: make this work later
-        val inputStream = contentResolver.openInputStream(Uri.fromFile(file))
-        val requestFile = RequestBody.create(MediaType.parse("audio.wav"), file)
+        val requestFile = RequestBody.create(MediaType.parse("audio/*"), file)
 
-        val part = MultipartBody.Part.createFormData("file", file.name, requestFile)
+        val part = MultipartBody.Part.createFormData("audio", file.name, requestFile)
 
         val response : Response<CreateAttemptResponse> = runBlocking {
             return@runBlocking api.attemptCard(set.id, userid, set.cards[index].id, part)
         }
-        Log.d("accuracy score: ", "${response.body()!!.metadata!!.accuracyScore}")
-        return response.body()!!.metadata!!.accuracyScore.toInt()
+        // TODO: This currently fails with Error: 400, need to fix this
+        // Log.d("response: ", "$response")
+        // Log.d("accuracy score: ", "${response.body()!!.metadata!!.accuracyScore}")
+        // return response.body()!!.metadata!!.accuracyScore.toInt()
+        return 100
     }
 
     @SuppressLint("SetTextI18n")
