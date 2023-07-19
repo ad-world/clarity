@@ -17,6 +17,7 @@ data class UserLoginEntity(val username: String, val password: String)
 data class CreateUserEntity(val user: User)
 data class CreateUserResponse(val response: StatusResponse, val message: String, val userId: Int?, val username: String?)
 data class GetUserResponse(val response: StatusResponse, val user: UserWithId?, val message: String)
+data class GetAllUsersResponse(val response: StatusResponse, val users: List<UserWithId>)
 
 data class LoginResponse(val response: StatusResponse, val message: String, val user: UserWithId?)
 
@@ -121,4 +122,32 @@ class UserEntity() {
             return GetUserResponse(StatusResponse.Failure, null, "Unknown error: ${e.message}")
         }
     }
+
+    fun getAllUsers(): GetAllUsersResponse {
+        val db = DataManager.conn()
+        try {
+            val query = "SELECT * FROM User;"
+            val statement = db!!.createStatement()
+            val result = statement.executeQuery(query)
+            val users = mutableListOf<UserWithId>()
+            while (result.next()) {
+                val user = UserWithId(
+                    username = result.getString("username"),
+                    user_id = result.getInt("user_id"),
+                    firstname = result.getString("first_name"),
+                    lastname = result.getString("last_name"),
+                    email = result.getString("email"),
+                    phone_number = result.getString("phone_number"),
+                    login_streak = result.getInt("login_streak")
+                )
+                users.add(user)
+            }
+            result.close()
+            return GetAllUsersResponse(StatusResponse.Success, users)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return GetAllUsersResponse(StatusResponse.Failure, emptyList())
+        }
+    }
+
 }
