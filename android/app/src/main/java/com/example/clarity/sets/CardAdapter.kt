@@ -22,6 +22,7 @@ class CardAdapter(private val cards: MutableList<Card>, val hideKeyboard: () -> 
     class CardViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
     // Local lock, to ensure there are no race conditions when clicking multiple delete buttons too fast successively
     private var deleteLock = false
+    private var counter = 0
 
     // Creates a card view in the recycler view
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CardViewHolder {
@@ -46,8 +47,9 @@ class CardAdapter(private val cards: MutableList<Card>, val hideKeyboard: () -> 
 
     // Adds a new card to the list of cards being created
     fun addCard() {
-        // We set the id to 0 for now, as we cannot get the true ID until it has been inserted into the database, as a result we put a temporary ID
-        cards.add(Card(0, "", false))
+        // We set the id to a temporary one for now, as we cannot get the true ID until it has been inserted into the database, as a result we put a temporary ID
+        cards.add(Card(counter, "", false))
+        counter++
         notifyItemInserted(cards.size - 1)
     }
 
