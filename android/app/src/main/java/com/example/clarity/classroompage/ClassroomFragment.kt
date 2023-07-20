@@ -20,9 +20,11 @@ import com.example.clarity.sdk.ClaritySDK
 import com.example.clarity.sdk.CreateClassroomEntity
 import com.example.clarity.sdk.CreateClassroomResponse
 import com.example.clarity.sdk.GetClassroomResponse
+import com.example.clarity.sdk.GetUserResponse
 import com.example.clarity.sdk.JoinClassroomEntity
 import com.example.clarity.sdk.JoinClassroomResponse
 import com.example.clarity.sdk.StatusResponse
+import com.example.clarity.sdk.UserWithId
 import com.google.android.material.materialswitch.MaterialSwitch
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -40,6 +42,8 @@ class ClassroomFragment : Fragment() {
     private var uid: Int = 0
     private val api = ClaritySDK().apiService
     private val sessionManager: SessionManager by lazy { SessionManager(requireContext()) }
+
+    data class classData(val code: String, val name: String, val teacherID: String, val teacherName: String)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,7 +66,8 @@ class ClassroomFragment : Fragment() {
         }
 
         // declare a list to show the different classrooms user is currently enrolled in
-        val classes: MutableList<Pair<String, String>> = mutableListOf()
+        val classes: MutableList<classData> = mutableListOf()
+//        val classes: MutableList<Pair<String, String>> = mutableListOf()
 
         // toggle switch between student and teacher classes
         var materialSwitch = view.findViewById<MaterialSwitch>(R.id.toggleClass)
@@ -80,14 +85,26 @@ class ClassroomFragment : Fragment() {
                     classes.clear()
                     // loop over each class name item and add it to the classes list
                     for (className in retrievedClassList) {
-                        classes.add(Pair(className.name, className.code))
+                        var userResponse : Response<GetUserResponse> = runBlocking {
+                            return@runBlocking api.getUserById(className.teacherID)
+                        }
+                        var teacherObject : UserWithId
+                        var teacherName = ""
+                        if (userResponse.body()?.response == StatusResponse.Success) {
+                            teacherObject = userResponse.body()?.user!!
+                            teacherName = teacherObject.firstname + " " + teacherObject.lastname
+                        }
+                        val classObject = classData(className.code, className.name, className.teacherID, teacherName)
+                        classes.add(classObject)
+//                        classes.add(Pair(className.name, className.code))
                     }
                 }
             }
             // adding the list classes to the recycler view (with recycler custom ClassAdapter)
             classAdapter = ClassAdapter(classes) { className ->
                 val intent = Intent(requireContext(), Classroom::class.java)
-                intent.putExtra("className", className.first)
+                intent.putExtra("classTeacherId", className.teacherID)
+                intent.putExtra("classId", className.code)
                 startActivity(intent)
             }
             recyclerView.adapter = classAdapter
@@ -109,14 +126,26 @@ class ClassroomFragment : Fragment() {
                         classes.clear()
                         // loop over each class name item and add it to the classes list
                         for (className in retrievedClassList) {
-                            classes.add(Pair(className.name, className.code))
+                            var userResponse : Response<GetUserResponse> = runBlocking {
+                                return@runBlocking api.getUserById(className.teacherID)
+                            }
+                            var teacherObject : UserWithId
+                            var teacherName = ""
+                            if (userResponse.body()?.response == StatusResponse.Success) {
+                                teacherObject = userResponse.body()?.user!!
+                                teacherName = teacherObject.firstname + " " + teacherObject.lastname
+                            }
+                            val classObject = classData(className.code, className.name, className.teacherID, teacherName)
+                            classes.add(classObject)
+//                            classes.add(Pair(className.name, className.code))
                         }
                     }
                 }
                 // adding the list classes to the recycler view (with recycler custom ClassAdapter)
                 classAdapter = ClassAdapter(classes) { className ->
                     val intent = Intent(requireContext(), Classroom::class.java)
-                    intent.putExtra("className", className.first)
+                    intent.putExtra("classTeacherId", className.teacherID)
+                    intent.putExtra("classId", className.code)
                     startActivity(intent)
                 }
                 recyclerView.adapter = classAdapter
@@ -135,14 +164,26 @@ class ClassroomFragment : Fragment() {
                         classes.clear()
                         // loop over each class name item and add it to the classes list
                         for (className in retrievedClassList) {
-                            classes.add(Pair(className.name, className.code))
+                            var userResponse : Response<GetUserResponse> = runBlocking {
+                                return@runBlocking api.getUserById(className.teacherID)
+                            }
+                            var teacherObject : UserWithId
+                            var teacherName = ""
+                            if (userResponse.body()?.response == StatusResponse.Success) {
+                                teacherObject = userResponse.body()?.user!!
+                                teacherName = teacherObject.firstname + " " + teacherObject.lastname
+                            }
+                            val classObject = classData(className.code, className.name, className.teacherID, teacherName)
+                            classes.add(classObject)
+//                            classes.add(Pair(className.name, className.code))
                         }
                     }
                 }
                 // adding the list classes to the recycler view (with recycler custom ClassAdapter)
                 classAdapter = ClassAdapter(classes) { className ->
                     val intent = Intent(requireContext(), ClassroomTeacher::class.java)
-                    intent.putExtra("className", className.first)
+                    intent.putExtra("classTeacherId", className.teacherID)
+                    intent.putExtra("classId", className.code)
                     startActivity(intent)
                 }
                 recyclerView.adapter = classAdapter
@@ -169,14 +210,26 @@ class ClassroomFragment : Fragment() {
                             classes.clear()
                             // loop over each class name item and add it to the classes list
                             for (className in retrievedClassList) {
-                                classes.add(Pair(className.name, className.code))
+                                var userResponse : Response<GetUserResponse> = runBlocking {
+                                    return@runBlocking api.getUserById(className.teacherID)
+                                }
+                                var teacherObject : UserWithId
+                                var teacherName = ""
+                                if (userResponse.body()?.response == StatusResponse.Success) {
+                                    teacherObject = userResponse.body()?.user!!
+                                    teacherName = teacherObject.firstname + " " + teacherObject.lastname
+                                }
+                                val classObject = classData(className.code, className.name, className.teacherID, teacherName)
+                                classes.add(classObject)
+//                                classes.add(Pair(className.name, className.code))
                             }
                         }
                     }
                     // adding the list classes to the recycler view (with recycler custom ClassAdapter)
                     classAdapter = ClassAdapter(classes) { className ->
                         val intent = Intent(requireContext(), Classroom::class.java)
-                        intent.putExtra("className", className.first)
+                        intent.putExtra("classTeacherId", className.teacherID)
+                        intent.putExtra("classId", className.code)
                         startActivity(intent)
                     }
                     recyclerView.adapter = classAdapter
@@ -215,14 +268,26 @@ class ClassroomFragment : Fragment() {
                             classes.clear()
                             // loop over each class name item and add it to the classes list
                             for (className in retrievedClassList) {
-                                classes.add(Pair(className.name, className.code))
+                                var userResponse : Response<GetUserResponse> = runBlocking {
+                                    return@runBlocking api.getUserById(className.teacherID)
+                                }
+                                var teacherObject : UserWithId
+                                var teacherName = ""
+                                if (userResponse.body()?.response == StatusResponse.Success) {
+                                    teacherObject = userResponse.body()?.user!!
+                                    teacherName = teacherObject.firstname + " " + teacherObject.lastname
+                                }
+                                val classObject = classData(className.code, className.name, className.teacherID, teacherName)
+                                classes.add(classObject)
+//                                classes.add(Pair(className.name, className.code))
                             }
                         }
                     }
                     // adding the list classes to the recycler view (with recycler custom ClassAdapter)
                     classAdapter = ClassAdapter(classes) { className ->
                         val intent = Intent(requireContext(), ClassroomTeacher::class.java)
-                        intent.putExtra("className", className.first)
+                        intent.putExtra("classTeacherId", className.teacherID)
+                        intent.putExtra("classId", className.code)
                         startActivity(intent)
                     }
                     recyclerView.adapter = classAdapter

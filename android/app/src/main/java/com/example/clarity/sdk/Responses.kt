@@ -17,7 +17,7 @@ data class JoinClassroomResponse(val response: StatusResponse, val id: String)
 data class GetClassroomResponse(val response: StatusResponse, val id: List<ClassroomReturnObject>)
 data class GetDataForSetResponse(val response: StatusResponse, val data: List<String>)
 data class CreateClassroomAttemptResponse(val response: StatusResponse, val metadata: ClassroomAttemptMetadata?, val message: String)
-data class ClassroomReturnObject(val code: String, val name: String)
+data class ClassroomReturnObject(val code: String, val name: String, val teacherID: String)
 data class GetUserAverageAttemptsResponse(val response: StatusResponse, val user_id: Int, val pronunciationScore: Double? = null, val accuracyScore: Double? = null,
                                           val fluencyScore: Double? = null, val completenessScore: Double? = null, val message: String)
 data class CreateAttemptResponse(val response: StatusResponse, val metadata: AttemptMetadata?, val message: String)
