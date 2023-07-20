@@ -41,6 +41,7 @@ Entries with start time and end times that span multiple days with have exactly 
 | Refactor create card and create card set | 1 hour | 11:00 PM | 12:00 AM | July 12-13th, 2023 | [Refactor create card and create card set](https://github.com/ad-world/clarity/commit/64cbbae91372c0faab580681b93122dbf485675c) |
 | Architecture meeting | 1 hour | 2:30 PM | 3:30 PM | July 17th, 2023 | N/A |
 | Find words with errors (omission, insertion, pronunciation) and refactor attempts endpoint | 2 hours | July 16th, 4:00 PM | July 17th, 4:00 PM | July 16th - July 17th, 2023 | [Find words w/ errors, refactor attemps](https://github.com/ad-world/clarity/commit/90a8089b212eebbd385544cd1c5b7e880099efec) |
-| Create classroom progress functionality, create card completeness functionality, create user progress functionality | ~5 hours | 5:00 PM | 11:59 PM | July 18th, 2023 | [User progress, classroom progress, card completeness](https://github.com/ad-world/clarity/commit/83b1531e9d42324fdfd2fc8115c71e2ad1b66e72) |  
+| Create classroom progress functionality, create card completeness functionality, create user progress functionality | ~5 hours | 5:00 PM | 11:59 PM | July 18th, 2023 | [User progress, classroom progress, card completeness](https://github.com/ad-world/clarity/commit/83b1531e9d42324fdfd2fc8115c71e2ad1b66e72) |
+| D5 Meeting | 1 hour | 3:00 PM | 4:00 PM | July 19th, 2023 | N/A |
 
-Total time spent as of July 18th, 2023: 50 hours
+Total time spent as of July 20th, 2023: 51 hours
