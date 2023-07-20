@@ -44,8 +44,8 @@ class InboxEntity {
         try {
             val statement = db!!.createStatement()
             val insertStatement = """
-                UPDATE Inbox SET message_read='${notification.isRead}' 
-                WHERE notification_id='${notification.notificationId}'
+                UPDATE Inbox SET message_read=${notification.isRead} 
+                WHERE notification_id=${notification.notificationId}
             """.trimIndent()
             val result = statement.executeUpdate(insertStatement)
             return NotificationResponse(StatusResponse.Success, "Marked message")
@@ -60,7 +60,7 @@ class InboxEntity {
         try {
             val statement = db!!.createStatement()
             val deleteStatement = """
-                DELETE FROM Inbox WHERE user_id='${notificationId}'
+                DELETE FROM Inbox WHERE user_id=${notificationId}
             """.trimIndent()
             val result = statement.executeUpdate(deleteStatement)
             return NotificationResponse(StatusResponse.Success, "Deleted Message Successfully")
@@ -77,7 +77,7 @@ class InboxEntity {
             val insertStatement = """
                 INSERT INTO Inbox (user_id, message, notification_date, message_read)
                 VALUES(
-                '${notification.userId}', '${notification.message}', '${notification.notificationDate}', '${0}'
+                ${notification.userId}, '${notification.message}', '${notification.notificationDate}', ${0}
                 )
             """.trimIndent()
             val result = statement.executeUpdate(insertStatement)

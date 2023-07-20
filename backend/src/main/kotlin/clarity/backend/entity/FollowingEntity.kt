@@ -16,7 +16,7 @@ class FollowingEntity {
             val insertStatement = """
                 INSERT INTO Following (following_id, follower_id)
                 VALUES(
-                '${request.followingId}', '${request.userId}'
+                ${request.followingId}, ${request.userId}
                 )
             """.trimIndent()
             val result = statement.executeUpdate(insertStatement)
@@ -32,7 +32,7 @@ class FollowingEntity {
         try {
             val statement = db!!.createStatement()
             val deleteStatement = """
-                DELETE FROM Following WHERE following_id='${request.followingId}'
+                DELETE FROM Following WHERE following_id=${request.followingId}
                  AND follower_id=${request.userId}
             """.trimIndent()
             val result = statement.executeUpdate(deleteStatement)
@@ -48,7 +48,7 @@ class FollowingEntity {
             val db = DataManager.conn()
             val statement = db!!.createStatement()
             val selectStatement = """
-                SELECT * FROM Following WHERE follower_id='${userId}'
+                SELECT * FROM Following WHERE follower_id=${userId}
             """.trimIndent()
             val ids = mutableListOf<Int>()
             val result = statement.executeQuery(selectStatement)
@@ -68,7 +68,7 @@ class FollowingEntity {
             val db = DataManager.conn()
             val statement = db!!.createStatement()
             val selectStatement = """
-                SELECT * FROM Following WHERE following_id='${userId}'
+                SELECT * FROM Following WHERE following_id=${userId}
             """.trimIndent()
             val ids = mutableListOf<Int>()
             val result = statement.executeQuery(selectStatement)

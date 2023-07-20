@@ -62,7 +62,7 @@ class ClassroomEntity() {
             val insertStatement = """
                 INSERT INTO Classroom (private_code, name, teacher)
                 VALUES(
-                '${newId}', '${classroom.name}', '${classroom.teacher}'
+                '${newId}', '${classroom.name}', ${classroom.teacher}
                 )
             """.trimIndent()
             val result = statement.executeUpdate(insertStatement)
