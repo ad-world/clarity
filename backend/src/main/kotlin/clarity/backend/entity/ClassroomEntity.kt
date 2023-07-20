@@ -14,7 +14,7 @@ data class JoinClassroomResponse(val response: StatusResponse, val id: String)
 
 data class GetClassroomResponse(val response: StatusResponse, val id: List<ClassroomReturnObject>)
 
-data class ClassroomReturnObject(val code: String, val name: String)
+data class ClassroomReturnObject(val code: String, val name: String, val teacherID: String)
 
 class ClassroomEntity() {
     private fun getRandomString(length: Int) : String {
@@ -86,7 +86,8 @@ class ClassroomEntity() {
             while (result.next()) {
                 var className = ClassroomReturnObject(
                     result.getString("private_code"),
-                    result.getString("name")
+                    result.getString("name"),
+                    result.getString("teacher")
                 )
                 classNames.add(className)
             }
@@ -113,7 +114,8 @@ class ClassroomEntity() {
             while (result.next()) {
                 var className = ClassroomReturnObject(
                     result.getString("class_id"),
-                    result.getString("name")
+                    result.getString("name"),
+                    result.getString("teacher")
                 )
                 classNames.add(className)
             }
