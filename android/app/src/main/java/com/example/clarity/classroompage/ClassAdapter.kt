@@ -8,8 +8,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.clarity.R
 
 class ClassAdapter(
-    private val classes: MutableList<Pair<String,String>>,
-    private val onItemClick: (Pair<String, String>) -> Unit
+    private val classes: MutableList<ClassroomFragment.classData>,
+    private val onItemClick: (ClassroomFragment.classData) -> Unit
 ) : RecyclerView.Adapter<ClassAdapter.ClassViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ClassViewHolder {
@@ -38,9 +38,9 @@ class ClassAdapter(
             }
         }
 
-        fun bind(className: Pair<String, String>) {
-            tvClassName.text = className.first
-            tvInstructorName.text = className.second
+        fun bind(className: ClassroomFragment.classData) {
+            tvClassName.text = className.name
+            tvInstructorName.text = className.teacherName
         }
     }
 }

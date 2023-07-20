@@ -24,17 +24,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <!--        <ToggleButton-->
-<!--            android:id="@+id/toggleClasses"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_marginTop="16dp"-->
-<!--            android:textOff="Show Joined Classes"-->
-<!--            android:textOn="Show Created Classes"-->
-<!--            app:layout_constraintEnd_toEndOf="parent"-->
-<!--            app:layout_constraintStart_toStartOf="parent"-->
-<!--            app:layout_constraintTop_toBottomOf="@id/btnCreateClass" />-->
-
         <Button
             android:id="@+id/btnJoinClass"
             android:layout_width="143dp"
