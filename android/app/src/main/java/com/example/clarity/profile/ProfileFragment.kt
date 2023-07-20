@@ -119,9 +119,12 @@ class ProfileFragment : Fragment() {
 
         binding.followers.text = numFollowers.toString() + " Followers"
 
-        binding.followers.setOnClickListener {
-            //findNavController().navigate(R.id.)
+        if(followersList?.size!! > 0) {
+            binding.followers.setOnClickListener {
+                //findNavController().navigate(R.id.)
+            }
         }
+
 
         //FOLLOWING
 
@@ -129,8 +132,10 @@ class ProfileFragment : Fragment() {
 
         binding.following.text = numFollowing.toString() + " Following"
 
-        binding.following.setOnClickListener {
-            //findNavController().navigate(R.id.)
+        if(followingList?.size!! > 0) {
+            binding.following.setOnClickListener {
+                //findNavController().navigate(R.id.)
+            }
         }
 
 
