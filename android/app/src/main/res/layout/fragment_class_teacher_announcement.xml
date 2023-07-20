@@ -4,14 +4,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".classroompage.ClassAnnouncement">
+    tools:context=".classroompage.ClassTeacherAnnouncement">
 
     <!-- TODO: Update blank fragment layout -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvClasses"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="120dp"
+        android:layout_marginTop="130dp"
         android:divider="@android:color/darker_gray"
         android:dividerHeight="1dp"
         android:nestedScrollingEnabled="false"
