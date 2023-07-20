@@ -13,16 +13,15 @@ import android.view.ViewGroup
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.clarity.sdk.ClaritySDK
-import com.example.clarity.sdk.GetDataForSetRequest
-import com.example.clarity.sdk.GetDataForSetResponse
-import com.example.clarity.sdk.GetSetsResponse
 import com.example.clarity.databinding.FragmentSetsBinding
+import com.example.clarity.sdk.GetCardsInSetRequest
+import com.example.clarity.sdk.GetCardsInSetResponse
+import com.example.clarity.sdk.GetSetsByUsernameResponse
+import com.google.gson.Gson
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import retrofit2.Response
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.flowOn
 
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 private const val USER_ID = "userId"
@@ -33,20 +32,29 @@ private const val USER_ID = "userId"
  * create an instance of this fragment.
  */
 class SetsFragment : Fragment() {
-
+    // Fragment binding
     private var _binding: FragmentSetsBinding? = null
+
+    // Set Adapter for list of sets
     private lateinit var setAdapter: SetAdapter
     private lateinit var sets: MutableList<Set>
-    private lateinit var username: String
-    private var uid: Int = 0
 
+    // Variables to store username and userid
+    private lateinit var username: String
+    private var userid: Int = 0
+
+    // ClaritySDK api for endpoint calls
     private val api = ClaritySDK().apiService
+
+    // sessionManager to interact with global datastore
     private val sessionManager: SessionManager by lazy { SessionManager(requireContext()) }
+
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
 
     private fun onSetClick(position: Int) {
+        // Get all Variables
         val btnTest = binding.btnTest
         val btnPractice = binding.btnPractice
         val btnCancel = binding.iBtnCancel
@@ -54,7 +62,9 @@ class SetsFragment : Fragment() {
         val tvPopupSetTitle = binding.tvPopupSetTitle
         val tvNumCards = binding.tvNumCards
 
+        // Make sure that cvStartActivity is not already up, otherwise the button won't work
         if (cvStartActivity.visibility != VISIBLE) {
+            //
             tvPopupSetTitle.text = sets[position].title
             if (sets[position].cards.size == 1) {
                 tvNumCards.text = "${sets[position].cards.size} card"
@@ -65,15 +75,23 @@ class SetsFragment : Fragment() {
 
             btnTest.setOnClickListener {
                 cvStartActivity.visibility = INVISIBLE
-                val intent = Intent(activity, TestSetActivity::class.java)
-                intent.putExtra("setId", sets[position].id);
+                val set = sets[position]
+                val gson = Gson()
+                val setJson = gson.toJson(set)
+                val intent = Intent(activity, TestSetActivity::class.java).apply {
+                    putExtra("set", setJson)
+                }
                 startActivity(intent)
             }
 
             btnPractice.setOnClickListener {
                 cvStartActivity.visibility = INVISIBLE
-                val intent = Intent(activity, PracticeSetActivity::class.java)
-                intent.putExtra("setId", sets[position].id);
+                val set = sets[position]
+                val gson = Gson()
+                val setJson = gson.toJson(set)
+                val intent = Intent(activity, PracticeSetActivity::class.java).apply {
+                    putExtra("set", setJson)
+                }
                 startActivity(intent)
             }
 
@@ -99,9 +117,18 @@ class SetsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        fillLayout()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        fillLayout()
+    }
+
+    private fun fillLayout() {
         lifecycleScope.launch {
             username = sessionManager.getUserName()
-            uid = sessionManager.getUserId()
+            userid = sessionManager.getUserId()
             Log.d("Username is: ", username)
         }
         sets = mutableListOf()
@@ -110,53 +137,33 @@ class SetsFragment : Fragment() {
         //  to the sets array
 
 
-        /*val response : Response<GetSetsResponse> = runBlocking {
-            return@runBlocking api.getAllSets()
+        val response : Response<GetSetsByUsernameResponse> = runBlocking {
+            return@runBlocking api.getSetsByUsername(username)
         }
         println(response.body())
 
-        val size = response.body()!!.sets.size - 1
-        for(i in 0..size) {
-            val setId = response.body()?.sets?.get(i)!!.toInt()
+        if (response.isSuccessful) {
+            val size = response.body()!!.data.size
 
-            val setRes : Response<GetDataForSetResponse> = runBlocking {
-                return@runBlocking api.getDataForSet(GetDataForSetRequest(setId))
+            for(i in 0 until size) {
+                val setData = response.body()?.data?.get(i)!!
+                val setId = setData.set_id
+                val setTitle = setData.title
+                val progress = 0
+                val set = Set(setId, setTitle, userid, mutableListOf<Card>(), progress, SetCategory.CREATED_SET)
+
+                val cards : Response<GetCardsInSetResponse> = runBlocking {
+                    return@runBlocking api.getCards(GetCardsInSetRequest(setId))
+                }
+                if (cards.isSuccessful) {
+                    for (card in cards.body()!!.cards) {
+                        set.cards.add(Card(card.card_id, card.phrase, false))
+                    }
+                }
+                sets.add(set)
             }
-            val progress = setRes.body()?.data?.get(1)!!.toInt()
-            val setTitle = setRes.body()?.data!![2]
-            val setCards = setRes.body()?.data?.get(3)
-            val cardArray: List<String> = setCards!!.split(",")
+        }
 
-            val set = Set(setId, setTitle, 0, mutableListOf<Card>(), progress, SetCategory.CREATED_SET)
-            for ((counter, card) in cardArray.withIndex()) {
-                set.cards.add(Card(counter, card, false))
-            }
-            sets.add(set)
-        }*/
-
-        // TEST DATA, will be removed when database is connected
-        sets.add(Set(0, username, 4,
-            mutableListOf(Card(0, "Dog", false),
-                Card(1, "Cat", false),
-                Card(2, "Zebra", false),
-                Card(3, "Kangaroo", false)),
-            0, SetCategory.DEFAULT_SET))
-
-        sets.add(Set(1, "$uid", 3,
-            mutableListOf(Card(0, "Canada", false),
-                Card(1, "Russia", false),
-                Card(2, "Japan", false)),
-            0, SetCategory.DOWNLOADED_SET))
-
-        sets.add(Set(2, "Devices", 5,
-            mutableListOf(Card(0, "Phone", false),
-                Card(1, "Laptop", false),
-                Card(2, "Computer", false),
-                Card(3, "Television", false),
-                Card(4, "Tablet", false)),
-            0, SetCategory.COMMUNITY_SET))
-        Log.d("myTag", "SET SIZE: " + sets.size)
-        Log.d("Username2", username)
         setAdapter = SetAdapter(sets) { position -> onSetClick(position) }
         binding.rvSets.adapter = setAdapter
         binding.rvSets.layoutManager = LinearLayoutManager(context)

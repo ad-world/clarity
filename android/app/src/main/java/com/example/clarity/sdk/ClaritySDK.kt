@@ -8,6 +8,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
+import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.Part
 import retrofit2.http.Query
@@ -76,6 +77,7 @@ interface API {
     @GET("getCardSetsOrderedByLikes")
     suspend fun getCardSetsOrderedByLikes(): Response<GetCardSetsOrderedByLikesResponse>
 
+    @Multipart
     @POST("attemptCard")
     suspend fun attemptCard(@Part("user_id") userId: Int, @Part("card_id") cardId: Int, @Part("set_id") setId: Int, @Part audio: MultipartBody.Part): Response<CreateAttemptResponse>
 
@@ -97,6 +99,7 @@ interface API {
     @POST("getSetProgress")
     suspend fun getSetProgress(@Body request: GetUserSetProgressRequest): Response<GetUserSetProgressResponse>
 
+    @Multipart
     @POST("classroom/attemptCard")
     suspend fun attemptClassroomCard(@Part("user_id") userId: Int, @Part("card_id") cardId: Int, @Part("task_id") task_id: Int, @Part audio: MultipartBody.Part): Response<CreateClassroomAttemptResponse>
 

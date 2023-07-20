@@ -58,4 +58,7 @@ dependencies {
 
     // Kotlin coroutines support
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.0"
+
+    // Allows us to pass in sets as arguments to activities
+    implementation 'com.google.code.gson:gson:2.8.8'
 }
