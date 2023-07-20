@@ -67,7 +67,7 @@ class ClassroomFragment : Fragment() {
         // toggle switch between student and teacher classes
         var materialSwitch = view.findViewById<MaterialSwitch>(R.id.toggleClass)
 
-        // show default student list when classroom page loads (toggle button is checked
+        // show default student list when classroom page loads (toggle button is checked)
         if (materialSwitch.isChecked) {
             // make api call to get the list of student class names from the backend
             var classesResponse : Response<GetClassroomResponse> = runBlocking {
@@ -141,7 +141,7 @@ class ClassroomFragment : Fragment() {
                 }
                 // adding the list classes to the recycler view (with recycler custom ClassAdapter)
                 classAdapter = ClassAdapter(classes) { className ->
-                    val intent = Intent(requireContext(), Classroom::class.java)
+                    val intent = Intent(requireContext(), ClassroomTeacher::class.java)
                     intent.putExtra("className", className.first)
                     startActivity(intent)
                 }
@@ -221,7 +221,7 @@ class ClassroomFragment : Fragment() {
                     }
                     // adding the list classes to the recycler view (with recycler custom ClassAdapter)
                     classAdapter = ClassAdapter(classes) { className ->
-                        val intent = Intent(requireContext(), Classroom::class.java)
+                        val intent = Intent(requireContext(), ClassroomTeacher::class.java)
                         intent.putExtra("className", className.first)
                         startActivity(intent)
                     }
