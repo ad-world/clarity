@@ -22,7 +22,7 @@ class ClassroomTeacher : AppCompatActivity() {
         val viewPager = findViewById<ViewPager>(R.id.viewPager)
 
         // Create a FragmentPagerAdapter for the ViewPager
-        val pagerAdapter = PagerAdapter(supportFragmentManager)
+        val pagerAdapter = PagerAdapterTeacher(supportFragmentManager)
         viewPager.adapter = pagerAdapter
 
         // handle onclick for back symbol on app bar (it will go back to main classroom page)
@@ -50,38 +50,5 @@ class ClassroomTeacher : AppCompatActivity() {
                 // Handle tab unselect
             }
         })
-
-
-        // Replace fragment container with Fragment1 initially
-//        val fragmentTransaction = fragmentManager.beginTransaction()
-//        fragmentTransaction.replace(R.id.fragmentContainer, ClassAnnouncement())
-//        fragmentTransaction.commit()
-//        tView.text = "Announcements"
-//        tView.setTextColor(Color.WHITE)
-//        tView.setTypeface(null, Typeface.BOLD)
-//        tView.textSize = 20f
-//
-//        // Button 1 click listener
-//        button1.setOnClickListener {
-//            val fragmentTransaction = fragmentManager.beginTransaction()
-//            fragmentTransaction.replace(R.id.fragmentContainer, ClassAnnouncement())
-//            fragmentTransaction.commit()
-//            tView.text = "Announcements"
-//            tView.setTextColor(Color.WHITE)
-//            tView.setTypeface(null, Typeface.BOLD)
-//            tView.textSize = 20f
-//        }
-//
-//        // Button 2 click listener
-//        button2.setOnClickListener {
-//            println("button 2 clicked")
-//            val fragmentTransaction = fragmentManager.beginTransaction()
-//            fragmentTransaction.replace(R.id.fragmentContainer, ClassTask())
-//            fragmentTransaction.commit()
-//            tView.text = "Tasks"
-//            tView.setTextColor(Color.WHITE)
-//            tView.setTypeface(null, Typeface.BOLD)
-//            tView.textSize = 20f
-//        }
     }
 }

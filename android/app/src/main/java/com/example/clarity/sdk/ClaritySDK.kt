@@ -37,6 +37,9 @@ interface API {
     @GET("getUser")
     suspend fun getUser(@Query("username") username: String): Response<GetUserResponse>
 
+    @GET("getUserById")
+    suspend fun getUserById(@Query("userId") userId: String): Response<GetUserResponse>
+
     @POST("addClass")
     suspend fun joinClass(@Body classroom: JoinClassroomEntity): Response<JoinClassroomResponse>
 
