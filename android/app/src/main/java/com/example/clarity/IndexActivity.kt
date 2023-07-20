@@ -28,6 +28,7 @@ class IndexActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         if (screen == "mainClassroom") {
+            binding.bottomNav.selectedItemId = R.id.classroom
             replaceFragment(ClassroomFragment())
         }
         else {
