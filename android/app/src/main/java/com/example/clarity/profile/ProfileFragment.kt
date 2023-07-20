@@ -1,5 +1,6 @@
 package com.example.clarity.profile
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
@@ -21,7 +22,10 @@ import com.example.clarity.sdk.GetSetsByUsernameResponse
 import com.example.clarity.sdk.GetUserResponse
 import com.example.clarity.sdk.GetUserSetProgressRequest
 import com.example.clarity.sdk.GetUserSetProgressResponse
+import com.github.mikephil.charting.animation.Easing
+import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.charts.PieChart
+import com.github.mikephil.charting.components.AxisBase
 import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
@@ -29,12 +33,16 @@ import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
+import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
+import com.github.mikephil.charting.formatter.ValueFormatter
 import com.google.android.material.tabs.TabLayout
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import retrofit2.Response
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
+import java.util.Date
 
 
 class ProfileFragment : Fragment() {
@@ -58,8 +66,8 @@ class ProfileFragment : Fragment() {
     private var completedSets = 0
     private var incompleteCards = 0
     private var incompleteSets = 0
-    private var cardDates = mutableListOf<LocalDateTime>()
-    private var setDates = mutableListOf<LocalDateTime>()
+    private var cardDates = mutableListOf<LocalDate>()
+    private var setDates = mutableListOf<LocalDate>()
 
 
     override fun onCreateView(
@@ -71,6 +79,7 @@ class ProfileFragment : Fragment() {
 
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
         //navigation
@@ -109,20 +118,6 @@ class ProfileFragment : Fragment() {
         val numFollowers = followersList?.size
 
         binding.followers.text = numFollowers.toString() + " Followers"
-        val followers = binding.followers
-
-
-        followers.setOnHoverListener { view, motionEvent ->
-            when (motionEvent.action) {
-                MotionEvent.ACTION_HOVER_ENTER -> {
-                    followers.setTextColor(Color.GRAY)
-                }
-                MotionEvent.ACTION_HOVER_EXIT -> {
-                    followers.setTextColor(Color.BLACK)
-                }
-            }
-            false
-        }
 
         binding.followers.setOnClickListener {
             //findNavController().navigate(R.id.)
@@ -133,19 +128,7 @@ class ProfileFragment : Fragment() {
         val numFollowing = followingList?.size
 
         binding.following.text = numFollowing.toString() + " Following"
-        val following = binding.following
 
-        following.setOnHoverListener { view, motionEvent ->
-            when (motionEvent.action) {
-                MotionEvent.ACTION_HOVER_ENTER -> {
-                    following.setTextColor(Color.GRAY)
-                }
-                MotionEvent.ACTION_HOVER_EXIT -> {
-                    following.setTextColor(Color.BLACK)
-                }
-            }
-            false
-        }
         binding.following.setOnClickListener {
             //findNavController().navigate(R.id.)
         }
@@ -159,11 +142,52 @@ class ProfileFragment : Fragment() {
 
         var selectedTab = 0
         updateInfo()
+        val sampleTimes: List<LocalDate> = listOf(
+            LocalDate.now().minusDays(1),
+            LocalDate.now().minusDays(1),
+            LocalDate.now().minusDays(1),
+            LocalDate.now().minusDays(1),
+            LocalDate.now().minusDays(1),// 1 day ago
+            LocalDate.now().minusDays(7),           // 7 days ago (1 week)
+            LocalDate.now().minusDays(30),          // 30 days ago (1 month, approximately)
+            LocalDate.now().minusDays(90),          // 90 days ago (3 months, approximately)
+            LocalDate.now().minusDays(365)          // 365 days ago (1 year)
+        )
+        val sampleTimes2: List<LocalDate> = listOf(
+            LocalDate.now().minusDays(1),
+            LocalDate.now().minusDays(1),
+            LocalDate.now().minusDays(1),
+            LocalDate.now().minusDays(1),
+            LocalDate.now().minusDays(1),// 1 day ago
+            LocalDate.now().minusDays(7),           // 7 days ago (1 week)
+            LocalDate.now().minusDays(30),          // 30 days ago (1 month, approximately)
+            LocalDate.now().minusDays(90),          // 90 days ago (3 months, approximately)
+            LocalDate.now().minusDays(365)          // 365 days ago (1 year)
+        )
+        //cardDates = sampleTimes as MutableList<LocalDate>
+        //setDates = sampleTimes2 as MutableList<LocalDate>
+
         println(cardDates)
         println(setDates)
         sets()
-
-
+        if(setDates.size == 0){
+            binding.noProgress.visibility = View.VISIBLE
+            binding.chartLabel.visibility = View.GONE
+            binding.lineChart.visibility = View.GONE
+            binding.pieChart.visibility = View.GONE
+            binding.tabs.visibility = View.GONE
+            binding.completedNum.visibility = View.GONE
+            binding.progress.visibility = View.GONE
+            binding.completedText.visibility = View.GONE
+        } else {
+            binding.noProgress.visibility = View.GONE
+            binding.lineChart.visibility = View.VISIBLE
+            binding.pieChart.visibility = View.VISIBLE
+            binding.tabs.visibility = View.VISIBLE
+            binding.completedNum.visibility = View.VISIBLE
+            binding.progress.visibility = View.VISIBLE
+            binding.completedText.visibility = View.VISIBLE
+        }
 
         binding.tabs.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab) {
@@ -172,11 +196,47 @@ class ProfileFragment : Fragment() {
                     binding.lineChart.clear()
                     binding.pieChart.clear()
                     updateInfo()
+                    if(setDates.size == 0){
+                        binding.noProgress.visibility = View.VISIBLE
+                        binding.lineChart.visibility = View.GONE
+                        binding.pieChart.visibility = View.GONE
+                        binding.tabs.visibility = View.GONE
+                        binding.chartLabel.visibility = View.GONE
+                        binding.completedNum.visibility = View.GONE
+                        binding.progress.visibility = View.GONE
+                        binding.completedText.visibility = View.GONE
+                    } else {
+                        binding.noProgress.visibility = View.GONE
+                        binding.lineChart.visibility = View.VISIBLE
+                        binding.pieChart.visibility = View.VISIBLE
+                        binding.tabs.visibility = View.VISIBLE
+                        binding.completedNum.visibility = View.VISIBLE
+                        binding.progress.visibility = View.VISIBLE
+                        binding.completedText.visibility = View.VISIBLE
+                    }
                     sets()
                 } else {
                     binding.lineChart.clear()
                     binding.pieChart.clear()
                     updateInfo()
+                    if(cardDates.size == 0){
+                        binding.noProgress.visibility = View.VISIBLE
+                        binding.lineChart.visibility = View.GONE
+                        binding.chartLabel.visibility = View.GONE
+                        binding.pieChart.visibility = View.GONE
+                        binding.tabs.visibility = View.GONE
+                        binding.completedNum.visibility = View.GONE
+                        binding.progress.visibility = View.GONE
+                        binding.completedText.visibility = View.GONE
+                    } else {
+                        binding.noProgress.visibility = View.GONE
+                        binding.lineChart.visibility = View.VISIBLE
+                        binding.pieChart.visibility = View.VISIBLE
+                        binding.tabs.visibility = View.VISIBLE
+                        binding.completedNum.visibility = View.VISIBLE
+                        binding.progress.visibility = View.VISIBLE
+                        binding.completedText.visibility = View.VISIBLE
+                    }
                     cards()
                 }
             }
@@ -199,39 +259,44 @@ class ProfileFragment : Fragment() {
         binding.completedNum.text = completedCards.toString()
         //get cards
 
-
-
-//        val attempts = listOf(
-//            Entry(0f, 10f),
-//            Entry(1f, 20f),
-//            Entry(2f, 15f),
-//            Entry(3f, 30f),
-//        )
-
-        val earliest = cardDates.minOrNull()
-        val range = getRanges(earliest)
-
-        val attempts = ArrayList<Entry>()
-        for (i in range.indices) {
-            val range = range[i]
-            val entry = range.second?.let { Entry(i.toFloat(), it.toFloat()) }
-            if (entry != null) {
-                attempts.add(entry)
-            }
+        var attempts = ArrayList<Entry>()
+        val sortedDates = cardDates.sorted()
+        val labels = ArrayList<String>()
+        val dateCardCountMap = sortedDates.groupingBy { it }.eachCount()
+        var index = 0f
+        for ((date, count) in dateCardCountMap) {
+            attempts.add(Entry(index, count.toFloat()))
+            labels.add(date.toString())
+            index++
+        }
+        val lineDataSet = LineDataSet(attempts, "Number of cards completed").apply {
+            setDrawValues(false)
+            color = Color.BLUE
+            lineWidth = 2f
         }
 
-        val lineDataSet = LineDataSet(attempts, "Data Set")
         val lineData = LineData(lineDataSet)
-        val chart = binding.lineChart
-        chart.data = lineData
-        chart.xAxis.position = XAxis.XAxisPosition.BOTTOM
-        chart.axisRight.isEnabled = false
-        chart.axisLeft.setDrawGridLines(false)
-        chart.xAxis.setDrawGridLines(false)
-        chart.description.isEnabled = false
-        chart.legend.isEnabled = false
-        chart.animateX(1000)
-        chart.invalidate()
+        val lineChart: LineChart = binding.lineChart
+        lineChart.data = lineData
+        lineChart.apply {
+            description.text = "Cards completion over time"
+            xAxis.apply {
+                valueFormatter = IndexAxisValueFormatter(labels)
+                position = XAxis.XAxisPosition.BOTTOM
+                setDrawGridLines(false)
+                granularity = 1f
+                setCenterAxisLabels(true) // Center the labels
+                labelRotationAngle = 45f // Rotate labels
+            }
+            description.isEnabled = false
+            legend.isEnabled = false
+            extraBottomOffset = 33f
+            axisRight.isEnabled = false
+            animateX(1800, Easing.EaseInOutQuart)
+            invalidate() // refresh
+        }
+        binding.chartLabel.text = "Number of Cards Completed"
+
 
         pieChart = binding.pieChart
         val entries = mutableListOf<PieEntry>()
@@ -256,54 +321,49 @@ class ProfileFragment : Fragment() {
         //number of sets completed
         binding.completedNum.text = completedCards.toString()
     }
-    private fun getRanges(earliest: LocalDateTime?): List<Pair<String, Long?>> {
-        val now = LocalDateTime.now()
-        val years = earliest?.until(now, ChronoUnit.YEARS)
-        val months = earliest?.until(now, ChronoUnit.MONTHS)?.rem(12)
-        val days = earliest?.until(now, ChronoUnit.DAYS)?.rem(30)
-
-        return listOf(
-            Pair("Years", years),
-            Pair("Months", months),
-            Pair("Days", days)
-        )
-    }
     private fun sets(){
         binding.completedText.text = "Completed Sets"
         binding.progress.text = "Saved Sets Progress"
 
         binding.completedNum.text = completedSets.toString()
 
-        val earliest = setDates.minOrNull()
-        val range = getRanges(earliest)
 
-        val attempts = ArrayList<Entry>()
-        for (i in range.indices) {
-            val range = range[i]
-            val entry = range.second?.let { Entry(i.toFloat(), it.toFloat()) }
-            if (entry != null) {
-                attempts.add(entry)
-            }
+        var attempts = ArrayList<Entry>()
+        val sortedDates = cardDates.sorted()
+        val labels = ArrayList<String>()
+        val dateCardCountMap = sortedDates.groupingBy { it }.eachCount()
+        var index = 0f
+        for ((date, count) in dateCardCountMap) {
+            attempts.add(Entry(index, count.toFloat()))
+            labels.add(date.toString())
+            index++
         }
-//        val attempts = listOf(
-//            Entry(0f, 10f),
-//            Entry(1f, 20f),
-//            Entry(2f, 15f),
-//            Entry(3f, 30f),
-//        )
-
-        val lineDataSet = LineDataSet(attempts, "Data Set")
+        val lineDataSet = LineDataSet(attempts, "Number of cards completed").apply {
+            setDrawValues(false)
+            color = Color.BLUE
+            lineWidth = 2f
+        }
         val lineData = LineData(lineDataSet)
-        val chart = binding.lineChart
-        chart.data = lineData
-        chart.xAxis.position = XAxis.XAxisPosition.BOTTOM
-        chart.axisRight.isEnabled = false
-        chart.axisLeft.setDrawGridLines(false)
-        chart.xAxis.setDrawGridLines(false)
-        chart.description.isEnabled = false
-        chart.legend.isEnabled = false
-        chart.animateX(1000)
-        chart.invalidate()
+        val lineChart: LineChart = binding.lineChart
+        lineChart.data = lineData
+        lineChart.apply {
+            description.text = "Cards completion over time"
+            xAxis.apply {
+                valueFormatter = IndexAxisValueFormatter(labels)
+                position = XAxis.XAxisPosition.BOTTOM
+                setDrawGridLines(false)
+                granularity = 1f
+                setCenterAxisLabels(true) // Center the labels
+                labelRotationAngle = 45f // Rotate labels
+            }
+            legend.isEnabled = false
+            description.isEnabled = false
+            extraBottomOffset = 33f
+            axisRight.isEnabled = false
+            animateX(1800, Easing.EaseInOutQuart)
+            invalidate() // refresh
+        }
+        binding.chartLabel.text = "Number of Cards Completed"
 
         pieChart = binding.pieChart
         val entries = mutableListOf<PieEntry>()
@@ -348,7 +408,6 @@ class ProfileFragment : Fragment() {
         return response.body()
     }
     private fun updateInfo() {
-        println("gdifugdnj")
         val response : Response<GetSetsByUsernameResponse> = runBlocking {
             return@runBlocking api.getSetsByUsername(username)
         }
@@ -373,17 +432,10 @@ class ProfileFragment : Fragment() {
 
                 val completedList = currentSet?.completedCard
 
-                //can check all cards that are completed and enter in their dates
-//                val allCardsReq = GetCardsInSetRequest(s.set_id)
-//                val allCardsRes : Response<GetCardsInSetResponse> = runBlocking {
-//                    return@runBlocking api.getCards(allCardsReq)
-//                }
-//                val allCards = allCardsRes.body()?.cards
-                var latestDate = LocalDateTime.of(-999_999_999, 1, 1, 0, 0, 0)
+                var latestDate = LocalDate.MIN
                 if (completedList != null) {
                     for (c in completedList) {
-                        //get card id and then check the completed date
-                        val date = LocalDateTime.parse(c.completion_date)
+                        val date = LocalDate.parse(c.completion_date)
                         cardDates.add(date)
                         if(date > latestDate) {
                             latestDate = date
@@ -393,7 +445,6 @@ class ProfileFragment : Fragment() {
                 if(currentSet?.numCards!! == currentSet?.numCompletedCards!!) {
                     completedSets += 1
                     setDates.add(latestDate)
-                    //now check the last completion date which will give the date that the set was completed
                 }
             }
         }
