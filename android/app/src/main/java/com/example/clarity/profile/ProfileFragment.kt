@@ -124,6 +124,9 @@ class ProfileFragment : Fragment() {
                 //findNavController().navigate(R.id.)
             }
         }
+        binding.followers.setOnClickListener {
+            //findNavController().navigate(R.id.)
+        }
 
 
         //FOLLOWING
