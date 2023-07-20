@@ -121,4 +121,31 @@ class UserEntity() {
             return GetUserResponse(StatusResponse.Failure, null, "Unknown error: ${e.message}")
         }
     }
+
+    fun getUserById(userId: String): GetUserResponse {
+        val db = DataManager.conn()
+
+        try {
+            val selectStatement = "SELECT * FROM User WHERE user_id = '$userId'"
+            val statement = db!!.createStatement();
+            val result = statement.executeQuery(selectStatement)
+
+            return if(result.next()) {
+                val user = UserWithId(
+                    username = result.getString("username"),
+                    user_id = result.getInt("user_id"),
+                    firstname = result.getString("first_name"),
+                    lastname = result.getString("last_name"),
+                    email = result.getString("email"),
+                    phone_number = result.getString("phone_number"),
+                    login_streak = result.getInt("login_streak")
+                )
+                GetUserResponse(StatusResponse.Success, user, "User found successfully")
+            } else {
+                GetUserResponse(StatusResponse.Failure, null, "Unable to find user with username $userId");
+            }
+        } catch (e: Exception) {
+            return GetUserResponse(StatusResponse.Failure, null, "Unknown error: ${e.message}")
+        }
+    }
 }

@@ -61,5 +61,26 @@ class LoginController {
         }
     }
 
+    @GetMapping("/getUserById")
+    fun getUserById(@RequestParam userId: String): ResponseEntity<GetUserResponse> {
+        val userEntity = UserEntity()
+        val getUserResponse = userEntity.getUserById(userId)
+
+        return if(userId.isNotEmpty()) {
+            if(getUserResponse.response == StatusResponse.Success) {
+                ResponseEntity.ok(getUserResponse)
+            } else {
+                ResponseEntity.badRequest().body(getUserResponse)
+            }
+        } else {
+            ResponseEntity.badRequest().body(
+                GetUserResponse(
+                    StatusResponse.Failure,
+                    null,
+                    "Please pass a username as a request param and try again."
+                )
+            )
+        }
+    }
 
 }
