@@ -17,7 +17,7 @@ class InboxEntity {
             val db = DataManager.conn()
             val statement = db!!.createStatement()
             val selectStatement = """
-                SELECT * FROM Inbox WHERE user_id='${userId}' AND message_read='${0}'
+                SELECT * FROM Inbox WHERE user_id=${userId} AND message_read=${0}
             """.trimIndent()
             val messages = mutableListOf<Notification>()
             val result = statement.executeQuery(selectStatement)
@@ -60,7 +60,7 @@ class InboxEntity {
         try {
             val statement = db!!.createStatement()
             val deleteStatement = """
-                DELETE FROM Inbox WHERE user_id=${notificationId}
+                DELETE FROM Inbox WHERE notification_id=${notificationId}
             """.trimIndent()
             val result = statement.executeUpdate(deleteStatement)
             return NotificationResponse(StatusResponse.Success, "Deleted Message Successfully")
