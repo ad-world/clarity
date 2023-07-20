@@ -8,6 +8,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
+import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.Part
 import retrofit2.http.Query
@@ -36,6 +37,9 @@ interface API {
 
     @GET("getUser")
     suspend fun getUser(@Query("username") username: String): Response<GetUserResponse>
+
+    @GET("getAllUsers")
+    suspend fun getAllusers(): Response<GetAllUsersResponse>
 
     @POST("addClass")
     suspend fun joinClass(@Body classroom: JoinClassroomEntity): Response<JoinClassroomResponse>
@@ -70,6 +74,10 @@ interface API {
     @GET("getSetsByUsername")
     suspend fun getSetsByUsername(@Query("username") username: String): Response<GetSetsByUsernameResponse>
 
+    @GET("getCardSetsOrderedByLikes")
+    suspend fun getCardSetsOrderedByLikes(): Response<GetCardSetsOrderedByLikesResponse>
+
+    @Multipart
     @POST("attemptCard")
     suspend fun attemptCard(@Part("user_id") userId: Int, @Part("card_id") cardId: Int, @Part("set_id") setId: Int, @Part audio: MultipartBody.Part): Response<CreateAttemptResponse>
 
@@ -91,6 +99,7 @@ interface API {
     @POST("getSetProgress")
     suspend fun getSetProgress(@Body request: GetUserSetProgressRequest): Response<GetUserSetProgressResponse>
 
+    @Multipart
     @POST("classroom/attemptCard")
     suspend fun attemptClassroomCard(@Part("user_id") userId: Int, @Part("card_id") cardId: Int, @Part("task_id") task_id: Int, @Part audio: MultipartBody.Part): Response<CreateClassroomAttemptResponse>
 
@@ -129,6 +138,15 @@ interface API {
 
     @GET("getFollowers")
     suspend fun getFollowers(@Query("userId") userId: Int) : Response<FollowerListResponse>
+
+    @POST("likeCardSet")
+    suspend fun likeCardSet(@Body request: LikeCardSetRequest): Response<LikeCardSetResponse>
+
+    @POST("unlikeCardSet")
+    suspend fun unlikeCardSet(@Body request: UnlikeCardSetRequest): Response<UnlikeCardSetResponse>
+
+    @POST("toggleCardSetVisibility")
+    suspend fun toggleCardSetVisibility(@Body request: ToggleCardSetRequest): Response<ToggleCardSetResponse>
 
 //    @POST("getProgressForSet")
 //    suspend fun getProgressForSet(@Body req: GetProgressForSetRequest) : Response<GetProgressForSetResponse>

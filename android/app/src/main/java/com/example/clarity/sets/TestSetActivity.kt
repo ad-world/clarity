@@ -3,7 +3,10 @@ package com.example.clarity.sets
 import android.Manifest
 import android.annotation.SuppressLint
 import android.graphics.Color
+import android.net.Uri
 import android.os.Bundle
+import android.speech.tts.TextToSpeech
+import android.util.Log
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.Button
@@ -13,17 +16,25 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.core.app.ActivityCompat
+import androidx.lifecycle.lifecycleScope
 import com.example.clarity.sdk.ClaritySDK
-import com.example.clarity.sdk.GetDataForSetRequest
-import com.example.clarity.sdk.GetDataForSetResponse
 import com.example.clarity.R
+import com.example.clarity.SessionManager
+import com.example.clarity.sdk.CreateAttemptResponse
 import com.example.clarity.sets.audio.AndroidAudioPlayer
 import com.example.clarity.sets.audio.AndroidAudioRecorder
+import com.google.gson.Gson
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import okhttp3.MediaType
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import retrofit2.Response
 import java.io.File
+import java.util.Locale
 
 class TestSetActivity() : AppCompatActivity() {
+
 
     private val recorder by lazy {
         AndroidAudioRecorder(applicationContext)
@@ -31,86 +42,62 @@ class TestSetActivity() : AppCompatActivity() {
 
     // TODO: Not sure if they can hear the correct recording after answering?
     //  added this here in case they can
-    private val player by lazy {
+    /* private val player by lazy {
         AndroidAudioPlayer(applicationContext)
-    }
+    }*/
 
     private var audioFile: File? = null
+    private var player: TextToSpeech? = null
 
     private var isRecording = false
     private var recordingCompleted = false
     private val api = ClaritySDK().apiService
+    private val sessionManager: SessionManager by lazy { SessionManager(this) }
 
+    var userid = 0
     var index = 0
+    var set: Set = Set(0, "", 0, mutableListOf<Card>(), 0, SetCategory.COMMUNITY_SET)
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.RECORD_AUDIO), 0)
         setContentView(R.layout.activity_test_set)
 
+        // Create TTS Object
+        player = TextToSpeech(this, TextToSpeech.OnInitListener {
+            if (it == TextToSpeech.SUCCESS) {
+                player!!.language = Locale.ENGLISH
+            } else {
+                Log.d("TTS ERROR", it.toString())
+            }
+        })
+
         val intent = intent
-        val setId: Int = intent.getIntExtra("setId", 0)
-        val userId: Int = intent.getIntExtra("userId", 0)
-        // TODO: Backend query to search for set with given userId and setId
-        //  for now we use our hard coded sets
-        val setRes : Response<GetDataForSetResponse> = runBlocking {
-            return@runBlocking api.getDataForSet(GetDataForSetRequest(setId))
-        }
-        val progress = setRes.body()?.data?.get(1)!!.toInt()
-        val setTitle = setRes.body()?.data!![2]
-        val setCards = setRes.body()?.data?.get(3)
-        val cardArray: List<String> = setCards!!.split(",")
-
-        val set = Set(setId, setTitle, 0, mutableListOf<Card>(), progress, SetCategory.CREATED_SET)
-        for ((counter, card) in cardArray.withIndex()) {
-            set.cards.add(Card(counter, card, false))
-        }
-
-        /*
-        var set = Set(0, "Animals", 4,
-                    mutableListOf(Card(0, "Dog", false),
-                        Card(1, "Cat", false),
-                        Card(2, "Zebra", false),
-                        Card(3, "Kangaroo", false)),
-                    0, SetCategory.DEFAULT_SET)
-        when (setId) {
-            0 -> {
-                set = Set(0, "Animals", 4,
-                    mutableListOf(Card(0, "Dog", false),
-                        Card(1, "Cat", false),
-                        Card(2, "Zebra", false),
-                        Card(3, "Kangaroo", false)),
-                    0, SetCategory.DEFAULT_SET)
-            }
-            1 -> {
-                set = Set(1, "Countries", 3,
-                    mutableListOf(Card(0, "Canada", false),
-                        Card(1, "Russia", false),
-                        Card(2, "Japan", false)),
-                    0, SetCategory.DOWNLOADED_SET)
-            }
-            2 -> {
-                set = Set(2, "Devices", 5,
-                    mutableListOf(Card(0, "Phone", false),
-                        Card(1, "Laptop", false),
-                        Card(2, "Computer", false),
-                        Card(3, "Television", false),
-                        Card(4, "Tablet", false)),
-                    0, SetCategory.COMMUNITY_SET)
-            }
-        }*/
+        val setJson = intent.getStringExtra("set")
+        val gson = Gson()
+        set = gson.fromJson(setJson, Set::class.java)
 
         val tvTitle = findViewById<TextView>(R.id.tvTitle)
         val iBtnClose = findViewById<ImageButton>(R.id.iBtnClose)
         val iBtnMic = findViewById<ImageButton>(R.id.iBtnMic)
+        val iBtnSpeaker = findViewById<ImageButton>(R.id.iBtnSpeaker)
         val iBtnNext = findViewById<ImageButton>(R.id.iBtnNext)
         val cvPopUp = findViewById<CardView>(R.id.cvPopUp)
         val cvCompletedScreen = findViewById<CardView>(R.id.cvCompletedScreen)
         val btnReturn = findViewById<Button>(R.id.btnReturn)
 
+        lifecycleScope.launch {
+            userid = sessionManager.getUserId()
+        }
+
         tvTitle.text = set.title
         iBtnClose.setOnClickListener {
             finish()
+        }
+
+        // Handle Speaker button click
+        iBtnSpeaker.setOnClickListener {
+            player!!.speak(set.cards[index].phrase, TextToSpeech.QUEUE_ADD, null, null)
         }
 
         iBtnMic.setOnClickListener {
@@ -120,7 +107,7 @@ class TestSetActivity() : AppCompatActivity() {
                     //  ...
                     iBtnMic.setBackgroundResource(R.drawable.setclosebutton)
                     iBtnMic.setImageResource(R.drawable.baseline_mic_24_white)
-                    File(cacheDir, "audio.mp3").also {
+                    File(cacheDir, "audio.wav").also {
                         recorder.start(it)
                         audioFile = it
                     }
@@ -132,7 +119,7 @@ class TestSetActivity() : AppCompatActivity() {
                     recorder.stop()
                     recordingCompleted = true
 
-                    val score = getAccuracyScore(File(cacheDir, "audio.mp3"))
+                    val score = getAccuracyScore(File(cacheDir, "audio.wav"))
                     displayMessagePopup(score)
                     val progressBar = findViewById<ProgressBar>(R.id.progressBar)
                     val tvCompletedCount = findViewById<TextView>(R.id.tvCompletedPhrases)
@@ -181,6 +168,17 @@ class TestSetActivity() : AppCompatActivity() {
 
     private fun getAccuracyScore(file: File): Int {
         // TODO: make this work later
+        val requestFile = RequestBody.create(MediaType.parse("audio/*"), file)
+
+        val part = MultipartBody.Part.createFormData("audio", file.name, requestFile)
+
+        val response : Response<CreateAttemptResponse> = runBlocking {
+            return@runBlocking api.attemptCard(set.id, userid, set.cards[index].id, part)
+        }
+        // TODO: This currently fails with Error: 400, need to fix this
+        // Log.d("response: ", "$response")
+        // Log.d("accuracy score: ", "${response.body()!!.metadata!!.accuracyScore}")
+        // return response.body()!!.metadata!!.accuracyScore.toInt()
         return 100
     }
 

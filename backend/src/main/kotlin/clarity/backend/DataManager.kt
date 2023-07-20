@@ -33,6 +33,7 @@ class DataManager {
         executeSqlFile("ddl/CREATE_ANNOUNCEMENTS.sql")
         executeSqlFile("ddl/CREATE_FOLLOWING.sql")
         executeSqlFile("ddl/CREATE_INBOX.sql")
+        executeSqlFile("ddl/CREATE_SETLIKES.sql")
     }
 
     private fun createDbFile() {

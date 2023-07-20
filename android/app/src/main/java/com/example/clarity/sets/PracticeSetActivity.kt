@@ -4,6 +4,8 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.graphics.Color
 import android.os.Bundle
+import android.speech.tts.TextToSpeech
+import android.util.Log
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
@@ -14,133 +16,128 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.core.app.ActivityCompat
 import com.example.clarity.sdk.ClaritySDK
-import com.example.clarity.sdk.GetDataForSetRequest
-import com.example.clarity.sdk.GetDataForSetResponse
 import com.example.clarity.R
 import com.example.clarity.sets.audio.AndroidAudioPlayer
 import com.example.clarity.sets.audio.AndroidAudioRecorder
-import kotlinx.coroutines.runBlocking
-import retrofit2.Response
+import com.google.gson.Gson
+import org.w3c.dom.Text
 import java.io.File
+import java.util.Locale
 
 class PracticeSetActivity() : AppCompatActivity() {
 
-    private val recorder by lazy {
-        AndroidAudioRecorder(applicationContext)
-    }
+    // Recorder and Player
+    private val recorder by lazy { AndroidAudioRecorder(applicationContext) }
+    private var player: TextToSpeech? = null
+    // private val player by lazy { AndroidAudioPlayer(applicationContext) }
 
-    private val player by lazy {
-        AndroidAudioPlayer(applicationContext)
-    }
-
+    // Audio File
     private var audioFile: File? = null
 
+    // Toggle to check if we are currently recording
     private var isRecording = false
+
+    // ClaritySDK api for endpoint calls
     private val api = ClaritySDK().apiService
 
+    // Index that stores the current card being displayed
     var index = 0
+
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Create TTS Object
+        player = TextToSpeech(this, TextToSpeech.OnInitListener {
+            if (it == TextToSpeech.SUCCESS) {
+                player!!.language = Locale.ENGLISH
+            } else {
+                Log.d("TTS ERROR", it.toString())
+            }
+        })
+
+        // Request permission to record
         ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.RECORD_AUDIO), 0)
+
+        // Set View
         setContentView(R.layout.activity_practice_set)
 
+        // Get Set that was started
         val intent = intent
-        val setId: Int = intent.getIntExtra("setId", 0)
-        val userId: Int = intent.getIntExtra("userId", 0)
-        // TODO: Backend query to search for set with given userId and setId
-        //  for now we use our hard coded sets
-        val setRes : Response<GetDataForSetResponse> = runBlocking {
-            return@runBlocking api.getDataForSet(GetDataForSetRequest(setId))
-        }
-        val progress = setRes.body()?.data?.get(1)!!.toInt()
-        val setTitle = setRes.body()?.data!![2]
-        val setCards = setRes.body()?.data?.get(3)
-        val cardArray: List<String> = setCards!!.split(",")
+        val setJson = intent.getStringExtra("set")
+        val gson = Gson()
+        val set = gson.fromJson(setJson, Set::class.java)
 
-        val set = Set(setId, setTitle, 0, mutableListOf<Card>(), progress, SetCategory.CREATED_SET)
-        for ((counter, card) in cardArray.withIndex()) {
-            set.cards.add(Card(counter, card, false))
-        }
-
-        /*
-        var set = Set(0, "Animals", 4,
-            mutableListOf(Card(0, "Dog", false),
-                Card(1, "Cat", false),
-                Card(2, "Zebra", false),
-                Card(3, "Kangaroo", false)),
-            0, SetCategory.DEFAULT_SET)
-        when (setId) {
-            0 -> {
-                set = Set(0, "Animals", 4,
-                    mutableListOf(Card(0, "Dog", false),
-                        Card(1, "Cat", false),
-                        Card(2, "Zebra", false),
-                        Card(3, "Kangaroo", false)),
-                    0, SetCategory.DEFAULT_SET)
-            }
-            1 -> {
-                set = Set(1, "Countries", 3,
-                    mutableListOf(Card(0, "Canada", false),
-                        Card(1, "Russia", false),
-                        Card(2, "Japan", false)),
-                    0, SetCategory.DOWNLOADED_SET)
-            }
-            2 -> {
-                set = Set(2, "Devices", 5,
-                    mutableListOf(Card(0, "Phone", false),
-                        Card(1, "Laptop", false),
-                        Card(2, "Computer", false),
-                        Card(3, "Television", false),
-                        Card(4, "Tablet", false)),
-                    0, SetCategory.COMMUNITY_SET)
-            }
-        }*/
-
+        // Get all view components
         val tvTitle = findViewById<TextView>(R.id.tvTitle)
         val iBtnClose = findViewById<ImageButton>(R.id.iBtnClose)
         val iBtnMic = findViewById<ImageButton>(R.id.iBtnMic)
+        val iBtnSpeaker = findViewById<ImageButton>(R.id.iBtnSpeaker)
         val iBtnNext = findViewById<ImageButton>(R.id.iBtnNext)
         val iBtnPrev = findViewById<ImageButton>(R.id.iBtnPrev)
         val cvPopUp = findViewById<CardView>(R.id.cvPopUp)
         val progressBar = findViewById<ProgressBar>(R.id.progressBar)
         val tvCompletedCount = findViewById<TextView>(R.id.tvCompletedPhrases)
+
+        // Initialize Progress Bar, Completed Count, and Title
         progressBar.progress = ((index + 1) * 100) / set.cards.size
         tvCompletedCount.text = "Phrase ${index + 1} / ${set.cards.size}"
-
         tvTitle.text = set.title
+
+        // Handle Close button, which automatically closes practice session
         iBtnClose.setOnClickListener {
             finish()
         }
 
+        // Handle Speaker button click
+        iBtnSpeaker.setOnClickListener {
+            player!!.speak(set.cards[index].phrase, TextToSpeech.QUEUE_ADD, null, null)
+        }
+
+        // Handle Mic button click
         iBtnMic.setOnClickListener {
+            // CASE 1: Not Recording -> Recording
             if (!isRecording) {
-                // TODO: Change UI of button to reflect ongoing recording
-                //  ...
+                // Disable Navigation Buttons
                 iBtnNext.isEnabled = false
                 iBtnPrev.isEnabled = false
+
+                // Ensure Result Pop up is Gone
                 cvPopUp.visibility = View.GONE
+
+                // Change UI of button
                 iBtnMic.setBackgroundResource(R.drawable.setclosebutton)
                 iBtnMic.setImageResource(R.drawable.baseline_mic_24_white)
-                File(cacheDir, "audio.mp3").also {
+
+                // Create file, and start recording, while storing recording in file
+                File(cacheDir, "audio.wav").also {
                     recorder.start(it)
                     audioFile = it
                 }
+
+            // CASE 2: Recording -> Not Recording
             } else {
-                // TODO Change UI of button to reflect recording stopped
-                //  ...
+                // Change UI of button
                 iBtnMic.setBackgroundResource(R.drawable.roundcorner)
                 iBtnMic.setImageResource(R.drawable.baseline_mic_24)
+
+                // Stop Recording
                 recorder.stop()
 
-                val score = getAccuracyScore(File(cacheDir, "audio.mp3"))
+                // Return Accuracy Score and Display Popup
+                val score = getAccuracyScore(File(cacheDir, "audio.wav"))
                 displayMessagePopup(score)
+
+                // Enable Navigation Buttons
                 iBtnNext.isEnabled = true
                 iBtnPrev.isEnabled = true
             }
+
+            // Toggle isRecording Value
             isRecording = !isRecording
         }
 
+        // Handle Forward Navigation
         iBtnNext.setOnClickListener {
             if (index < set.cards.size - 1) {
                 index++
@@ -156,6 +153,7 @@ class PracticeSetActivity() : AppCompatActivity() {
             }
         }
 
+        // Handle Backward Navigation
         iBtnPrev.setOnClickListener {
             if (index > 0) {
                 index--
@@ -171,19 +169,23 @@ class PracticeSetActivity() : AppCompatActivity() {
             }
         }
 
+        // Load Initial Card
         loadCard(set.cards[index])
     }
 
+    // Handles setting the UI for the current card
     private fun loadCard(card: Card) {
         val tvCardPhrase = findViewById<TextView>(R.id.tvCardPhrase)
         tvCardPhrase.text = card.phrase
     }
 
+    // Returns accuracy score
     private fun getAccuracyScore(file: File): Int {
         // TODO: make this work later
         return 100
     }
 
+    // Display popup
     @SuppressLint("SetTextI18n")
     private fun displayMessagePopup(score: Int)  {
         val cvPopUp = findViewById<CardView>(R.id.cvPopUp)
@@ -197,6 +199,5 @@ class PracticeSetActivity() : AppCompatActivity() {
         }
 
         cvPopUp.visibility = View.VISIBLE
-        // Log.d("Tag Visibility 1", cvPopUp.visibility.toString())
     }
 }

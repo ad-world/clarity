@@ -121,4 +121,44 @@ class CardController {
             ResponseEntity.badRequest().body(resp)
         }
     }
+
+    @GetMapping("/getCardSetsOrderedByLikes")
+    fun getCardSetsOrderedByLikes(): ResponseEntity<GetCardSetsOrderedByLikesResponse> {
+        val resp = CardSetEntity().getCardSetsOrderedByLikes()
+        return if (resp.response == StatusResponse.Success) {
+            ResponseEntity.ok(resp)
+        } else {
+            ResponseEntity.badRequest().body(resp)
+        }
+    }
+
+    @PostMapping("/likeCardSet")
+    fun likeCardSet(@RequestBody request: LikeCardSetRequest): ResponseEntity<LikeCardSetResponse> {
+        val resp = CardSetEntity().likeCardSet(request)
+        return if (resp.response == StatusResponse.Success) {
+            ResponseEntity.ok(resp)
+        } else {
+            ResponseEntity.badRequest().body(resp)
+        }
+    }
+
+    @PostMapping("/unlikeCardSet")
+    fun unlikeCardSet(@RequestBody request: UnlikeCardSetRequest): ResponseEntity<UnlikeCardSetResponse> {
+        val resp = CardSetEntity().unlikeCardSet(request)
+        return if (resp.response == StatusResponse.Success) {
+            ResponseEntity.ok(resp)
+        } else {
+            ResponseEntity.badRequest().body(resp)
+        }
+    }
+
+    @PostMapping("/toggleCardSetVisibility")
+    fun toggleCardSetVisibility(@RequestBody request: ToggleCardSetRequest): ResponseEntity<ToggleCardSetResponse> {
+        val resp = CardSetEntity().toggleCardSetVisibility(request)
+        return if (resp.response == StatusResponse.Success) {
+            ResponseEntity.ok(resp)
+        } else {
+            ResponseEntity.badRequest().body(resp)
+        }
+    }
 }

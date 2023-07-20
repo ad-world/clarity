@@ -61,5 +61,14 @@ class LoginController {
         }
     }
 
+    @GetMapping("/getAllUsers")
+    fun getAllUsers(): ResponseEntity<GetAllUsersResponse> {
+        val resp = UserEntity().getAllUsers()
+        return if (resp.response == StatusResponse.Success) {
+            ResponseEntity.ok(resp)
+        } else {
+            ResponseEntity.badRequest().body(resp)
+        }
+    }
 
 }
