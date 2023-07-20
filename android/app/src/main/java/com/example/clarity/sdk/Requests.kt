@@ -27,5 +27,6 @@ data class CreateTaskEntity(val classId: String, val sets: String, val name: Str
 data class GetTasksEntity(val classId: String)
 data class CreateAnnouncementEntity(val classId: String, val text: String, val description: String, val date: String)
 data class FollowingRequestEntity(val userId: Int, val followingId: Int)
-
-
+data class LikeCardSetRequest(val user_id: Int, val set_id: Int)
+data class UnlikeCardSetRequest(val user_id: Int, val set_id: Int)
+data class ToggleCardSetRequest(val set_id: Int)

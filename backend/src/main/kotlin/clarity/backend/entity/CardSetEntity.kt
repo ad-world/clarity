@@ -15,6 +15,10 @@ data class GetDataForSetRequest(val set_id: Int)
 data class GetSetsByUsername(val username: String)
 data class GetProgressForSetRequest(val set_id: Int)
 data class UpdateProgressForSetRequest(val set_id: Int, val progress: Int)
+data class CompleteCardRequest(val user_id: Int, val card: Int, val set: Int)
+data class LikeCardSetRequest(val user_id: Int, val set_id: Int)
+data class UnlikeCardSetRequest(val user_id: Int, val set_id: Int)
+data class ToggleCardSetRequest(val set_id: Int)
 
 // Response Formats.
 data class CreateCardSetResponse(val response: StatusResponse, val msg: String, val set: SetMetadata? = null)
@@ -24,23 +28,29 @@ data class GetCardsInSetResponse(val response: StatusResponse, val cards: List<C
 data class GetSetsResponse(val response: StatusResponse, val sets: List<String>)
 data class GetDataForSetResponse(val response: StatusResponse, val data: List<String>)
 data class GetSetsByUsernameResponse(val response: StatusResponse, val data: List<SetMetadata>)
-data class CompleteCardRequest(val user_id: Int, val card: Int, val set: Int)
-
 data class CompleteCardResponse(val response: StatusResponse, val msg: String, val card_id: Int, val set_id: Int, val user_id: Int)
-
 data class GetCompletedCardsInSetResponse(val response: StatusResponse, val cards: List<CardInSet>)
+data class ToggleCardSetResponse(val response: StatusResponse, val is_public: Int)
 
-data class GetUserSetProgressResponse(val response: StatusResponse, val set_id: Int, val user_id: Int, val numCards: Int, val numCompletedCards: Int, val cards: List<Card>, val completedCard: List<CardInSet>)
+data class GetUserSetProgressResponse(
+    val response: StatusResponse, 
+    val set_id: Int, 
+    val user_id: Int, 
+    val numCards: Int, 
+    val numCompletedCards: Int, 
+    val cards: List<Card>, 
+    val completedCard: List<CardInSet>
+)
+data class GetCardSetsOrderedByLikesResponse(val response: StatusResponse, val sets: List<SetMetadata>)
+data class LikeCardSetResponse(val response: StatusResponse, val message: String)
+data class UnlikeCardSetResponse(val response: StatusResponse, val message: String)
 
 // Util Formats
 data class SetMetadata(val set_id: Int, val title: String, val type: String, val is_public: Boolean, val likes: Int)
 data class GetUserSetProgressRequest(val set_id: Int, val user_id: Int)
-
 data class CardInSet(val card_id: Int, val set_id: Int, val completion_date: String?)
 
 class CardSetEntity() {
-
-
     fun createCardSet(set: CreateCardSetEntity) : CreateCardSetResponse {
         val db = DataManager.conn()
         var newSet: SetMetadata? = null
@@ -318,4 +328,104 @@ class CardSetEntity() {
             )
         }
     }
+
+    fun getCardSetsOrderedByLikes() : GetCardSetsOrderedByLikesResponse {
+        val db = DataManager.conn()
+        try {
+            val statement = db!!.createStatement()
+            val query = "SELECT * FROM CardSet WHERE is_public_ind = 1 ORDER BY likes DESC;"
+            val resultSet =  statement.executeQuery(query)
+            val sets = mutableListOf<SetMetadata>()
+
+            while (resultSet.next()) {
+                val set = SetMetadata(
+                    set_id = resultSet.getInt("set_id"),
+                    title = resultSet.getString("title"),
+                    type = resultSet.getString("type"),
+                    is_public = resultSet.getInt("is_public_ind") == 1,
+                    likes = resultSet.getInt("likes")
+                )
+                sets.add(set)
+            }
+            resultSet.close()
+            return GetCardSetsOrderedByLikesResponse(StatusResponse.Success, sets)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return GetCardSetsOrderedByLikesResponse(StatusResponse.Failure, emptyList())
+        }
+    }
+
+    fun likeCardSet(request: LikeCardSetRequest): LikeCardSetResponse {
+        val db = DataManager.conn()
+        try {
+            val statement = db!!.createStatement()
+            var query = """
+                SELECT * FROM SetLikes
+                WHERE user_id = ${request.user_id} AND [set_id] = ${request.set_id};
+            """.trimIndent()
+            val result = statement.executeQuery(query)
+
+            // If we don't already have an entry, then we make the necessary updates.
+            if (!result.next()) {
+                query = """
+                    INSERT INTO SetLikes (user_id, [set_id])
+                    VALUES (${request.user_id}, ${request.set_id});
+                """.trimIndent()
+                statement.executeUpdate(query)
+                query = "UPDATE CardSet SET likes = likes + 1 WHERE [set_id] = ${request.set_id};"
+                statement.executeUpdate(query)
+            }
+            return LikeCardSetResponse(StatusResponse.Success, "")
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return LikeCardSetResponse(StatusResponse.Failure, e.message ?: "Unknown error occured.")
+        }
+    }
+
+    fun unlikeCardSet(request: UnlikeCardSetRequest): UnlikeCardSetResponse {
+        val db = DataManager.conn()
+        try {
+            val statement = db!!.createStatement()
+            var query = """
+                SELECT * FROM SetLikes
+                WHERE user_id = ${request.user_id} AND [set_id] = ${request.set_id};
+            """.trimIndent()
+            val result = statement.executeQuery(query)
+
+            // If we don't have an entry, then the user has not liked the set, so do nothing.
+            if (result.next()) {
+                query = "DELETE FROM SetLikes WHERE user_id = ${request.user_id} AND [set_id] = ${request.set_id};"
+                statement.executeUpdate(query)
+                query = "UPDATE CardSet SET likes = likes - 1 WHERE [set_id] = ${request.set_id};"
+                statement.executeUpdate(query)
+            }
+            return UnlikeCardSetResponse(StatusResponse.Success, "")
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return UnlikeCardSetResponse(StatusResponse.Failure, e.message ?: "Unknown error occured.")
+        }
+    }
+
+    fun toggleCardSetVisibility(request: ToggleCardSetRequest): ToggleCardSetResponse {
+        val db = DataManager.conn()
+        try {
+            val statement = db!!.createStatement()
+            var query = "SELECT is_public_ind FROM CardSet WHERE [set_id] = ${request.set_id};"
+            val result = statement.executeQuery(query)
+
+            if (result.next()) {
+                val is_public = result.getInt("is_public_ind")
+                // If is_public = 0 --> new_mode = 1. Otherwise, is_public = 1 --> new_mode = 0.
+                val new_mode = 1 - is_public
+                query = "UPDATE CardSet SET is_public_ind = $new_mode WHERE [set_id] = ${request.set_id};"
+                statement.executeUpdate(query)
+                return ToggleCardSetResponse(StatusResponse.Success, new_mode)
+            }
+            // We can't toggle visibility of a card set that does not exist in the CardSet table.
+            return ToggleCardSetResponse(StatusResponse.Failure, -1)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return ToggleCardSetResponse(StatusResponse.Failure, -1)
+        }
+    }   
 }
