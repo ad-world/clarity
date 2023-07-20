@@ -18,9 +18,21 @@ class IndexActivity : AppCompatActivity() {
     private lateinit var binding : IndexActivityBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Get the intent that started this activity
+        val intent = intent
+
+        val screen = intent.getStringExtra("screen")
+
         binding = IndexActivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        replaceFragment(ProfileFragment())
+
+        if (screen == "mainClassroom") {
+            replaceFragment(ClassroomFragment())
+        }
+        else {
+            replaceFragment(ProfileFragment())
+        }
 
         binding.bottomNav.setOnItemSelectedListener {
             when(it.itemId){

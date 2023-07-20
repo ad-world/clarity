@@ -1,12 +1,10 @@
 package com.example.clarity.classroompage
 
-import android.graphics.Color
-import android.graphics.Typeface
+import android.content.Intent
 import android.os.Bundle
-import android.widget.Button
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager.widget.ViewPager
+import com.example.clarity.IndexActivity
 import com.example.clarity.R
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.tabs.TabLayout
@@ -27,13 +25,12 @@ class ClassroomTeacher : AppCompatActivity() {
         val pagerAdapter = PagerAdapter(supportFragmentManager)
         viewPager.adapter = pagerAdapter
 
-
-        // handle onclick for back symbol on app bar
+        // handle onclick for back symbol on app bar (it will go back to main classroom page)
         appBar.setNavigationOnClickListener {
-            // TODO
-            /*
-            want to make the user go back to the main classroom page
-             */
+            // Replace the entire current fragment with the ClassroomFragment
+            val intent = Intent(this, IndexActivity::class.java)
+            intent.putExtra("screen", "mainClassroom")
+            startActivity(intent)
         }
 
         // handle onclick for the tabs
@@ -41,6 +38,7 @@ class ClassroomTeacher : AppCompatActivity() {
 
             override fun onTabSelected(tab: TabLayout.Tab?) {
                 if (tab != null) {
+                    println(tab.position)
                     viewPager.currentItem = tab.position
                 }
             }
@@ -52,7 +50,6 @@ class ClassroomTeacher : AppCompatActivity() {
                 // Handle tab unselect
             }
         })
-
 
 
         // Replace fragment container with Fragment1 initially
