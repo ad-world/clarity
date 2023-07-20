@@ -17,7 +17,7 @@ class InboxEntity {
             val db = DataManager.conn()
             val statement = db!!.createStatement()
             val selectStatement = """
-                SELECT * FROM Inbox WHERE user_id='${userId}' AND message_read=0
+                SELECT * FROM Inbox WHERE user_id='${userId}' AND message_read='${0}'
             """.trimIndent()
             val messages = mutableListOf<Notification>()
             val result = statement.executeQuery(selectStatement)
@@ -45,7 +45,7 @@ class InboxEntity {
             val statement = db!!.createStatement()
             val insertStatement = """
                 UPDATE Inbox SET message_read='${notification.isRead}' 
-                WHERE user_id='${notification.notificationId}'
+                WHERE notification_id='${notification.notificationId}'
             """.trimIndent()
             val result = statement.executeUpdate(insertStatement)
             return NotificationResponse(StatusResponse.Success, "Marked message")
