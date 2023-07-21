@@ -16,13 +16,16 @@ class ClassroomTeacher : AppCompatActivity() {
 
         val fragmentManager = supportFragmentManager
 
+        val intent = intent
+        val classId = intent.getStringExtra("classId")
+
         // get the app bar and the tabs
         val appBar = findViewById<MaterialToolbar>(R.id.topAppBar)
         val tabLayout = findViewById<TabLayout>(R.id.teacherTab)
         val viewPager = findViewById<ViewPager>(R.id.viewPager)
 
         // Create a FragmentPagerAdapter for the ViewPager
-        val pagerAdapter = PagerAdapterTeacher(supportFragmentManager)
+        val pagerAdapter = classId?.let { PagerAdapterTeacher(fragmentManager, it) }
         viewPager.adapter = pagerAdapter
 
         // handle onclick for back symbol on app bar (it will go back to main classroom page)
@@ -38,7 +41,6 @@ class ClassroomTeacher : AppCompatActivity() {
 
             override fun onTabSelected(tab: TabLayout.Tab?) {
                 if (tab != null) {
-                    println(tab.position)
                     viewPager.currentItem = tab.position
                 }
             }

@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.clarity.R
 
 class AnnouncementAdapter(
-    private val classes: Array<Pair<String,String>>,
+    private val classes: MutableList<Pair<String,String>>,
     private val onItemClick: (Pair<String, String>) -> Unit
 ): RecyclerView.Adapter<AnnouncementAdapter.ClassViewHolder>() {
 
