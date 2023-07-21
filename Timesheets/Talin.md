@@ -33,6 +33,7 @@
 | Created postman tests and tested Inbox Endpoint Scenarios                                            | 0.5 hours  | 12:00PM    | 12:30PM  | July 20th, 2023 | N/A                                                                                                                                    |
 | Configured and set up initial email service for sending out notifications                            | ~3.5 hours | 3:00PM     | 6:30PM   | July 20th, 2023 | [Implementing Email Service](https://github.com/ad-world/clarity/commit/8435ac717730f61eb17c15c9d8786b85b5855e17)                      |
 | D5 Work (decorator pattern)                                                                          | 1 hour     | 11:00 AM   | 12:00 PM | July 21st, 2023 | N/A                                                                                                                                    |
+| Created postman tests and tested Email Endpoint Scenarios                                            | 0.5 hours  | 2:00PM     | 2:30PM   | July 21st, 2023 | N/A                                                                                                                                    |
 
 
-Total time spent as of July 20th, 2023: 39.0 hours
+Total time spent as of July 20th, 2023: 39.5 hours

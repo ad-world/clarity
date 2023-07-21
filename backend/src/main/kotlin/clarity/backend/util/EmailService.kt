@@ -16,14 +16,12 @@ class EmailService @Autowired constructor(
     fun sendEmail(to: String, subject: String, body: String) {
         val message = mailSender.createMimeMessage()
         val helper = MimeMessageHelper(message, true)
-
         if (from != null) {
             helper.setFrom(from)
         }
         helper.setTo(to)
         helper.setSubject(subject)
         helper.setText(body, true)
-
         mailSender.send(message)
     }
 }
