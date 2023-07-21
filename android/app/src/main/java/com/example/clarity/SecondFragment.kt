@@ -13,6 +13,7 @@ import com.example.clarity.databinding.FragmentSecondBinding
 import com.example.clarity.sdk.ClaritySDK
 import com.example.clarity.sdk.CreateUserEntity
 import com.example.clarity.sdk.CreateUserResponse
+import com.example.clarity.sdk.Difficulty
 import com.example.clarity.sdk.User
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -52,7 +53,7 @@ class SecondFragment : Fragment() {
             val email = binding.editTextEmail.text.toString()
             val number = binding.editTextPhoneNum.text.toString()
 
-            val user = User(username, email, password, first, last, number)
+            val user = User(username, email, password, first, last, number, Difficulty.Easy)
             val response : Response<CreateUserResponse> = runBlocking {
                 return@runBlocking api.createUser(CreateUserEntity(user))
             }
