@@ -2,8 +2,7 @@ package clarity.backend.entity
 
 import SpeechAPIResponse
 import clarity.backend.DataManager
-import clarity.backend.util.ErrorType
-import clarity.backend.util.SpeechAnalysis
+import clarity.backend.util.*
 import org.springframework.web.multipart.MultipartFile
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -46,6 +45,9 @@ class ClassroomAttemptsEntity {
 
             val card = CardEntity().getCard(card_id)
 
+            val task = TaskEntity().getTaskById(task_id)
+            val taskObject = task.task
+
             val analysis = card?.let { speechAnalyzer.analyzeAudio(audio, it.phrase) }
                 ?: throw Exception("Speech analysis returned null - unknown error")
 
@@ -61,7 +63,14 @@ class ClassroomAttemptsEntity {
             val mispronunciations = speechAnalyzer.findErrorType(json, ErrorType.Mispronunciation)
             val insertions = speechAnalyzer.findErrorType(json, ErrorType.Insertion)
 
-            val shouldComplete = speechAnalyzer.shouldCompleteCard(result, omissions, mispronunciations, insertions)
+            val analyzer: ErrorAnalysis = when(taskObject?.difficulty) {
+                Difficulty.Easy -> EasyErrorAnalysis()
+                Difficulty.Medium -> MediumErrorAnalysis()
+                Difficulty.Hard -> HardErrorAnalysis()
+                else -> EasyErrorAnalysis()
+            }
+
+            val shouldComplete = analyzer.shouldCompleteCard(result, omissions, mispronunciations, insertions)
             val shouldCompleteIndex = if(shouldComplete) { 1 } else 0
 
             val attemptMetadata = ClassroomAttemptMetadata(task_id, user_id, card_id, mispronunciations, omissions, insertions,

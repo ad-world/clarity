@@ -2,6 +2,7 @@ package clarity.backend.util
 
 import SpeechAPIResponse
 import TemporaryFileStorage
+import clarity.backend.util.Difficulty
 import com.google.gson.Gson
 import com.microsoft.cognitiveservices.speech.*
 import com.microsoft.cognitiveservices.speech.audio.AudioConfig
@@ -10,11 +11,6 @@ import io.github.cdimascio.dotenv.dotenv
 import org.springframework.web.multipart.MultipartFile
 import java.util.concurrent.TimeUnit
 
-enum class ErrorType {
-    Mispronunciation,
-    Insertion,
-    Omission
-}
 
 data class SpeechAnalysisResult(val json: SpeechAPIResponse, val assessmentResult: PronunciationAssessmentResult?)
 
@@ -98,25 +94,5 @@ class SpeechAnalysis {
         }
 
         return mispronounced
-    }
-
-    fun shouldCompleteCard(assessment: PronunciationAssessmentResult, omissions: List<String>, mispronunciations: List<String>, insertions: List<String>): Boolean {
-        val completeness = assessment.completenessScore
-        val accuracy = assessment.accuracyScore
-        val fluency = assessment.fluencyScore
-        val pronunciation = assessment.pronunciationScore
-
-        var shouldComplete = true
-
-        if(completeness < 70) shouldComplete = false;
-        if(accuracy < 70) shouldComplete = false;
-        if(fluency < 70) shouldComplete = false;
-        if(pronunciation < 80) shouldComplete = false;
-
-        if(omissions.size > 1) shouldComplete = false;
-        if(mispronunciations.size > 1) shouldComplete = false;
-        if(insertions.isNotEmpty()) shouldComplete = false;
-
-        return shouldComplete
     }
 }
