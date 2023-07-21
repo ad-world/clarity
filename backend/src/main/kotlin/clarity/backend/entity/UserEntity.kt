@@ -12,10 +12,9 @@ enum class StatusResponse {
     Failure
 }
 
-data class User(val username: String, val email: String, val password: String, val firstname: String, val lastname: String, val phone_number: String, val difficulty: Difficulty)
 data class UserWithId(val user_id: Int, val username: String, val email: String, val firstname: String, val lastname: String, val phone_number: String, val login_streak: Int, val difficulty: Difficulty)
 data class UserLoginEntity(val username: String, val password: String)
-data class CreateUserEntity(val user: User)
+data class CreateUserEntity(val username: String, val email: String, val password: String, val firstname: String, val lastname: String, val phone_number: String, val difficulty: Difficulty)
 
 data class UpdateDifficultyEntity(val userId: Int, val newDifficulty: Difficulty? = null)
 data class CreateUserResponse(val response: StatusResponse, val message: String, val userId: Int?, val username: String?)
@@ -72,14 +71,13 @@ class UserEntity() {
         val db = DataManager.conn()
 
         try {
-            val data = user.user
             val statement = db!!.createStatement()
             val currentDate = LocalDate.now().format(DateTimeFormatter.ISO_DATE)
             val insertStatement = """
                 INSERT INTO User (username, first_name, last_name, email, password, phone_number, last_logged_in, login_streak, difficulty)
                 VALUES(
-                '${data.username}', '${data.firstname}', '${data.lastname}', 
-                '${data.email}', '${data.password}', '${data.phone_number}',
+                '${user.username}', '${user.firstname}', '${user.lastname}', 
+                '${user.email}', '${user.password}', '${user.phone_number}',
                 '$currentDate', 1, ${Difficulty.Easy.ordinal}
                 )
             """.trimIndent()
@@ -89,7 +87,7 @@ class UserEntity() {
                 resultSet.next()
 
                 val newId = resultSet.getInt(1)
-                CreateUserResponse(StatusResponse.Success, "User created successfully", newId, data.username);
+                CreateUserResponse(StatusResponse.Success, "User created successfully", newId, user.username);
             } else {
                 CreateUserResponse(StatusResponse.Failure, "Could not create user for unknown reason", null, null)
             }

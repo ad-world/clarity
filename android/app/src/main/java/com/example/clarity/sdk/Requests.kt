@@ -6,7 +6,7 @@ import retrofit2.http.Part
 
 
 data class LoginRequest(val username: String, val password: String)
-data class CreateUserEntity(val user: User)
+data class CreateUserEntity(val username: String, val email: String, val password: String, val firstname: String, val lastname: String, val phone_number: String, val difficulty: Difficulty)
 data class JoinClassroomEntity(val privateCode: String, val userID: String)
 data class CreateClassroomEntity(val name: String, val teacher: Int)
 data class CreateCardSetEntity(val creator_id: Int, val title: String, val type: String)
