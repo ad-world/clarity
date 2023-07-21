@@ -1,6 +1,7 @@
 package clarity.backend.entity
 
 import clarity.backend.DataManager
+import clarity.backend.util.Difficulty
 import java.sql.Statement
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -11,14 +12,8 @@ enum class StatusResponse {
     Failure
 }
 
-enum class Difficulty {
-    Easy,
-    Medium,
-    Hard
-}
-
-data class User(val username: String, val email: String, val password: String, val firstname: String, val lastname: String, val phone_number: String, val difficulty: Int)
-data class UserWithId(val user_id: Int, val username: String, val email: String, val firstname: String, val lastname: String, val phone_number: String, val login_streak: Int, val difficulty: Int)
+data class User(val username: String, val email: String, val password: String, val firstname: String, val lastname: String, val phone_number: String, val difficulty: Difficulty)
+data class UserWithId(val user_id: Int, val username: String, val email: String, val firstname: String, val lastname: String, val phone_number: String, val login_streak: Int, val difficulty: Difficulty)
 data class UserLoginEntity(val username: String, val password: String)
 data class CreateUserEntity(val user: User)
 
@@ -57,7 +52,7 @@ class UserEntity() {
                     user_id = result.getInt("user_id"),
                     phone_number = result.getString("phone_number"),
                     login_streak = newLoginStreak,
-                    difficulty = result.getInt("difficulty")
+                    difficulty = Difficulty.values()[result.getInt("difficulty")]
                 )
 
                 // Updating last logged in + streak
@@ -121,7 +116,7 @@ class UserEntity() {
                     email = result.getString("email"),
                     phone_number = result.getString("phone_number"),
                     login_streak = result.getInt("login_streak"),
-                    difficulty = result.getInt("difficulty")
+                    difficulty = Difficulty.values()[result.getInt("difficulty")]
                 )
                 GetUserResponse(StatusResponse.Success, user, "User found successfully")
             } else {
@@ -148,7 +143,7 @@ class UserEntity() {
                     email = result.getString("email"),
                     phone_number = result.getString("phone_number"),
                     login_streak = result.getInt("login_streak"),
-                    difficulty = result.getInt("difficulty")
+                    difficulty = Difficulty.values()[result.getInt("difficulty")]
                 )
                 users.add(user)
             }
@@ -178,7 +173,7 @@ class UserEntity() {
                     email = result.getString("email"),
                     phone_number = result.getString("phone_number"),
                     login_streak = result.getInt("login_streak"),
-                    difficulty = result.getInt("difficulty")
+                    difficulty = Difficulty.values()[result.getInt("difficulty")]
                 )
                 GetUserResponse(StatusResponse.Success, user, "User found successfully")
             } else {
