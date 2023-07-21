@@ -44,5 +44,6 @@ Entries with start time and end times that span multiple days with have exactly 
 | Create classroom progress functionality, create card completeness functionality, create user progress functionality | ~5 hours | 5:00 PM | 11:59 PM | July 18th, 2023 | [User progress, classroom progress, card completeness](https://github.com/ad-world/clarity/commit/83b1531e9d42324fdfd2fc8115c71e2ad1b66e72) |
 | D5 Meeting | 1 hour | 3:00 PM | 4:00 PM | July 19th, 2023 | N/A |
 | D5 Work (Observer Pattern) | 1 hour | 11:00 PM | 11:59PM | July 20th, 2023 | N/A |
+| D5 Wrap up + Projec meeting | 1 hour | 12:00 PM | 1:00 PM | July 21st, 2023 | N/A |
 
-Total time spent as of July 20th, 2023: 52 hours
+Total time spent as of July 21st, 2023: 53 hours
