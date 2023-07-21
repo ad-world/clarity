@@ -11,16 +11,23 @@ enum class StatusResponse {
     Failure
 }
 
-data class User(val username: String, val email: String, val password: String, val firstname: String, val lastname: String, val phone_number: String)
-data class UserWithId(val user_id: Int, val username: String, val email: String, val firstname: String, val lastname: String, val phone_number: String, val login_streak: Int)
+enum class Difficulty {
+    Easy,
+    Medium,
+    Hard
+}
+
+data class User(val username: String, val email: String, val password: String, val firstname: String, val lastname: String, val phone_number: String, val difficulty: Int)
+data class UserWithId(val user_id: Int, val username: String, val email: String, val firstname: String, val lastname: String, val phone_number: String, val login_streak: Int, val difficulty: Int)
 data class UserLoginEntity(val username: String, val password: String)
 data class CreateUserEntity(val user: User)
+
+data class UpdateDifficultyEntity(val userId: Int, val newDifficulty: Difficulty? = null)
 data class CreateUserResponse(val response: StatusResponse, val message: String, val userId: Int?, val username: String?)
 data class GetUserResponse(val response: StatusResponse, val user: UserWithId?, val message: String)
 data class GetAllUsersResponse(val response: StatusResponse, val users: List<UserWithId>)
-
 data class LoginResponse(val response: StatusResponse, val message: String, val user: UserWithId?)
-
+data class UpdateDifficultyResponse(val response: StatusResponse, val newDifficulty: Difficulty?, val message: String)
 class UserEntity() {
 
     fun checkCredentials(user: UserLoginEntity): UserWithId? {
@@ -49,7 +56,8 @@ class UserEntity() {
                     lastname = result.getString("last_name"),
                     user_id = result.getInt("user_id"),
                     phone_number = result.getString("phone_number"),
-                    login_streak = newLoginStreak
+                    login_streak = newLoginStreak,
+                    difficulty = result.getInt("difficulty")
                 )
 
                 // Updating last logged in + streak
@@ -73,11 +81,11 @@ class UserEntity() {
             val statement = db!!.createStatement()
             val currentDate = LocalDate.now().format(DateTimeFormatter.ISO_DATE)
             val insertStatement = """
-                INSERT INTO User (username, first_name, last_name, email, password, phone_number, last_logged_in, login_streak)
+                INSERT INTO User (username, first_name, last_name, email, password, phone_number, last_logged_in, login_streak, difficulty)
                 VALUES(
                 '${data.username}', '${data.firstname}', '${data.lastname}', 
                 '${data.email}', '${data.password}', '${data.phone_number}',
-                '$currentDate', 1
+                '$currentDate', 1, ${Difficulty.Easy.ordinal}
                 )
             """.trimIndent()
             val result = statement.executeUpdate(insertStatement, Statement.RETURN_GENERATED_KEYS)
@@ -112,7 +120,8 @@ class UserEntity() {
                     lastname = result.getString("last_name"),
                     email = result.getString("email"),
                     phone_number = result.getString("phone_number"),
-                    login_streak = result.getInt("login_streak")
+                    login_streak = result.getInt("login_streak"),
+                    difficulty = result.getInt("difficulty")
                 )
                 GetUserResponse(StatusResponse.Success, user, "User found successfully")
             } else {
@@ -138,7 +147,8 @@ class UserEntity() {
                     lastname = result.getString("last_name"),
                     email = result.getString("email"),
                     phone_number = result.getString("phone_number"),
-                    login_streak = result.getInt("login_streak")
+                    login_streak = result.getInt("login_streak"),
+                    difficulty = result.getInt("difficulty")
                 )
                 users.add(user)
             }
@@ -167,7 +177,8 @@ class UserEntity() {
                     lastname = result.getString("last_name"),
                     email = result.getString("email"),
                     phone_number = result.getString("phone_number"),
-                    login_streak = result.getInt("login_streak")
+                    login_streak = result.getInt("login_streak"),
+                    difficulty = result.getInt("difficulty")
                 )
                 GetUserResponse(StatusResponse.Success, user, "User found successfully")
             } else {
@@ -175,6 +186,39 @@ class UserEntity() {
             }
         } catch (e: Exception) {
             return GetUserResponse(StatusResponse.Failure, null, "Unknown error: ${e.message}")
+        }
+    }
+
+    fun updateDifficulty(request: UpdateDifficultyEntity): UpdateDifficultyResponse {
+        val db = DataManager.conn()
+
+        try {
+            val statement = db!!.createStatement()
+            val updateStatement = """
+                UPDATE User SET difficulty = ${request.newDifficulty?.ordinal} WHERE user_id = ${request.userId}
+            """.trimIndent()
+            val result = statement.executeUpdate(updateStatement)
+
+            return if(result > 0) {
+                UpdateDifficultyResponse(
+                    StatusResponse.Success,
+                    request.newDifficulty,
+                    "Difficulty updated successfully"
+                )
+            } else {
+                UpdateDifficultyResponse(
+                    StatusResponse.Success,
+                    null,
+                    "Could not update difficulty."
+                )
+            }
+
+        } catch (e: Exception) {
+            return UpdateDifficultyResponse(
+                StatusResponse.Failure,
+                newDifficulty = request.newDifficulty,
+                message = e.message ?: "Unknown error"
+            )
         }
     }
 }

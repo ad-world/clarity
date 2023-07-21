@@ -1,6 +1,5 @@
 package clarity.backend.controllers
 
-import clarity.backend.DataManager
 import clarity.backend.entity.*
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
@@ -10,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-class LoginController {
+class UserController {
     @PostMapping("/login")
     fun login(@RequestBody user: UserLoginEntity): ResponseEntity<LoginResponse> {
         val username = user.username
@@ -92,4 +91,14 @@ class LoginController {
         }
     }
 
+    @PostMapping("/updateDifficulty")
+    fun updateDifficulty(@RequestBody request: UpdateDifficultyEntity): ResponseEntity<UpdateDifficultyResponse> {
+        val resp = UserEntity().updateDifficulty(request)
+
+        return if(resp.response == StatusResponse.Success) {
+            ResponseEntity.ok(resp)
+        } else {
+            ResponseEntity.badRequest().body(resp)
+        }
+    }
 }

@@ -38,3 +38,4 @@ data class GetClassroomTaskProgressResponse(val response: StatusResponse, val ta
 data class LikeCardSetResponse(val response: StatusResponse, val message: String)
 data class UnlikeCardSetResponse(val response: StatusResponse, val message: String)
 data class ToggleCardSetResponse(val response: StatusResponse, val is_public: Int)
+data class UpdateDifficultyResponse(val response: StatusResponse, val newDifficulty: Difficulty?, val message: String)

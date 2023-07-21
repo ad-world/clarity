@@ -7,5 +7,7 @@ CREATE TABLE IF NOT EXISTS User (
     password TEXT NOT NULL,
     phone_number TEXT NOT NULL,
     last_logged_in TEXT NOT NULL,
-    login_streak INTEGER NOT NULL
+    login_streak INTEGER NOT NULL,
+    difficulty INTEGER NOT NULL,
+    CHECK ( difficulty = 0 OR difficulty = 1 OR difficulty = 2 )
 )
