@@ -43,10 +43,10 @@ class ClassAnnouncement : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val dummyData = arrayOf(
-            Pair("Announcement 1", "Welcome to ENGL100. A course designed to help you improve your speech impediment!"),
-            Pair("Announcement 2", "Reminder: Task 2 is due in 1 day.")
-        )
+        val dummyData: MutableList<Pair<String, String>> = mutableListOf()
+        dummyData.add(Pair("Announcement 1", "Welcome to ENGL100. A course designed to help you improve your speech impediment!"))
+        dummyData.add(Pair("Announcement 2", "Reminder: Task 2 is due in 1 day."))
+
         announcementAdapter = AnnouncementAdapter(dummyData) {announcement ->
         }
         binding.rvClasses.adapter = announcementAdapter

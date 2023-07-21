@@ -23,6 +23,7 @@ import com.example.clarity.sdk.ClaritySDK
 import com.example.clarity.sdk.CreateAnnouncementEntity
 import com.example.clarity.sdk.CreateClassroomEntity
 import com.example.clarity.sdk.CreateClassroomResponse
+import com.example.clarity.sdk.GetAnnouncementsResponse
 import com.example.clarity.sdk.GetClassroomResponse
 import com.example.clarity.sdk.GetUserResponse
 import com.example.clarity.sdk.StatusResponse
@@ -64,21 +65,34 @@ class ClassTeacherAnnouncement(private val classId: String) : Fragment() {
 
         val announcements: MutableList<Pair<String, String>> = mutableListOf()
 
+        // update list with current announcements
+        val response: Response<GetAnnouncementsResponse> = runBlocking {
+            return@runBlocking api.getAnnouncements(classId)
+        }
+        if (response.body()?.response  == StatusResponse.Success) {
+            val announcementList = response?.body()?.result
+            if (announcementList != null) {
+                announcements.clear()
+                for (announcement in announcementList) {
+                    announcements.add(Pair(announcement.text, announcement.description))
+                }
+            }
+        }
         announcementAdapter = AnnouncementAdapter(announcements) {announcement ->
         }
         binding.rvClasses.adapter = announcementAdapter
         binding.rvClasses.layoutManager = LinearLayoutManager(context)
 
+        // teacher can add announcements to class
         binding.addAnnouncement.setOnClickListener {
             var announcementDetail: MutableList<Pair<String, String>> = mutableListOf()
-            addAnnouncementsDialog(announcementDetail) {classCreated ->
-                if (classCreated && announcementDetail.size > 0) {
+            addAnnouncementsDialog(announcementDetail) {announcementCreated ->
+                if (announcementCreated && announcementDetail.size > 0) {
                     val announcementTitle = announcementDetail[0].first
                     val description = announcementDetail[0].second
 
-                    announcements.add(0, Pair(announcementTitle, description))
+                    announcements.add(Pair(announcementTitle, description))
 
-                    // adding the list classes to the recycler view (with recycler custom ClassAdapter)
                     announcementAdapter = AnnouncementAdapter(announcements) { announcement ->
                     }
                     binding.rvClasses.adapter = announcementAdapter
