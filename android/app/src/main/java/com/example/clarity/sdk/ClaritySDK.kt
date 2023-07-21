@@ -153,4 +153,7 @@ interface API {
 
     @POST("updateDifficulty")
     suspend fun updateDifficulty(@Body request: UpdateDifficultyEntity): Response<UpdateDifficultyResponse>
+
+    @POST("updateTaskDifficulty")
+    suspend fun updateTaskDifficulty(@Body request: UpdateTaskDifficultyEntity): Response<UpdateTaskDifficultyResponse>
 }

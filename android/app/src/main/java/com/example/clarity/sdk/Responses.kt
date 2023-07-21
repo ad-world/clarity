@@ -27,7 +27,6 @@ data class GetAttemptsForSetResponse(val user_id: Int, val set_id: Int, val atte
 data class GetTaskAttemptsResponse(val task_id: Int, val attempts: List<TaskAttemptWithName>, val response: StatusResponse)
 data class GetClassAttemptsResponse(val classroom: String, val attempts: List<TaskAttemptWithNameAndClass>, val response: StatusResponse)
 data class CreateTaskResponse(val response: StatusResponse, val id: String)
-data class Task(val taskId: Int, val classId: String, val setId: Int, val name: String, val description: String, val dueDate: String?)
 data class GetTasksResponse(val response: StatusResponse, val id: List<Task>)
 data class Announcement(val announcementId: Int, val classId: String, val text: String, val description: String, val dateCreated: String)
 data class AnnouncementResponse(val response: StatusResponse, val message: String)
@@ -39,3 +38,6 @@ data class LikeCardSetResponse(val response: StatusResponse, val message: String
 data class UnlikeCardSetResponse(val response: StatusResponse, val message: String)
 data class ToggleCardSetResponse(val response: StatusResponse, val is_public: Int)
 data class UpdateDifficultyResponse(val response: StatusResponse, val newDifficulty: Difficulty?, val message: String)
+data class UpdateTaskDifficultyResponse(val response: StatusResponse, val newDifficulty: Difficulty? = null, val message: String)
+
+
