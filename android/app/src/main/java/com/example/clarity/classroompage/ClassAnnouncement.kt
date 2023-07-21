@@ -14,17 +14,22 @@ import com.example.clarity.IndexActivity
 import com.example.clarity.R
 import com.example.clarity.databinding.FragmentClassAnnouncementBinding
 import com.example.clarity.databinding.FragmentFirstBinding
+import com.example.clarity.sdk.ClaritySDK
+import com.example.clarity.sdk.GetAnnouncementsResponse
+import com.example.clarity.sdk.StatusResponse
+import kotlinx.coroutines.runBlocking
+import retrofit2.Response
 
 /**
  * A simple [Fragment] subclass.
  * Use the [ClassAnnouncement.newInstance] factory method to
  * create an instance of this fragment.
  */
-class ClassAnnouncement : Fragment() {
+class ClassAnnouncement(private val classId: String) : Fragment() {
     private var _binding: FragmentClassAnnouncementBinding? = null
 
-    private lateinit var recyclerView: RecyclerView
     private lateinit var announcementAdapter: AnnouncementAdapter
+    private val api = ClaritySDK().apiService
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -43,11 +48,22 @@ class ClassAnnouncement : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val dummyData: MutableList<Pair<String, String>> = mutableListOf()
-        dummyData.add(Pair("Announcement 1", "Welcome to ENGL100. A course designed to help you improve your speech impediment!"))
-        dummyData.add(Pair("Announcement 2", "Reminder: Task 2 is due in 1 day."))
+        val announcements: MutableList<Pair<String, String>> = mutableListOf()
 
-        announcementAdapter = AnnouncementAdapter(dummyData) {announcement ->
+        // update list with current announcements
+        val response: Response<GetAnnouncementsResponse> = runBlocking {
+            return@runBlocking api.getAnnouncements(classId)
+        }
+        if (response.body()?.response  == StatusResponse.Success) {
+            val announcementList = response?.body()?.result
+            if (announcementList != null) {
+                announcements.clear()
+                for (announcement in announcementList) {
+                    announcements.add(Pair(announcement.text, announcement.description))
+                }
+            }
+        }
+        announcementAdapter = AnnouncementAdapter(announcements) {announcement ->
         }
         binding.rvClasses.adapter = announcementAdapter
         binding.rvClasses.layoutManager = LinearLayoutManager(context)

@@ -1,12 +1,17 @@
 package com.example.clarity.classroompage
 
+import android.content.Intent
 import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.viewpager.widget.ViewPager
+import com.example.clarity.IndexActivity
 import com.example.clarity.R
+import com.google.android.material.appbar.MaterialToolbar
+import com.google.android.material.tabs.TabLayout
 
 class Classroom : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -15,40 +20,41 @@ class Classroom : AppCompatActivity() {
 
         val fragmentManager = supportFragmentManager
 
-        val button1 = findViewById<Button>(R.id.announcementsBttn)
-        val button2 = findViewById<Button>(R.id.tasksBttn)
-        val tView = findViewById<TextView>(R.id.tView)
+        val intent = intent
+        val classId = intent.getStringExtra("classId")
 
-        // Replace fragment container with Fragment1 initially
-        val fragmentTransaction = fragmentManager.beginTransaction()
-        fragmentTransaction.replace(R.id.fragmentContainer, ClassAnnouncement())
-        fragmentTransaction.commit()
-        tView.text = "Announcements"
-        tView.setTextColor(Color.WHITE)
-        tView.setTypeface(null, Typeface.BOLD)
-        tView.textSize = 20f
+        // get the app bar and the tabs
+        val appBar = findViewById<MaterialToolbar>(R.id.topAppBar)
+        val tabLayout = findViewById<TabLayout>(R.id.teacherTab)
+        val viewPager = findViewById<ViewPager>(R.id.viewPager)
 
-        // Button 1 click listener
-        button1.setOnClickListener {
-            val fragmentTransaction = fragmentManager.beginTransaction()
-            fragmentTransaction.replace(R.id.fragmentContainer, ClassAnnouncement())
-            fragmentTransaction.commit()
-            tView.text = "Announcements"
-            tView.setTextColor(Color.WHITE)
-            tView.setTypeface(null, Typeface.BOLD)
-            tView.textSize = 20f
+        // Create a FragmentPagerAdapter for the ViewPager
+        val pagerAdapter = classId?.let { PagerAdapter(fragmentManager, it) }
+        viewPager.adapter = pagerAdapter
+
+        // handle onclick for back symbol on app bar (it will go back to main classroom page)
+        appBar.setNavigationOnClickListener {
+            // Replace the entire current fragment with the ClassroomFragment
+            val intent = Intent(this, IndexActivity::class.java)
+            intent.putExtra("screen", "mainClassroom")
+            startActivity(intent)
         }
 
-        // Button 2 click listener
-        button2.setOnClickListener {
-            println("button 2 clicked")
-            val fragmentTransaction = fragmentManager.beginTransaction()
-            fragmentTransaction.replace(R.id.fragmentContainer, ClassTask())
-            fragmentTransaction.commit()
-            tView.text = "Tasks"
-            tView.setTextColor(Color.WHITE)
-            tView.setTypeface(null, Typeface.BOLD)
-            tView.textSize = 20f
-        }
+        // handle onclick for the tabs
+        tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+
+            override fun onTabSelected(tab: TabLayout.Tab?) {
+                if (tab != null) {
+                    viewPager.currentItem = tab.position
+                }
+            }
+            override fun onTabReselected(tab: TabLayout.Tab?) {
+                // Handle tab reselect
+            }
+
+            override fun onTabUnselected(tab: TabLayout.Tab?) {
+                // Handle tab unselect
+            }
+        })
     }
 }
