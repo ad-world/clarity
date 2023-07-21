@@ -13,7 +13,7 @@ class TaskController {
     @PostMapping("/createTask")
     fun createTask(@RequestBody task: CreateTaskEntity) : ResponseEntity<CreateTaskResponse> {
         val taskEntity = TaskEntity()
-        var response = taskEntity.createTask(task)
+        val response = taskEntity.createTask(task)
         return if(response.response == StatusResponse.Success) {
             ResponseEntity.ok(response)
         } else {
@@ -24,11 +24,22 @@ class TaskController {
     @PostMapping("/getTasksList")
     fun getTasks(@RequestBody classId: GetTasksEntity) : ResponseEntity<GetTasksResponse> {
         val taskEntity = TaskEntity()
-        var response = taskEntity.getAllTasksList(classId)
+        val response = taskEntity.getAllTasksList(classId)
         return if(response.response == StatusResponse.Success) {
             ResponseEntity.ok(response)
         } else {
             ResponseEntity.badRequest().body(response)
+        }
+    }
+
+    @PostMapping("/updateTaskDifficulty")
+    fun updateTaskDifficulty(@RequestBody request: UpdateTaskDifficultyEntity): ResponseEntity<UpdateTaskDifficultyResponse> {
+        val resp = TaskEntity().updateTaskDifficulty(request);
+
+        return if(resp.response == StatusResponse.Success) {
+            ResponseEntity.ok(resp)
+        } else {
+            ResponseEntity.badRequest().body(resp)
         }
     }
 }
