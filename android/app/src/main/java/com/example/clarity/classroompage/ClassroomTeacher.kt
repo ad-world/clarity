@@ -47,7 +47,6 @@ class ClassroomTeacher : AppCompatActivity() {
             override fun onTabReselected(tab: TabLayout.Tab?) {
                 // Handle tab reselect
             }
-
             override fun onTabUnselected(tab: TabLayout.Tab?) {
                 // Handle tab unselect
             }
