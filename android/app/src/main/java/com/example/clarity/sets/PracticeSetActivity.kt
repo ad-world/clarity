@@ -17,17 +17,15 @@ import androidx.cardview.widget.CardView
 import androidx.core.app.ActivityCompat
 import com.example.clarity.sdk.ClaritySDK
 import com.example.clarity.R
-import com.example.clarity.sets.audio.AndroidAudioPlayer
-import com.example.clarity.sets.audio.AndroidAudioRecorder
+import com.example.clarity.sets.audio.PrevAndroidAudioRecorder
 import com.google.gson.Gson
-import org.w3c.dom.Text
 import java.io.File
 import java.util.Locale
 
 class PracticeSetActivity() : AppCompatActivity() {
 
     // Recorder and Player
-    private val recorder by lazy { AndroidAudioRecorder(applicationContext) }
+    private val recorder by lazy { PrevAndroidAudioRecorder(applicationContext) }
     private var player: TextToSpeech? = null
     // private val player by lazy { AndroidAudioPlayer(applicationContext) }
 
@@ -123,6 +121,8 @@ class PracticeSetActivity() : AppCompatActivity() {
 
                 // Stop Recording
                 recorder.stop()
+
+                val wavFile = File("")
 
                 // Return Accuracy Score and Display Popup
                 val score = getAccuracyScore(File(cacheDir, "audio.wav"))
