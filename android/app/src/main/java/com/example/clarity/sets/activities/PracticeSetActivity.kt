@@ -1,4 +1,4 @@
-package com.example.clarity.sets
+package com.example.clarity.sets.activities
 
 import android.Manifest
 import android.annotation.SuppressLint
@@ -17,6 +17,8 @@ import androidx.cardview.widget.CardView
 import androidx.core.app.ActivityCompat
 import com.example.clarity.sdk.ClaritySDK
 import com.example.clarity.R
+import com.example.clarity.sets.data.Card
+import com.example.clarity.sets.data.Set
 import com.example.clarity.sets.audio.PrevAndroidAudioRecorder
 import com.google.gson.Gson
 import java.io.File

@@ -1,4 +1,4 @@
-package com.example.clarity.sets
+package com.example.clarity.sets.activities
 
 import android.Manifest
 import android.annotation.SuppressLint
@@ -21,9 +21,11 @@ import com.example.clarity.sdk.ClaritySDK
 import com.example.clarity.R
 import com.example.clarity.SessionManager
 import com.example.clarity.sdk.CreateAttemptResponse
+import com.example.clarity.sets.data.Card
+import com.example.clarity.sets.data.Set
+import com.example.clarity.sets.data.SetCategory
 import com.example.clarity.sets.audio.AndroidAudioPlayer
 import com.example.clarity.sets.audio.AndroidAudioRecorder
-import com.example.clarity.sets.audio.PrevAndroidAudioRecorder
 import com.example.clarity.sets.audio.WavPlayer
 import com.google.gson.Gson
 import kotlinx.coroutines.launch

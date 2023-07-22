@@ -3,7 +3,6 @@ package com.example.clarity.sets
 import android.app.Activity
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
@@ -15,12 +14,8 @@ import com.example.clarity.sdk.CreateCardSetEntity
 import com.example.clarity.sdk.CreateCardSetResponse
 import com.example.clarity.R
 import com.example.clarity.SessionManager
-import com.example.clarity.sdk.AddCardToSetRequest
-import com.example.clarity.sdk.AddCardToSetResponse
 import com.example.clarity.sdk.CreateCardEntity
-import com.example.clarity.sdk.CreateCardResponse
-import com.example.clarity.sdk.CreateUserEntity
-import com.example.clarity.sdk.CreateUserResponse
+import com.example.clarity.sets.data.PhraseDictionary
 import com.google.android.material.textfield.TextInputEditText
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -46,7 +41,8 @@ class CreateSetActivity : AppCompatActivity() {
         setContentView(R.layout.activity_create_set)
 
         // Create Card Adapter, and update RecyclerView properties
-        cardAdapter = CardAdapter(mutableListOf()){ hideKeyboard() }
+        val dictionary = PhraseDictionary(mutableListOf("alien", "break", "phone", "rover", "japan", "faint"))
+        cardAdapter = CardAdapter(mutableListOf(), dictionary){ hideKeyboard() }
         val rvCards = findViewById<RecyclerView>(R.id.rvCards)
         rvCards.adapter = cardAdapter
         rvCards.layoutManager = LinearLayoutManager(this)

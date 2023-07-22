@@ -1,23 +1,20 @@
 package com.example.clarity.sets
 
-import android.app.Activity
-import android.content.Context
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
-import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.InputMethodManager
+import android.widget.AutoCompleteTextView
 import android.widget.ImageButton
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.recyclerview.widget.RecyclerView
 import com.example.clarity.R
+import com.example.clarity.sets.data.Card
+import com.example.clarity.sets.data.PhraseDictionary
 import com.google.android.material.textfield.TextInputEditText
 
 // This class is used in the CreateSetActivity, and tracks the list of cards being created
-class CardAdapter(private val cards: MutableList<Card>, val hideKeyboard: () -> Unit) : RecyclerView.Adapter<CardAdapter.CardViewHolder>() {
+class CardAdapter(private val cards: MutableList<Card>, private val dictionary: PhraseDictionary, val hideKeyboard: () -> Unit) : RecyclerView.Adapter<CardAdapter.CardViewHolder>() {
 
     class CardViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
     // Local lock, to ensure there are no race conditions when clicking multiple delete buttons too fast successively
@@ -73,7 +70,7 @@ class CardAdapter(private val cards: MutableList<Card>, val hideKeyboard: () -> 
         holder.itemView.apply {
             // Store Components of CardView
             val btnDeleteCard = findViewById<ImageButton>(R.id.iBtnDeleteCard)
-            val etCardTitle = findViewById<TextInputEditText>(R.id.etCardPhrase)
+            val etCardTitle = findViewById<AutoCompleteTextView>(R.id.etCardPhrase)
 
             // Text Watcher that keeps track of what is being entered in the textfield, and makes appropriate updates
             // The first two functions are just filler for now

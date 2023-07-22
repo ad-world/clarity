@@ -18,10 +18,10 @@
         android:theme="@style/Theme.Clarity"
         >
         <activity
-            android:name=".sets.PracticeSetActivity"
+            android:name=".sets.activities.PracticeSetActivity"
             android:exported="false" />
         <activity
-            android:name=".sets.TestSetActivity"
+            android:name=".sets.activities.TestSetActivity"
             android:exported="false" />
         <activity
             android:name=".sets.CreateSetActivity"
