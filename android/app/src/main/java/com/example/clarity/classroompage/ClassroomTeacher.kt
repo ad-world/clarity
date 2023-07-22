@@ -38,7 +38,6 @@ class ClassroomTeacher : AppCompatActivity() {
 
         // handle onclick for the tabs
         tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
-
             override fun onTabSelected(tab: TabLayout.Tab?) {
                 if (tab != null) {
                     viewPager.currentItem = tab.position
