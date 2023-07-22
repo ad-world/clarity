@@ -1,9 +1,10 @@
 package com.example.clarity.profile
 
-import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -12,6 +13,8 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.PopupMenu
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavController
+import androidx.navigation.fragment.findNavController
 import com.example.clarity.MainActivity
 import com.example.clarity.R
 import com.example.clarity.SessionManager
@@ -25,7 +28,6 @@ import com.example.clarity.sdk.GetUserSetProgressResponse
 import com.github.mikephil.charting.animation.Easing
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.charts.PieChart
-import com.github.mikephil.charting.components.AxisBase
 import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
@@ -70,6 +72,7 @@ class ProfileFragment : Fragment() {
     private var setDates = mutableListOf<LocalDate>()
 
 
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -79,8 +82,8 @@ class ProfileFragment : Fragment() {
 
     }
 
-    @SuppressLint("ClickableViewAccessibility")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         //navigation
         lifecycleScope.launch {
@@ -115,18 +118,28 @@ class ProfileFragment : Fragment() {
         binding.firstLast.text = user?.firstname + " " + user?.lastname
 
         //FOLLOWERS
+        println("here")
         val numFollowers = followersList?.size
 
+        println("here")
         binding.followers.text = numFollowers.toString() + " Followers"
 
-        if(followersList?.size!! > 0) {
-            binding.followers.setOnClickListener {
-                //findNavController().navigate(R.id.)
+        //if(followersList?.size!! > 0) {
+//        val host = activity?.findNavController(R.id.navHostFragment) as NavHostFragment
+//        val navController = host.navController
+        // Now you can navigate to another destination using the NavController
+        binding.followers.setOnClickListener {
+            Log.d("MyFragment", "Followers button clicked")
+            //Log.d("ProfileFragment", "NavController: ${findNavController()}")
+            try {
+                findNavController()?.navigate(R.id.Followers)
+
+            } catch (e: Exception) {
+                // Handle the exception, or log the error for debugging
+                e.printStackTrace()
             }
         }
-        binding.followers.setOnClickListener {
-            //findNavController().navigate(R.id.)
-        }
+        //}
 
 
         //FOLLOWING
@@ -135,11 +148,11 @@ class ProfileFragment : Fragment() {
 
         binding.following.text = numFollowing.toString() + " Following"
 
-        if(followingList?.size!! > 0) {
-            binding.following.setOnClickListener {
-                //findNavController().navigate(R.id.)
-            }
-        }
+//        if(followingList?.size!! > 0) {
+//            binding.following.setOnClickListener {
+//                //findNavController().navigate(R.id.)
+//            }
+//        }
 
 
         //STREAKS

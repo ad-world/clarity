@@ -50,4 +50,27 @@
             android:id="@+id/action_tasks_to_announcements"
             app:destination="@id/ClassAnnouncements" />
     </fragment>
+    <fragment
+        android:id="@+id/Followers"
+        android:name="com.example.clarity.profile.Followers"
+        android:label="Followers Fragment"
+        tools:layout="@layout/fragment_followers">
+
+    </fragment>
+    <fragment
+        android:id="@+id/ProfileFragment"
+        android:name="com.example.clarity.profile.ProfileFragment"
+        android:label="Profile Fragment"
+        tools:layout="@layout/fragment_profile">
+        <action
+            android:id="@+id/action_profile_to_followers"
+            app:destination="@id/Followers" />
+    </fragment>
+    <fragment
+        android:id="@+id/Community"
+        android:name="com.example.clarity.CommunityFragment"
+        android:label="Community Fragment"
+        tools:layout="@layout/fragment_community">
+    </fragment>
+
 </navigation>
