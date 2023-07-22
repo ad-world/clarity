@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/index_nav_graph"
+    app:startDestination="@+id/ProfileFragment">
+
+    <fragment
+        android:id="@+id/ClassAnnouncements"
+        android:name="com.example.clarity.classroompage.ClassAnnouncement"
+        android:label="announcement_label"
+        tools:layout="@layout/fragment_class_announcement">
+        <action
+            android:id="@+id/action_announcement_to_tasks"
+            app:destination="@id/ClassTasks" />
+    </fragment>
+    <fragment
+        android:id="@+id/ClassTasks"
+        android:name="com.example.clarity.classroompage.ClassTask"
+        android:label="task_label"
+        tools:layout="@layout/fragment_class_task">
+        <action
+            android:id="@+id/action_tasks_to_announcements"
+            app:destination="@id/ClassAnnouncements" />
+    </fragment>
+    <fragment
+        android:id="@+id/Followers"
+        android:name="com.example.clarity.profile.Followers"
+        android:label="Followers Fragment"
+        tools:layout="@layout/fragment_followers">
+
+    </fragment>
+    <fragment
+        android:id="@+id/ProfileFragment"
+        android:name="com.example.clarity.profile.ProfileFragment"
+        android:label="Profile Fragment"
+        tools:layout="@layout/fragment_profile">
+        <action
+            android:id="@+id/action_profile_to_followers"
+            app:destination="@id/Followers" />
+    </fragment>
+    <fragment
+        android:id="@+id/Community"
+        android:name="com.example.clarity.CommunityFragment"
+        android:label="Community Fragment"
+        tools:layout="@layout/fragment_community">
+    </fragment>
+    <fragment
+        android:id="@+id/SetsFragment"
+        android:name="com.example.clarity.sets.SetsFragment"
+        android:label="Sets Fragment"
+        tools:layout="@layout/fragment_sets">
+    </fragment>
+    <fragment
+        android:id="@+id/ClassroomFragment"
+        android:name="com.example.clarity.classroompage.ClassroomFragment"
+        android:label="Classroom Fragment"
+        tools:layout="@layout/fragment_classroom">
+    </fragment>
+
+
+</navigation>

@@ -132,7 +132,7 @@ class ProfileFragment : Fragment() {
             Log.d("MyFragment", "Followers button clicked")
             //Log.d("ProfileFragment", "NavController: ${findNavController()}")
             try {
-                findNavController()?.navigate(R.id.Followers)
+                findNavController().navigate(R.id.Followers)
 
             } catch (e: Exception) {
                 // Handle the exception, or log the error for debugging
