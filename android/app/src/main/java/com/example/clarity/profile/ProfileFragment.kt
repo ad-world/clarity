@@ -102,6 +102,7 @@ class ProfileFragment : Fragment() {
             menu.setOnMenuItemClickListener { item ->
                 when (item.itemId) {
                     R.id.action_settings -> {
+                        settings()
                         true
                     }
                     R.id.logout -> {
@@ -273,6 +274,9 @@ class ProfileFragment : Fragment() {
     private fun logout() {
         val intent = Intent(activity, MainActivity::class.java)
         startActivity(intent)
+    }
+    private fun settings() {
+        findNavController()?.navigate(R.id.Followers)
     }
     private fun cards() {
         binding.progress.text = "Cards Progress"
