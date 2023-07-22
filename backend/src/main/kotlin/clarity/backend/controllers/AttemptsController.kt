@@ -41,6 +41,7 @@ class AttemptsController {
         return if(attemptResponse.response == StatusResponse.Success) {
             ResponseEntity.ok(attemptResponse)
         } else {
+            print(attemptResponse)
             ResponseEntity.badRequest().body(attemptResponse)
         }
     }
