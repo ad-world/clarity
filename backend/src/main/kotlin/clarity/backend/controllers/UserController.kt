@@ -101,4 +101,26 @@ class UserController {
             ResponseEntity.badRequest().body(resp)
         }
     }
+
+    @PostMapping("/updateUser")
+    fun updateUser(@RequestBody request: EditUserEntity): ResponseEntity<EditUserResponse> {
+        val resp = UserEntity().editUser(request)
+
+        return if(resp.response == StatusResponse.Success) {
+            ResponseEntity.ok(resp)
+        } else {
+            ResponseEntity.badRequest().body(resp)
+        }
+    }
+
+    @PostMapping("/changePassword")
+    fun changePassword(@RequestBody request: ChangePasswordEntity): ResponseEntity<ChangePasswordResponse> {
+        val resp = UserEntity().changePassword(request)
+
+        return if(resp.response == StatusResponse.Success) {
+            ResponseEntity.ok(resp)
+        } else {
+            ResponseEntity.badRequest().body(resp)
+        }
+    }
 }

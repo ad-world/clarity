@@ -39,5 +39,6 @@ data class UnlikeCardSetResponse(val response: StatusResponse, val message: Stri
 data class ToggleCardSetResponse(val response: StatusResponse, val is_public: Int)
 data class UpdateDifficultyResponse(val response: StatusResponse, val newDifficulty: Difficulty?, val message: String)
 data class UpdateTaskDifficultyResponse(val response: StatusResponse, val newDifficulty: Difficulty? = null, val message: String)
-
+data class EditUserResponse(val response: StatusResponse, val message: String)
+data class ChangePasswordResponse(val response: StatusResponse, val message: String)
 
