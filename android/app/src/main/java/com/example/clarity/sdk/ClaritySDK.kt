@@ -156,4 +156,9 @@ interface API {
 
     @POST("updateTaskDifficulty")
     suspend fun updateTaskDifficulty(@Body request: UpdateTaskDifficultyEntity): Response<UpdateTaskDifficultyResponse>
-}
+
+    @POST("updateUser")
+    suspend fun updateUser(@Body request: EditUserEntity): Response<EditUserResponse>
+
+    @POST("changePassword")
+    suspend fun changePassword(@Body request: ChangePasswordEntity): Response<ChangePasswordResponse>
