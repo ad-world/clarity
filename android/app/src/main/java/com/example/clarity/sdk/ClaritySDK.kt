@@ -162,3 +162,4 @@ interface API {
 
     @POST("changePassword")
     suspend fun changePassword(@Body request: ChangePasswordEntity): Response<ChangePasswordResponse>
+}
