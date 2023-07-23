@@ -6,9 +6,16 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.clarity.R
 import com.example.clarity.databinding.FragmentClassTeacherTaskBinding
 import com.example.clarity.sdk.ClaritySDK
+import com.example.clarity.sdk.GetTasksEntity
+import com.example.clarity.sdk.GetTasksResponse
+import com.example.clarity.sdk.StatusResponse
+import com.example.clarity.sdk.Task
+import kotlinx.coroutines.runBlocking
+import retrofit2.Response
 
 /**
  * A simple [Fragment] subclass.
@@ -18,7 +25,7 @@ import com.example.clarity.sdk.ClaritySDK
 class ClassTeacherTasks(private val classId: String) : Fragment() {
     private var _binding: FragmentClassTeacherTaskBinding? = null
 
-    private lateinit var announcementAdapter: AnnouncementAdapter
+    private lateinit var classTeacherTaskAdapter: ClassroomTeacherTaskAdapter
     private val api = ClaritySDK().apiService
 
     // This property is only valid between onCreateView and
@@ -37,10 +44,28 @@ class ClassTeacherTasks(private val classId: String) : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val tasks: MutableList<Pair<String, String>> = mutableListOf()
+        val tasks: MutableList<Task> = mutableListOf()
 
         // update list with current tasks
-        // TODO
+        val getTaskEntity = GetTasksEntity(classId)
+        // call api to get the list of tasks
+        val response: Response<GetTasksResponse> = runBlocking {
+            return@runBlocking api.getTasks(getTaskEntity)
+        }
+        // check for valid response status
+        if (response.body()?.response == StatusResponse.Success) {
+            val listOfTasks = response.body()?.id
+            if (listOfTasks != null) {
+                tasks.clear()
+                for (task in listOfTasks) {
+                    tasks.add(task)
+                }
+                classTeacherTaskAdapter = ClassroomTeacherTaskAdapter(tasks) {task ->
+                }
+                binding.rvClasses.adapter = classTeacherTaskAdapter
+                binding.rvClasses.layoutManager = LinearLayoutManager(context)
+            }
+        }
 
         // teacher can add announcements to class
         binding.addTask.setOnClickListener {

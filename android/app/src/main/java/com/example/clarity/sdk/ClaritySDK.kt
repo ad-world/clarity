@@ -117,7 +117,7 @@ interface API {
     suspend fun getClassAttempts(@Query("classroom") classroom: String): Response<GetClassAttemptsResponse>
 
     @POST("createTask")
-    suspend fun createTask(@Body task: Any) : Response<CreateTaskResponse>
+    suspend fun createTask(@Body task: CreateTaskEntity) : Response<CreateTaskResponse>
 
     @POST("getTasksList")
     suspend fun getTasks(@Body classId: GetTasksEntity) : Response<GetTasksResponse>

@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.clarity.SessionManager
 import com.example.clarity.databinding.FragmentClassroomSetsBinding
 import com.example.clarity.sdk.ClaritySDK
+import com.example.clarity.sdk.CreateTaskEntity
 import com.example.clarity.sdk.CreateTaskResponse
 import com.example.clarity.sdk.Difficulty
 import com.example.clarity.sdk.GetCardsInSetRequest
@@ -75,11 +76,11 @@ class ClassroomSelectSets(private val classId: String) : Fragment() {
     }
 
     private fun onSetClick(position: Int) {
+        println("selecte set here")
         // get the set clicked
         val selectedSet = sets[position]
 
         // create fields for making new task
-        data class CreateTaskEntity(val classId: String, val sets: String, val name: String, val description: String, val dueDate: String, val difficulty: Difficulty)
         val setIdForTask = selectedSet.id.toString()
         val setNameForTask = selectedSet.title
         val taskDescription = "English Practice"
@@ -92,6 +93,7 @@ class ClassroomSelectSets(private val classId: String) : Fragment() {
         val response: Response<CreateTaskResponse> = runBlocking {
             return@runBlocking api.createTask(taskEntity)
         }
+        println("printing response: ${response}")
         if (response.body()?.response == StatusResponse.Success) {
             println("added new task")
         }
