@@ -29,11 +29,30 @@ class ClassroomTeacher : AppCompatActivity() {
         var pagerAdapter: Any
         if (tab != null && tab == "false") {
             pagerAdapter = classId?.let { PagerAdapterTeacher(fragmentManager, it, false) }!!
+            // Get the Tab object you want to select (i.e. Tasks tab)
+            val tabToSelect = tabLayout.getTabAt(1)
+            // Check if the tab exists
+            if (tabToSelect != null) {
+                tabLayout.selectTab(tabToSelect) // Programmatically set the selected tab
+                viewPager.adapter = pagerAdapter
+                viewPager.currentItem = tabToSelect.position
+            }
+        }
+        else if (tab != null && tab == "true") {
+            pagerAdapter = classId?.let { PagerAdapterTeacher(fragmentManager, it, true) }!!
+            // Get the Tab object you want to select (i.e. Tasks tab)
+            val tabToSelect = tabLayout.getTabAt(1)
+            // Check if the tab exists
+            if (tabToSelect != null) {
+                tabLayout.selectTab(tabToSelect) // Programmatically set the selected tab
+                viewPager.adapter = pagerAdapter
+                viewPager.currentItem = tabToSelect.position
+            }
         }
         else {
             pagerAdapter = classId?.let { PagerAdapterTeacher(fragmentManager, it, true) }!!
+            viewPager.adapter = pagerAdapter
         }
-        viewPager.adapter = pagerAdapter
 
         // handle onclick for back symbol on app bar (it will go back to main classroom page)
         appBar.setNavigationOnClickListener {

@@ -175,6 +175,7 @@ class ClassroomSelectSets(private val classId: String) : Fragment() {
         binding.backToTasks.setOnClickListener {
             val intent = Intent(requireContext(), ClassroomTeacher::class.java)
             intent.putExtra("classId", classId)
+            intent.putExtra("tasksTab", "true")
             startActivity(intent)
         }
     }
