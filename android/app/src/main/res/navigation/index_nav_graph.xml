@@ -57,6 +57,12 @@
         android:label="Classroom Fragment"
         tools:layout="@layout/fragment_classroom">
     </fragment>
+    <fragment
+        android:id="@+id/FollowingFragment"
+        android:name="com.example.clarity.profile.FollowingFragment"
+        android:label="Following Fragment"
+        tools:layout="@layout/fragment_following">
+    </fragment>
 
 
 </navigation>

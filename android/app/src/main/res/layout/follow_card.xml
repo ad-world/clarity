@@ -15,13 +15,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="18sp"
-            android:layout_marginEnd="220dp"
+            android:layout_marginEnd="200dp"
             android:text="First Last"/>
 
         <TextView
             android:id="@+id/remove"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginRight="10dp"
             android:textSize="14sp"
             android:textStyle="bold"
             android:text="Remove"/>

@@ -125,22 +125,13 @@ class ProfileFragment : Fragment() {
         println("here")
         binding.followers.text = numFollowers.toString() + " Followers"
 
-        //if(followersList?.size!! > 0) {
-//        val host = activity?.findNavController(R.id.navHostFragment) as NavHostFragment
-//        val navController = host.navController
-        // Now you can navigate to another destination using the NavController
-        binding.followers.setOnClickListener {
-            Log.d("MyFragment", "Followers button clicked")
-            //Log.d("ProfileFragment", "NavController: ${findNavController()}")
-            try {
+        if(followersList?.size!! > 0) {
+            println(followersList)
+            binding.followers.setOnClickListener {
                 findNavController().navigate(R.id.Followers)
-
-            } catch (e: Exception) {
-                // Handle the exception, or log the error for debugging
-                e.printStackTrace()
             }
         }
-        //}
+
 
 
         //FOLLOWING
@@ -149,11 +140,11 @@ class ProfileFragment : Fragment() {
 
         binding.following.text = numFollowing.toString() + " Following"
 
-//        if(followingList?.size!! > 0) {
-//            binding.following.setOnClickListener {
-//                //findNavController().navigate(R.id.)
-//            }
-//        }
+        if(followingList?.size!! > 0) {
+            binding.following.setOnClickListener {
+                findNavController().navigate(R.id.FollowingFragment)
+            }
+        }
 
 
         //STREAKS

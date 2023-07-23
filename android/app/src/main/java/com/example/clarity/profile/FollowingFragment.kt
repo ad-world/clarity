@@ -1,7 +1,5 @@
 package com.example.clarity.profile
 
-import android.app.AlertDialog
-import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -10,7 +8,6 @@ import android.view.ViewGroup
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.clarity.R
 import com.example.clarity.SessionManager
 import com.example.clarity.databinding.FragmentFollowersBinding
 import com.example.clarity.sdk.ClaritySDK
@@ -19,8 +16,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import retrofit2.Response
 
-
-class Followers : Fragment() {
+class FollowingFragment : Fragment() {
 
     private val api = ClaritySDK().apiService
 
@@ -30,7 +26,7 @@ class Followers : Fragment() {
 
     private var userId = 0
     private val binding get() = _binding!!
-    private var followersList: List<Int>? = null
+    private var followingList: List<Int>? = null
     private lateinit var recyclerView: RecyclerView
 
     override fun onCreateView(
@@ -50,17 +46,16 @@ class Followers : Fragment() {
         lifecycleScope.launch {
             userId = sessionManager.getUserId()
         }
-        followersList = getFollowers()
-        println(followersList)
+        followingList = getFollowing()
         recyclerView.layoutManager = LinearLayoutManager(context)
-        recyclerView.adapter = followersList?.let { FollowAdapter(it, true, userid = userId) }
+        recyclerView.adapter = followingList?.let { FollowAdapter(it, false, userid = userId) }
 
 
     }
 
-    private fun getFollowers(): List<Int>? {
+    private fun getFollowing(): List<Int>? {
         val response : Response<FollowerListResponse> = runBlocking {
-            return@runBlocking api.getFollowers(userId)
+            return@runBlocking api.getFollowing(userId)
         }
         return response.body()?.followers
     }
