@@ -267,7 +267,7 @@ class ProfileFragment : Fragment() {
         startActivity(intent)
     }
     private fun settings() {
-        findNavController()?.navigate(R.id.Followers)
+        findNavController()?.navigate(R.id.SettingsFragment)
     }
     private fun cards() {
         binding.progress.text = "Cards Progress"
