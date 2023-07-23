@@ -1,40 +1,14 @@
 package com.example.clarity.classroompage
 
-import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
-import android.text.InputType
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.EditText
-import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.example.clarity.IndexActivity
 import com.example.clarity.R
-import com.example.clarity.databinding.FragmentClassAnnouncementBinding
-import com.example.clarity.databinding.FragmentClassTeacherAnnouncementBinding
 import com.example.clarity.databinding.FragmentClassTeacherTaskBinding
-import com.example.clarity.databinding.FragmentFirstBinding
-import com.example.clarity.sdk.AnnouncementResponse
 import com.example.clarity.sdk.ClaritySDK
-import com.example.clarity.sdk.CreateAnnouncementEntity
-import com.example.clarity.sdk.CreateClassroomEntity
-import com.example.clarity.sdk.CreateClassroomResponse
-import com.example.clarity.sdk.GetAnnouncementsResponse
-import com.example.clarity.sdk.GetClassroomResponse
-import com.example.clarity.sdk.GetUserResponse
-import com.example.clarity.sdk.StatusResponse
-import com.example.clarity.sdk.UserWithId
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import kotlinx.coroutines.runBlocking
-import retrofit2.Response
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
 /**
  * A simple [Fragment] subclass.
@@ -58,7 +32,6 @@ class ClassTeacherTasks(private val classId: String) : Fragment() {
 
         _binding = FragmentClassTeacherTaskBinding.inflate(inflater, container, false)
         return binding.root
-
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -71,8 +44,9 @@ class ClassTeacherTasks(private val classId: String) : Fragment() {
 
         // teacher can add announcements to class
         binding.addTask.setOnClickListener {
-            val intent = Intent(requireContext(), ClassroomCreateTask::class.java)
+            val intent = Intent(requireContext(), ClassroomTeacher::class.java)
             intent.putExtra("classId", classId)
+            intent.putExtra("tasksTab", "false")
             startActivity(intent)
         }
     }
