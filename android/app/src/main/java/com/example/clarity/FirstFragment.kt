@@ -59,7 +59,6 @@ class FirstFragment : Fragment() {
             if (response.body()?.response == StatusResponse.Success) {
                 valid = true
             }
-
             if (valid) {
                 lifecycleScope.launch {
                     sessionManager.setUserName(username)

@@ -2,36 +2,9 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/nav_graph"
-    app:startDestination="@+id/LandingFragment">
+    android:id="@+id/index_nav_graph"
+    app:startDestination="@+id/ProfileFragment">
 
-    <fragment
-        android:id="@+id/FirstFragment"
-        android:name="com.example.clarity.FirstFragment"
-        android:label="@string/first_fragment_label"
-        tools:layout="@layout/fragment_first">
-
-        <action
-            android:id="@+id/action_FirstFragment_to_SecondFragment"
-            app:destination="@id/SecondFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/LandingFragment"
-        android:name="com.example.clarity.LandingFragment"
-        android:label="Landing Fragment"
-        tools:layout="@layout/fragment_landing">
-
-    </fragment>
-    <fragment
-        android:id="@+id/SecondFragment"
-        android:name="com.example.clarity.SecondFragment"
-        android:label="@string/second_fragment_label"
-        tools:layout="@layout/fragment_second">
-
-        <action
-            android:id="@+id/action_SecondFragment_to_FirstFragment"
-            app:destination="@id/FirstFragment" />
-    </fragment>
     <fragment
         android:id="@+id/ClassAnnouncements"
         android:name="com.example.clarity.classroompage.ClassAnnouncement"
@@ -72,5 +45,18 @@
         android:label="Community Fragment"
         tools:layout="@layout/fragment_community">
     </fragment>
+    <fragment
+        android:id="@+id/SetsFragment"
+        android:name="com.example.clarity.sets.SetsFragment"
+        android:label="Sets Fragment"
+        tools:layout="@layout/fragment_sets">
+    </fragment>
+    <fragment
+        android:id="@+id/ClassroomFragment"
+        android:name="com.example.clarity.classroompage.ClassroomFragment"
+        android:label="Classroom Fragment"
+        tools:layout="@layout/fragment_classroom">
+    </fragment>
+
 
 </navigation>

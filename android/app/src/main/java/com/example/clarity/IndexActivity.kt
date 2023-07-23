@@ -3,8 +3,10 @@ package com.example.clarity
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.navigation.findNavController
 import com.example.clarity.classroompage.ClassroomFragment
 import com.example.clarity.databinding.IndexActivityBinding
+import com.example.clarity.profile.ProfileFragment
 import com.example.clarity.sets.SetsFragment
 
 // Just created a blank file for the main content
@@ -21,36 +23,27 @@ class IndexActivity : AppCompatActivity() {
 
         // Get the intent that started this activity
         val intent = intent
-
         val screen = intent.getStringExtra("screen")
 
         binding = IndexActivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        val navController = findNavController(R.id.nav_host_fragment_index_content_main)
+
         if (screen == "mainClassroom") {
             binding.bottomNav.selectedItemId = R.id.classroom
-            replaceFragment(ClassroomFragment())
-        }
-        else {
-            replaceFragment(ProfileFragment())
+            navController.navigate(R.id.ClassroomFragment)
         }
 
         binding.bottomNav.setOnItemSelectedListener {
             when(it.itemId){
-                R.id.profile -> replaceFragment(ProfileFragment())
-                R.id.sets -> replaceFragment(SetsFragment())
-                R.id.community -> replaceFragment(CommunityFragment())
-                R.id.classroom -> replaceFragment(ClassroomFragment())
+                R.id.profile -> navController.navigate(R.id.ProfileFragment)
+                R.id.sets -> navController.navigate(R.id.SetsFragment)
+                R.id.community -> navController.navigate(R.id.Community)
+                R.id.classroom -> navController.navigate(R.id.ClassroomFragment)
                 else -> {}
             }
             true
         }
-    }
-
-    private fun replaceFragment(fragment : Fragment){
-        val fragmentManager = supportFragmentManager
-        val fragmentTransaction = fragmentManager.beginTransaction()
-        fragmentTransaction.replace(R.id.frame_layout,fragment)
-        fragmentTransaction.commit()
     }
 }
