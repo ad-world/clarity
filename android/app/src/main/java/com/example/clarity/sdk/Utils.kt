@@ -1,7 +1,7 @@
 package com.example.clarity.sdk
 
 data class SetMetadata(val set_id: Int, val title: String, val type: String, val is_public: Boolean, val likes: Int)
-data class UserWithId(val user_id: Int, val username: String, val email: String, val firstname: String, val lastname: String, val phone_number: String, val login_streak: Int)
+data class UserWithId(val user_id: Int, val username: String, val email: String, val firstname: String, val lastname: String, val phone_number: String, val login_streak: Int, val difficulty: Difficulty)
 data class ClassroomAttemptMetadata(
     val task_id: Int, val user_id: Int, val card_id: Int, val mispronunciations: List<String>,
     val omissions: List<String>, val insertions: List<String>, val pronunciationScore: Double, val accuracyScore: Double,
@@ -24,6 +24,13 @@ data class TaskAttemptWithNameAndClass(val classroom: String, val task_id: Int, 
 
 data class StudentProgress(val user_id: Int, val completed_count: Int, val firstName: String, val lastName: String)
 
+data class Task(val taskId: Int, val classId: String, val setId: Int, val name: String, val description: String, val dueDate: String?, val difficulty: Difficulty)
+
+enum class Difficulty {
+    Easy,
+    Medium,
+    Hard
+}
 data class PronunciationAssessment(
     val accuracyScore: Double?,
     val fluencyScore: Double?,
