@@ -13,6 +13,7 @@ data class AttemptMetadata(
 data class CardAttempt(val user_id: Int, val card_id: Int, val set_id: Int, val pronunciationScore: Double? = null, val accuracyScore: Double? = null,
                        val fluencyScore: Double? = null, val completenessScore: Double? = null, val attemptDate: String)
 data class Card(val card_id: Int, val phrase: String, val title: String)
+data class CardSet(val metadata: SetMetadata, val cards: List<Card>)
 data class CardInSet(val card_id: Int, val set_id: Int, val completion_date: String?)
 
 data class TaskAttemptWithName(val task_id: Int, val user_id: Int, val card_id: Int, val pronunciationScore: Int,

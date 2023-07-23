@@ -68,17 +68,14 @@ interface API {
     @POST("getCardsForSet")
     suspend fun getCards(@Body set: GetCardsInSetRequest) : Response<GetCardsInSetResponse>
 
-    @GET("getSets")
-    suspend fun getAllSets() : Response<GetSetsResponse>
-
-    @POST("getDataForSet")
-    suspend fun  getDataForSet(@Body set: GetDataForSetRequest) : Response<GetDataForSetResponse>
+    @GET("getSetIDs")
+    suspend fun getSetIDs() : Response<GetSetIDsResponse>
 
     @GET("getSetsByUsername")
     suspend fun getSetsByUsername(@Query("username") username: String): Response<GetSetsByUsernameResponse>
 
-    @GET("getCardSetsOrderedByLikes")
-    suspend fun getCardSetsOrderedByLikes(): Response<GetCardSetsOrderedByLikesResponse>
+    @GET("getPublicCardSetsOrderedByLikes")
+    suspend fun getPublicCardSetsOrderedByLikes(): Response<getPublicCardSetsOrderedByLikesResponse>
 
     @Multipart
     @POST("attemptCard")
@@ -162,4 +159,10 @@ interface API {
 
     @POST("changePassword")
     suspend fun changePassword(@Body request: ChangePasswordEntity): Response<ChangePasswordResponse>
+
+    @GET("getPublicCardSets")
+    suspend fun getPublicCardSets(): Response<GetPublicCardSetsResponse>
+
+    @POST("clonePublicSet")
+    suspend fun clonePublicSet(@Body request: ClonePublicSetRequest): Response<ClonePublicSetResponse>
 }
