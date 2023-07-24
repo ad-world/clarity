@@ -12,11 +12,15 @@ import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.clarity.databinding.FragmentClassTaskBinding
 import com.example.clarity.sdk.ClaritySDK
-import com.example.clarity.databinding.FragmentSetsBinding
 import com.example.clarity.sdk.GetCardsInSetRequest
 import com.example.clarity.sdk.GetCardsInSetResponse
 import com.example.clarity.sdk.GetSetsByUsernameResponse
+import com.example.clarity.sdk.GetTasksEntity
+import com.example.clarity.sdk.GetTasksResponse
+import com.example.clarity.sdk.StatusResponse
+import com.example.clarity.sdk.Task
 import com.example.clarity.sets.SetAdapter
 import com.example.clarity.sets.activities.PracticeSetActivity
 import com.example.clarity.sets.activities.TestSetActivity
@@ -37,13 +41,14 @@ private const val USER_ID = "userId"
  * Use the [SetsFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class ClassTask(private val classId: String) : Fragment() {
+class ClassTask(private val classId: String, private val classTeacherId: String) : Fragment() {
     // Fragment binding
-    private var _binding: FragmentSetsBinding? = null
+    private var _binding: FragmentClassTaskBinding? = null
 
     // Set Adapter for list of sets
     private lateinit var setAdapter: SetAdapter
     private lateinit var sets: MutableList<com.example.clarity.sets.data.Set>
+    private lateinit var tasks: MutableList<Task>
 
     // Variables to store username and userid
     private lateinit var username: String
@@ -112,7 +117,7 @@ class ClassTask(private val classId: String) : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         // Inflate the layout for this fragment
-        _binding = FragmentSetsBinding.inflate(inflater, container, false)
+        _binding = FragmentClassTaskBinding.inflate(inflater, container, false)
 
         return binding.root
     }
@@ -138,29 +143,41 @@ class ClassTask(private val classId: String) : Fragment() {
             Log.d("Username is: ", username)
         }
         sets = mutableListOf()
+        tasks = mutableListOf()
         // TODO: Replace following lines with a query for all sets with our userId, and then parse
         //  through the object returned, creating a set data class for each set, and appending it
         //  to the sets array
 
+        // get a list of tasks associated with this class
 
-        val response : Response<GetSetsByUsernameResponse> = runBlocking {
-            return@runBlocking api.getSetsByUsername(username)
+        // set up request body
+        val getTaskEntity = GetTasksEntity(classId)
+        // make api call to fetch list of tasks
+        val taskResponse: Response<GetTasksResponse> = runBlocking {
+            return@runBlocking api.getTasks(getTaskEntity)
         }
-        println(response.body())
-
-        if (response.isSuccessful) {
-            val size = response.body()!!.data.size
-
-            for(i in 0 until size) {
-                val setData = response.body()?.data?.get(i)!!
-                val setId = setData.set_id
-                val setTitle = setData.title
+        // validate response received
+        if (taskResponse.body()?.response == StatusResponse.Success) {
+            val taskList = taskResponse.body()?.id
+            val mutableTaskList = taskList?.toMutableList()
+            if (mutableTaskList != null) {
+                tasks.clear()
+                sets.clear()
+                tasks = mutableTaskList
+            }
+            val tasksSize = tasks.size
+            for (i in 0 until tasksSize) {
+                val singleTask = tasks.get(i)
+                val setId = singleTask.setId
+                val setTitle = singleTask.name
                 val progress = 0
                 val set = Set(setId, setTitle, userid, mutableListOf<Card>(), progress, SetCategory.CREATED_SET)
 
+                // get the cards corresponding to the task/set
                 val cards : Response<GetCardsInSetResponse> = runBlocking {
                     return@runBlocking api.getCards(GetCardsInSetRequest(setId))
                 }
+                // validate fetching card response
                 if (cards.isSuccessful) {
                     for (card in cards.body()!!.cards) {
                         set.cards.add(Card(card.card_id, card.phrase, false))
@@ -169,7 +186,7 @@ class ClassTask(private val classId: String) : Fragment() {
                 sets.add(set)
             }
         }
-
+        // call setAdapter to update the list view and display the tasks/sets
         setAdapter = SetAdapter(sets) { position -> onSetClick(position) }
         binding.rvSets.adapter = setAdapter
         binding.rvSets.layoutManager = LinearLayoutManager(context)
@@ -184,8 +201,8 @@ class ClassTask(private val classId: String) : Fragment() {
          * @return A new instance of fragment SetsFragment.
          */
         @JvmStatic
-        fun newInstance(classId: String) =
-            ClassTask(classId).apply {
+        fun newInstance(classId: String, classTeacherId: String) =
+            ClassTask(classId, classTeacherId).apply {
                 arguments = Bundle().apply {
                 }
             }
