@@ -39,7 +39,6 @@ class AttemptsEntity {
             val analysis = card?.let { speechAnalyzer.analyzeAudio(audio, it.phrase) }
                 ?: throw Exception("Speech analysis returned null - unknown error")
 
-            println("Analysis is $analysis")
             val json = analysis.json
             val result = analysis.assessmentResult
                 ?: throw Exception("Speech analysis result was null - don't record this attempt")

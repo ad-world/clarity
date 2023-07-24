@@ -9,10 +9,6 @@ import com.microsoft.cognitiveservices.speech.audio.AudioConfig
 import io.github.cdimascio.dotenv.Dotenv
 import io.github.cdimascio.dotenv.dotenv
 import org.springframework.web.multipart.MultipartFile
-import java.io.File
-import java.io.FileInputStream
-import java.io.IOException
-import java.nio.charset.Charset
 import java.util.concurrent.TimeUnit
 
 
@@ -49,9 +45,6 @@ class SpeechAnalysis {
             val filePath = tempFile.storeFile(file)
             val config: AudioConfig = AudioConfig.fromWavFileInput(filePath)
 
-            println("HIHIHIHIHIHIHIHIHIH Filepath is: $filePath")
-            println("isWavFile ${isWavFile(File(filePath))}")
-
             val speechRecognizer = SpeechRecognizer(speechConfig, config)
             val assessmentConfig = PronunciationAssessmentConfig(
                 phrase,
@@ -59,7 +52,6 @@ class SpeechAnalysis {
                 PronunciationAssessmentGranularity.Phoneme,
                 true
             )
-            println("hello1")
 
             assessmentConfig.applyTo(speechRecognizer)
 
@@ -72,48 +64,19 @@ class SpeechAnalysis {
             val gson = Gson()
             val parsedResponse: SpeechAPIResponse = gson.fromJson(pronunciationAssessmentResultJson, SpeechAPIResponse::class.java)
 
-            println("hello2")
-
             speechRecognizer.close()
             config.close()
             assessmentConfig.close()
             result.close()
 
-            println("hello3")
 
             tempFile.deleteFile(filePath)
-
-            println("hello4")
 
             return SpeechAnalysisResult(json = parsedResponse, assessmentResult = pronunciationAssessmentResult)
         } catch (e: Exception) {
             e.printStackTrace();
             return null;
         }
-    }
-
-    fun isWavFile(wavFile: File): Boolean {
-        if (!wavFile.exists()) {
-            return false
-        }
-
-        val headerSize = 12 // The WAV header size is 12 bytes
-        val buffer = ByteArray(headerSize)
-
-        try {
-            val fileInputStream = FileInputStream(wavFile)
-            fileInputStream.read(buffer, 0, headerSize)
-            fileInputStream.close()
-        } catch (e: IOException) {
-            e.printStackTrace()
-            return false
-        }
-
-        // Verify the WAV file header
-        val riffHeaderStr = String(buffer, 0, 4, Charset.forName("US-ASCII"))
-        val formatHeaderStr = String(buffer, 8, 4, Charset.forName("US-ASCII"))
-
-        return riffHeaderStr == "RIFF" && formatHeaderStr == "WAVE"
     }
 
     fun findErrorType(response: SpeechAPIResponse, errorType: ErrorType): List<String> {
