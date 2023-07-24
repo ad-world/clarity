@@ -24,4 +24,15 @@ class EmailService @Autowired constructor(
         helper.setText(body, true)
         mailSender.send(message)
     }
+    fun sendEmailList(to: List<String>, subject: String, body: String) {
+        val message = mailSender.createMimeMessage()
+        val helper = MimeMessageHelper(message, true)
+        if (from != null) {
+            helper.setFrom(from)
+        }
+        helper.setTo(to.toTypedArray())
+        helper.setSubject(subject)
+        helper.setText(body, true)
+        mailSender.send(message)
+    }
 }
