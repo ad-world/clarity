@@ -19,12 +19,12 @@ import com.example.clarity.sdk.GetCardsInSetRequest
 import com.example.clarity.sdk.GetCardsInSetResponse
 import com.example.clarity.sdk.GetSetsByUsernameResponse
 import com.example.clarity.sdk.StatusResponse
-import com.example.clarity.sets.Card
-import com.example.clarity.sets.PracticeSetActivity
-import com.example.clarity.sets.Set
+import com.example.clarity.sets.data.Card
+import com.example.clarity.sets.activities.PracticeSetActivity
+import com.example.clarity.sets.data.Set
 import com.example.clarity.sets.SetAdapter
-import com.example.clarity.sets.SetCategory
-import com.example.clarity.sets.TestSetActivity
+import com.example.clarity.sets.data.SetCategory
+import com.example.clarity.sets.activities.TestSetActivity
 import com.google.gson.Gson
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking

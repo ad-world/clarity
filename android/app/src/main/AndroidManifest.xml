@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
+    <uses-permission android:name="android.permission.WRITE_MEDIA_AUDIO" />
 
     <uses-permission android:name="android.permission.INTERNET" />
     <application
@@ -16,10 +18,10 @@
         android:theme="@style/Theme.Clarity"
         >
         <activity
-            android:name=".sets.PracticeSetActivity"
+            android:name=".sets.activities.PracticeSetActivity"
             android:exported="false" />
         <activity
-            android:name=".sets.TestSetActivity"
+            android:name=".sets.activities.TestSetActivity"
             android:exported="false" />
         <activity
             android:name=".sets.CreateSetActivity"
