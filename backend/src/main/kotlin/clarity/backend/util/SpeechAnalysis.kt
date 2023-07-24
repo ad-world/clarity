@@ -68,7 +68,7 @@ class SpeechAnalysis {
             config.close()
             assessmentConfig.close()
             result.close()
-            
+
             tempFile.deleteFile(filePath)
 
             return SpeechAnalysisResult(json = parsedResponse, assessmentResult = pronunciationAssessmentResult)
