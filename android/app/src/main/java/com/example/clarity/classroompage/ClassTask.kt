@@ -46,7 +46,7 @@ class ClassTask(private val classId: String, private val classTeacherId: String)
     private var _binding: FragmentClassTaskBinding? = null
 
     // Set Adapter for list of sets
-    private lateinit var setAdapter: SetAdapter
+    private lateinit var classTaskAdapter: ClassroomTaskAdapter
     private lateinit var sets: MutableList<com.example.clarity.sets.data.Set>
     private lateinit var tasks: MutableList<Task>
 
@@ -171,7 +171,7 @@ class ClassTask(private val classId: String, private val classTeacherId: String)
                 val setId = singleTask.setId
                 val setTitle = singleTask.name
                 val progress = 0
-                val set = Set(setId, setTitle, userid, mutableListOf<Card>(), progress, SetCategory.CREATED_SET)
+                val set = Set(setId, setTitle, classTeacherId.toInt(), mutableListOf<Card>(), progress, SetCategory.CREATED_SET)
 
                 // get the cards corresponding to the task/set
                 val cards : Response<GetCardsInSetResponse> = runBlocking {
@@ -187,8 +187,8 @@ class ClassTask(private val classId: String, private val classTeacherId: String)
             }
         }
         // call setAdapter to update the list view and display the tasks/sets
-        setAdapter = SetAdapter(sets) { position -> onSetClick(position) }
-        binding.rvSets.adapter = setAdapter
+        classTaskAdapter = ClassroomTaskAdapter(sets) { position -> onSetClick(position) }
+        binding.rvSets.adapter = classTaskAdapter
         binding.rvSets.layoutManager = LinearLayoutManager(context)
     }
 
