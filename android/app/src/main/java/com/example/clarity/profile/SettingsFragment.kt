@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.RadioButton
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.clarity.IndexActivity
@@ -60,27 +61,60 @@ class SettingsFragment : Fragment() {
             username = sessionManager.getUserName()
             userId = sessionManager.getUserId()
         }
+
+        binding.back.setOnClickListener {
+            findNavController().navigate(R.id.ProfileFragment)
+        }
         val user = getUser()?.user
+
+        val firstBefore = user?.firstname
+        val lastBefore = user?.lastname
+        val emailBefore = user?.email
+        var difficulty = user?.difficulty
 
         binding.editTextFirst.setText(user?.firstname)
         binding.editTextLast.setText(user?.lastname)
         binding.editTextEmail.setText(user?.email)
-        val difficulty = user?.difficulty
+
         var level = 0
-        if(difficulty == Difficulty.Easy) {
-            binding.difficulty.check(R.id.easy)
-        } else if(difficulty == Difficulty.Medium) {
-            binding.difficulty.check(R.id.medium)
-            level = 1
-        } else {
-            binding.difficulty.check(R.id.hard)
-            level = 2
+        when (difficulty) {
+            Difficulty.Hard -> {
+                binding.difficulty.check(R.id.hard)
+                level = 2
+            }
+            Difficulty.Medium -> {
+                binding.difficulty.check(R.id.medium)
+                level = 1
+            }
+            else -> binding.difficulty.check(R.id.easy)
         }
+        var newLevel = level
+        binding.difficulty.setOnCheckedChangeListener { _, checkedId ->
+            val radioButton: RadioButton = when (checkedId) {
+                binding.easy.id -> binding.easy
+                binding.medium.id -> binding.medium
+                binding.hard.id -> binding.hard
+                else -> binding.easy // Default value
+            }
+            difficulty = when (checkedId) {
+                binding.easy.id -> Difficulty.Easy
+                binding.medium.id -> Difficulty.Medium
+                binding.hard.id -> Difficulty.Hard
+                else -> Difficulty.Easy
+            }
+            newLevel = when (checkedId) {
+                binding.easy.id -> 0
+                binding.medium.id -> 1
+                binding.hard.id -> 2
+                else -> 0
+            }
+        }
+
         //binding.difficulty = user?.difficulty
         binding.buttonSavePass.setOnClickListener {
             val oldPassword = binding.editTextOldPass.text
             val newPassword = binding.editTextNewPass.text
-            if(!oldPassword.isEmpty() && !newPassword.isEmpty()) {
+            if(oldPassword.isNotEmpty() && newPassword.isNotEmpty()) {
                 //then do api call to change password
                 val changePass = ChangePasswordEntity(userId, oldPassword.toString(), newPassword.toString())
                 val response: Response<ChangePasswordResponse> = runBlocking {
@@ -105,29 +139,20 @@ class SettingsFragment : Fragment() {
             var notNull = false
 
             //need to check if all of these are not null
-            if(first.isEmpty()) {
+            if(first.isEmpty() || first.toString() == firstBefore) {
                 first = null
             } else {
                 notNull = true
             }
-            if(last.isEmpty()) {
+            if(last.isEmpty() || last.toString() == lastBefore) {
                 last = null
             } else {
                 notNull = true
             }
-            if(email.isEmpty()) {
+            if(email.isEmpty() || email.toString() == emailBefore) {
                 email = null
             } else {
                 notNull = true
-            }
-
-            var newLevel = 0
-
-            val newDifficulty = binding.difficulty.id
-            if(newDifficulty == R.id.medium) {
-                newLevel = 1
-            } else if (newDifficulty == R.id.hard) {
-                newLevel = 2
             }
 
 
@@ -136,20 +161,15 @@ class SettingsFragment : Fragment() {
                 var responseDiff: Response<UpdateDifficultyResponse>? = null
                 if(notNull) {
                     val user =
-                        EditUserEntity(userId, first.toString(), last.toString(), email.toString())
+                        EditUserEntity(userId, first?.toString(), last?.toString(), email?.toString())
                     response = runBlocking {
                         return@runBlocking api.updateUser(user)
                     }
                 }
 
                 if(newLevel != level) {
-                    //level has been changed
-                    var diff = UpdateDifficultyEntity(userId, Difficulty.Easy)
-                    if(newLevel == 1) {
-                        diff = UpdateDifficultyEntity(userId, Difficulty.Medium)
-                    } else if (newLevel == 2) {
-                        UpdateDifficultyEntity(userId, Difficulty.Hard)
-                    }
+                    println("it is different")
+                    var diff = UpdateDifficultyEntity(userId, difficulty)
                     responseDiff = runBlocking {
                         return@runBlocking api.updateDifficulty(diff)
                     }
