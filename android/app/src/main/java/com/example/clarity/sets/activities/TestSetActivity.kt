@@ -26,11 +26,7 @@ import com.example.clarity.sdk.CreateAttemptResponse
 import com.example.clarity.sets.data.Card
 import com.example.clarity.sets.data.Set
 import com.example.clarity.sets.data.SetCategory
-import com.example.clarity.sets.audio.AndroidAudioPlayer
-import com.example.clarity.sets.audio.AndroidAudioRecorder
-import com.example.clarity.sets.audio.WavPlayer
 import com.example.clarity.sets.audio.WavRecorder
-import com.example.clarity.sets.audio.WavUtils
 import com.google.gson.Gson
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -47,41 +43,37 @@ import java.util.Locale
 
 class TestSetActivity() : AppCompatActivity() {
 
-
-    private val recorder by lazy {
-        AndroidAudioRecorder(applicationContext)
-    }
-
-    // TODO: Not sure if they can hear the correct recording after answering?
-    //  added this here in case they can
-    /*private val player by lazy {
-        AndroidAudioPlayer(applicationContext)
-    }*/
-
-    private var audioFile: File? = null
-    private var wavFile: File? = null
+    // Recorder and Player
     private var player: TextToSpeech? = null
-    // private var player: TextToSpeech? = null
-
-    private var isRecording = false
-    private var recordingCompleted = false
-    private val api = ClaritySDK().apiService
     private val wavRecorder = WavRecorder(this)
+
+    // Session Manager
     private val sessionManager: SessionManager by lazy { SessionManager(this) }
 
-    private val PERMISSIONS = arrayOf(
-        Manifest.permission.RECORD_AUDIO,
-        Manifest.permission.WRITE_EXTERNAL_STORAGE
-    )
-    private val PERMISSION_CODE = 123
+    // Toggle to check if we are currently recording
+    private var isRecording = false
 
+    // Variable to restrict users to one attempt per card
+    private var recordingCompleted = false
+
+    // ClaritySDK api for endpoint calls
+    private val api = ClaritySDK().apiService
+
+    // Index that stores the current card being displayed
+    private var index = 0
+
+    // User and Set
     var userid = 0
-    var index = 0
     var set: Set = Set(0, "", 0, mutableListOf<Card>(), 0, SetCategory.COMMUNITY_SET)
+
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Request permission to record
         ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.RECORD_AUDIO), 0)
+
+        // Set View
         setContentView(R.layout.activity_test_set)
 
         // Create TTS Object
@@ -93,11 +85,13 @@ class TestSetActivity() : AppCompatActivity() {
             }
         })
 
+        // Get Set that was started
         val intent = intent
         val setJson = intent.getStringExtra("set")
         val gson = Gson()
         set = gson.fromJson(setJson, Set::class.java)
 
+        // Get all view components
         val tvTitle = findViewById<TextView>(R.id.tvTitle)
         val iBtnClose = findViewById<ImageButton>(R.id.iBtnClose)
         val iBtnMic = findViewById<ImageButton>(R.id.iBtnMic)
@@ -107,11 +101,15 @@ class TestSetActivity() : AppCompatActivity() {
         val cvCompletedScreen = findViewById<CardView>(R.id.cvCompletedScreen)
         val btnReturn = findViewById<Button>(R.id.btnReturn)
 
+        // Get Session Context Variables
         lifecycleScope.launch {
             userid = sessionManager.getUserId()
         }
 
+        // Initialize Title
         tvTitle.text = set.title
+
+        // Handle Close button, which automatically closes test session
         iBtnClose.setOnClickListener {
             finish()
         }
@@ -121,58 +119,58 @@ class TestSetActivity() : AppCompatActivity() {
             player!!.speak(set.cards[index].phrase, TextToSpeech.QUEUE_ADD, null, null)
         }
 
+        // Handle Mic button click
         iBtnMic.setOnClickListener {
+            // Ensure we haven't already recorded an attempt for this card
             if (!recordingCompleted) {
+                // CASE 1: Not Recording -> Recording
                 if (!isRecording) {
-                    // TODO: Change UI of button to reflect ongoing recording
-                    //  ...
+                    // Change UI of button
                     iBtnMic.setBackgroundResource(R.drawable.setclosebutton)
                     iBtnMic.setImageResource(R.drawable.baseline_mic_24_white)
-                    wavRecorder.startRecording("audio.wav", true)
-                    /*val path  = File(cacheDir, "audio.wav").also {
-                        recorder.start(it)
-                        audioFile = it
-                    }.absolutePath
 
-                    wavFile = File(cacheDir, "audio.wav")
-                    WavUtils.convertMp3ToWav(path, wavFile!!.absolutePath)*/
-                    /*if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
-                        != PackageManager.PERMISSION_GRANTED ||
-                        ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                        != PackageManager.PERMISSION_GRANTED
-                    ) {
-                        ActivityCompat.requestPermissions(this, PERMISSIONS, PERMISSION_CODE)
-                    } else {
-                        ClarityAudioRecorder.startRecording()
-                    }*/
+                    // Start recording, while storing recording in file
+                    wavRecorder.startRecording("audio.wav", true)
+
+                // CASE 2: Recording -> Not Recording
                 } else {
-                    // TODO Change UI of button to reflect recording stopped
-                    //  ...
+                    // Change UI of button
                     iBtnMic.setBackgroundResource(R.drawable.roundcorner)
                     iBtnMic.setImageResource(R.drawable.baseline_mic_24)
-                    wavRecorder.stopRecording()
-                    // recorder.stop()
-                    // ClarityAudioRecorder.stopRecording()
-                    recordingCompleted = true
 
+                    // Stop Recording
+                    wavRecorder.stopRecording()
+
+                    // Indicate that we have already recorded an attempt for this card
+                    recordingCompleted = true
+                    iBtnMic.isEnabled = false
+
+                    // Make next button visible
+                    iBtnNext.visibility = VISIBLE
+
+                    // Return Accuracy Score and Display Popup
                     val score = getAccuracyScore(File(this.filesDir, "audio.wav"))
                     displayMessagePopup(score)
 
+                    // Increment Index and set Progress
+                    index++
+                    set.progress = index
+
+                    // Update Progress Components
                     val progressBar = findViewById<ProgressBar>(R.id.progressBar)
                     val tvCompletedCount = findViewById<TextView>(R.id.tvCompletedPhrases)
                     val tvPercentComplete = findViewById<TextView>(R.id.tvPercentComplete)
-                    index++
                     progressBar.progress = (index * 100) / set.cards.size
                     tvCompletedCount.text = "$index Complete"
                     tvPercentComplete.text = "${(index * 100) / set.cards.size} %"
-                    iBtnNext.visibility = VISIBLE
-                    set.progress = index
-                    iBtnMic.isEnabled = false
                 }
+
+                // Toggle isRecording Value
                 isRecording = !isRecording
             }
         }
 
+        // Handle Forward Navigation
         iBtnNext.setOnClickListener {
             iBtnMic.isEnabled = true
             if (index < set.cards.size) {
@@ -188,6 +186,7 @@ class TestSetActivity() : AppCompatActivity() {
             }
         }
 
+        // Handle Return after completion
         btnReturn.setOnClickListener {
             cvCompletedScreen.visibility = GONE
             iBtnClose.isEnabled = true
@@ -195,60 +194,48 @@ class TestSetActivity() : AppCompatActivity() {
             finish()
         }
 
+        // Load Initial Card
         loadCard(set.cards[index])
     }
 
+    // Handles setting the UI for the current card
     private fun loadCard(card: Card) {
         val tvCardPhrase = findViewById<TextView>(R.id.tvCardPhrase)
         tvCardPhrase.text = card.phrase
     }
 
+    // Returns accuracy score
     private fun getAccuracyScore(wavFile: File): Int {
-        // TODO: make this work later
-        // val wavFile = convertMp3ToWav(file.absolutePath)
-        // val wavFile = file
-        // player.playFile(file)
-        Log.d("has mic connected: ", packageManager.hasSystemFeature(PackageManager.FEATURE_MICROPHONE).toString())
-        val wavPlayer = WavPlayer(applicationContext)
-        //wavPlayer.playWavFileFromCache("audio.wav")
-
-        Log.d("Wav File In Score: ", wavFile.toString())
-        Log.d("Is Wav File In Score: ", isWavFile(wavFile).toString())
-        Log.d("Does Wav file have data: ", hasWavData(wavFile).toString())
+        // Convert file to MultipartBody.Part
         val requestFile = RequestBody.create(MediaType.parse("audio/*"), wavFile)
         val part = MultipartBody.Part.createFormData("audio", wavFile.name, requestFile)
-        val response : Response<CreateAttemptResponse> = runBlocking {
+
+        // Make attempt call
+        val response: Response<CreateAttemptResponse> = runBlocking {
             return@runBlocking api.attemptCard(userid, set.cards[index].id, set.id, part)
         }
-        if (response.body()?.metadata?.accuracyScore == null) {
+
+        // Handle failed response case
+        if (response.body() == null || response.body()!!.metadata == null) {
             return 0
         }
-        // TODO: This currently fails with Error: 400, need to fix this
-        Log.d("response: ", "$response")
-        Log.d("response accuracy score", response.body()?.metadata?.accuracyScore.toString())
-        Log.d("response completeness score", response.body()?.metadata?.completenessScore.toString())
-        Log.d("response fluency score", response.body()?.metadata?.fluencyScore.toString())
-        Log.d("response mispronunciations score", response.body()?.metadata?.mispronunciations.toString())
-        Log.d("response omissions score", response.body()?.metadata?.omissions.toString())
-        Log.d("response insertions score", response.body()?.metadata?.insertions.toString())
-        Log.d("response pronunciation score", response.body()?.metadata?.pronunciationScore.toString())
-        Log.d("response is_complete score", response.body()?.metadata?.is_complete.toString())
 
-        val accuracyMetric = response.body()?.metadata?.accuracyScore?.toInt()!!
-
-
-        //Log.d("accuracy score: ", "${response.body()!!.metadata!!.accuracyScore}")
-        //return response.body()!!.metadata!!.accuracyScore.toInt()
-        return accuracyMetric
+        // Return with Accuracy Score
+        return response.body()?.metadata!!.accuracyScore.toInt()
     }
 
     // Display popup
     @SuppressLint("SetTextI18n")
     private fun displayMessagePopup(score: Int)  {
+        // Get Components
         val cvPopUp = findViewById<CardView>(R.id.cvPopUp)
         val tvResultMessage = findViewById<TextView>(R.id.tvResultMessage)
 
+        // TODO: Make this actually return the threshold later
+        // Get Difficulty Threshold
         val difficultyThreshold = 50
+
+        // Set Message Properties based on Difficulty Threshold
         if (score in 0 until difficultyThreshold)  {
             cvPopUp.setCardBackgroundColor(Color.YELLOW)
             tvResultMessage.text = resources.getString(R.string.try_again)
@@ -257,390 +244,7 @@ class TestSetActivity() : AppCompatActivity() {
             tvResultMessage.text = resources.getString(R.string.great_job)
         }
 
+        // Make Popup visible
         cvPopUp.visibility = View.VISIBLE
-    }
-
-    /*
-    private fun convertMp3ToWav(mp3File: File): File {
-        // Create a new WAV file
-        val wavFile = File(cacheDir, "audio.wav")
-        wavFile.createNewFile()
-
-        try {
-            // Initialize the MediaCodec
-            val mediaCodec = MediaCodec.createDecoderByType("audio/mpeg")
-            val mediaFormat = MediaFormat.createAudioFormat("audio/mpeg", 44100, 2)
-            mediaCodec.configure(mediaFormat, null, null, 0)
-            mediaCodec.start()
-
-            // Input and output streams
-            val inputStream = FileInputStream(mp3File)
-            val outputStream = FileOutputStream(wavFile)
-
-            val codecInputBufferIndex = mediaCodec.dequeueInputBuffer(-1)
-            val codecOutputBufferIndex = mediaCodec.dequeueOutputBuffer(MediaCodec.BufferInfo(), -1)
-            val codecInputBuffer = mediaCodec.getInputBuffer(codecInputBufferIndex)
-            val codecOutputBuffer = mediaCodec.getOutputBuffer(codecOutputBufferIndex)
-
-            // Buffer size
-            val bufferSize = 4096
-            val buffer = ByteArray(bufferSize)
-
-            // Decode MP3 and write to WAV
-            while (true) {
-                val bytesRead = inputStream.read(buffer)
-                if (bytesRead == -1) break
-
-                codecInputBuffer?.put(buffer, 0, bytesRead)
-                mediaCodec.queueInputBuffer(codecInputBufferIndex, 0, bytesRead, 0, 0)
-                val info = MediaCodec.BufferInfo()
-                mediaCodec.dequeueOutputBuffer(info, -1)
-
-                val chunkSize = info.size
-                val chunkData = ByteArray(chunkSize)
-                codecOutputBuffer?.get(chunkData)
-
-                outputStream.write(chunkData, 0, chunkSize)
-                mediaCodec.releaseOutputBuffer(codecOutputBufferIndex, false)
-            }
-
-            // Release resources
-            mediaCodec.stop()
-            mediaCodec.release()
-            inputStream.close()
-            outputStream.close()
-
-        } catch (e: IOException) {
-            Log.d("AN ERROR HAS OCCURRED", "1")
-            e.printStackTrace()
-        }
-
-        // Return file
-        return wavFile
-    }
-
-
-    private fun convertMp3ToWav(mp3FilePath: String): File? {
-        try {
-            // Initialize the MediaPlayer
-            val mediaPlayer = MediaPlayer()
-            mediaPlayer.setDataSource(mp3FilePath)
-            mediaPlayer.prepare()
-
-            // Create a new WAV file
-            val wavFile = File(cacheDir, "audio.wav")
-            wavFile.createNewFile()
-
-
-            // Initialize the FileOutputStream for the WAV file
-            val outputStream = FileOutputStream(wavFile)
-
-            // Get the duration of the MP3 audio in milliseconds
-            val durationInMillis = mediaPlayer.duration
-
-            // Set up the MediaCodec to encode WAV
-            val mediaCodec = MediaCodec.createEncoderByType(MediaFormat.MIMETYPE_AUDIO_RAW)
-            val mediaFormat = MediaFormat.createAudioFormat(MediaFormat.MIMETYPE_AUDIO_RAW, 44100, 2)
-            mediaFormat.setInteger(MediaFormat.KEY_BIT_RATE, 128000) // Adjust bit rate as needed
-            mediaCodec.configure(mediaFormat, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE)
-            mediaCodec.start()
-
-            // Get the input and output buffers for MediaCodec
-            val inputBufferIndex = mediaCodec.dequeueInputBuffer(-1)
-            val inputBuffer = mediaCodec.getInputBuffer(inputBufferIndex)
-            val outputBufferIndex = mediaCodec.dequeueOutputBuffer(MediaCodec.BufferInfo(), -1)
-            val outputBuffer = mediaCodec.getOutputBuffer(outputBufferIndex)
-
-            // Start encoding
-            var presentationTimeUs: Long = 0
-            var offset = 0
-            var size: Int
-
-            while (true) {
-                // Read data from MediaPlayer
-                val bytesRead = mediaPlayer.readBytes(inputBuffer)
-
-                if (bytesRead <= 0) {
-                    break // End of stream
-                }
-
-                size = bytesRead
-                inputBuffer.position(0)
-                inputBuffer.limit(size)
-
-                // Encode the PCM data to WAV format
-                val inputBufferInfo = MediaCodec.BufferInfo()
-                inputBufferInfo.set(0, size, presentationTimeUs, 0)
-                mediaCodec.queueInputBuffer(inputBufferIndex, 0, size, presentationTimeUs, 0)
-
-                // Get the encoded WAV data from MediaCodec
-                var outputBufferIndex = mediaCodec.dequeueOutputBuffer(inputBufferInfo, -1)
-                while (outputBufferIndex >= 0) {
-                    // Write the WAV data to the output file
-                    val outputData = ByteArray(inputBufferInfo.size)
-                    outputBuffer?.get(outputData)
-                    outputStream.write(outputData)
-
-                    // Release the output buffer
-                    mediaCodec.releaseOutputBuffer(outputBufferIndex, false)
-                    outputBufferIndex = mediaCodec.dequeueOutputBuffer(inputBufferInfo, 0)
-                }
-
-                presentationTimeUs += 1000000 * bytesRead / (2 * 44100)
-            }
-
-            // Stop and release resources
-            mediaPlayer.stop()
-            mediaPlayer.release()
-
-            mediaCodec.stop()
-            mediaCodec.release()
-            outputStream.close()
-            return wavFile
-        } catch (e: IOException) {
-            e.printStackTrace()
-            return null
-        }
-    }*/
-
-
-    /*
-    fun convertMp3ToWav(mp3FilePath: String): File? {
-        val bufferSize = AudioTrack.getMinBufferSize(44100, AudioFormat.CHANNEL_OUT_STEREO, AudioFormat.ENCODING_PCM_16BIT)
-        val audioTrack = AudioTrack.Builder()
-            .setAudioAttributes(AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_MEDIA).setContentType(AudioAttributes.CONTENT_TYPE_MUSIC).build())
-            .setAudioFormat(AudioFormat.Builder().setSampleRate(44100).setChannelMask(AudioFormat.CHANNEL_OUT_STEREO).setEncoding(AudioFormat.ENCODING_PCM_16BIT).build())
-            .setBufferSizeInBytes(bufferSize)
-            .build()
-
-        val extractor = MediaExtractor()
-        try {
-            extractor.setDataSource(mp3FilePath)
-
-            // Find and select the audio track
-            var audioTrackIndex = -1
-            for (i in 0 until extractor.trackCount) {
-                val format = extractor.getTrackFormat(i)
-                val mime = format.getString(MediaFormat.KEY_MIME)
-                if (mime?.startsWith("audio/") == true) {
-                    audioTrackIndex = i
-                    break
-                }
-            }
-            if (audioTrackIndex == -1) {
-                throw RuntimeException("No audio track found in the MP3 file.")
-            }
-
-            extractor.selectTrack(audioTrackIndex)
-
-            // Create a new WAV file
-            val wavFile = File(cacheDir, "audio.wav")
-            wavFile.createNewFile()
-
-            // Initialize the FileOutputStream for the WAV file
-            val outputStream = FileOutputStream(wavFile)
-
-            // Read the audio data from the MP3 file and write it to the WAV file
-            val buffer = ByteBuffer.allocate(bufferSize)
-            while (true) {
-                buffer.clear()
-                val sampleSize = extractor.readSampleData(buffer, 0)
-                if (sampleSize < 0) {
-                    break // End of stream
-                }
-
-                audioTrack.write(buffer.array(), 0, sampleSize)
-                outputStream.write(buffer.array(), 0, sampleSize)
-
-                extractor.advance()
-            }
-
-            // Release resources
-            extractor.release()
-            audioTrack.release()
-            outputStream.close()
-
-            return wavFile
-
-        } catch (e: IOException) {
-            e.printStackTrace()
-            return null
-        }
-    }*/
-
-    /*
-    fun convertMp3ToWav(mp3FilePath: String): File? {
-        try {
-            val wavFile = File(cacheDir, "audio.wav")
-            wavFile.createNewFile()
-
-            val extractor = MediaExtractor()
-            extractor.setDataSource(mp3FilePath)
-
-            // Find and select the audio track
-            var audioTrackIndex = -1
-            for (i in 0 until extractor.trackCount) {
-                val format = extractor.getTrackFormat(i)
-                val mime = format.getString(MediaFormat.KEY_MIME)
-                if (mime?.startsWith("audio/") == true) {
-                    audioTrackIndex = i
-                    break
-                }
-            }
-
-            if (audioTrackIndex == -1) {
-                throw RuntimeException("No audio track found in the MP3 file.")
-            }
-
-            extractor.selectTrack(audioTrackIndex)
-
-            // Get the audio format
-            val audioFormat = extractor.getTrackFormat(audioTrackIndex)
-
-            // Create a new WAV file with the correct audio format
-            val outputStream = FileOutputStream(wavFile)
-            outputStream.write(generateWavFileHeader(audioFormat))
-
-            val bufferSize = 4096
-            val buffer = ByteBuffer.allocate(bufferSize)
-
-            while (true) {
-                buffer.clear()
-                val sampleSize = extractor.readSampleData(buffer, 0)
-                if (sampleSize < 0) {
-                    break // End of stream
-                }
-                outputStream.write(buffer.array(), 0, sampleSize)
-                extractor.advance()
-            }
-
-            // Update the WAV file header with the correct data size
-            outputStream.close()
-            updateWavFileHeader(wavFile)
-
-            // Release resources
-            extractor.release()
-
-            return wavFile
-        } catch (e: IOException) {
-            e.printStackTrace()
-            return null
-        }
-    }
-
-    private fun generateWavFileHeader(audioFormat: MediaFormat): ByteArray {
-        val channels = audioFormat.getInteger(MediaFormat.KEY_CHANNEL_COUNT)
-        val sampleRate = audioFormat.getInteger(MediaFormat.KEY_SAMPLE_RATE)
-        val bitsPerSample = 16 // We're assuming 16-bit PCM audio
-
-        val byteArray = ByteArray(44)
-        val buffer = ByteBuffer.wrap(byteArray)
-
-        // RIFF header
-        buffer.put("RIFF".toByteArray()) // Chunk ID
-        buffer.putInt(0) // Chunk Size (placeholder)
-        buffer.put("WAVE".toByteArray()) // Format
-
-        // Format Subchunk
-        buffer.put("fmt ".toByteArray()) // Subchunk 1 ID
-        buffer.putInt(16) // Subchunk 1 Size (PCM format size)
-        buffer.putShort(1.toShort()) // Audio Format (PCM = 1)
-        buffer.putShort(channels.toShort()) // Number of Channels
-        buffer.putInt(sampleRate) // Sample Rate
-        buffer.putInt(sampleRate * channels * bitsPerSample / 8) // Byte Rate
-        buffer.putShort((channels * bitsPerSample / 8).toShort()) // Block Align
-        buffer.putShort(bitsPerSample.toShort()) // Bits per Sample
-
-        // Data Subchunk
-        buffer.put("data".toByteArray()) // Subchunk 2 ID
-        buffer.putInt(0) // Subchunk 2 Size (placeholder)
-
-        return byteArray
-    }
-
-    private fun updateWavFileHeader(wavFile: File) {
-        val fileSizeInBytes = wavFile.length()
-        val headerSize = 44 // The WAV header size is 44 bytes
-
-        val header = ByteBuffer.allocate(headerSize)
-        val outputStream = FileOutputStream(wavFile)
-
-        // Update Subchunk 2 Size field in the header with the correct data size
-        header.order(ByteOrder.LITTLE_ENDIAN)
-        header.putInt(40, (fileSizeInBytes - headerSize + 8).toInt())
-
-        outputStream.write(header.array())
-        outputStream.close()
-    }*/
-/*
-    fun convertMp3ToWav(mp3FilePath: String): File? {
-        return try {
-            val wavFile = File(cacheDir, "audio.wav")
-            wavFile.createNewFile()
-
-            val converter = Converter()
-            converter.convert(mp3FilePath, wavFile.absolutePath)
-
-            wavFile
-        } catch (e: IOException) {
-            e.printStackTrace()
-            null
-        }
-    }
-*/
-    fun isWavFile(wavFile: File): Boolean {
-        if (!wavFile.exists() || wavFile == null) {
-            return false
-        }
-
-        val headerSize = 12 // The WAV header size is 12 bytes
-        val buffer = ByteArray(headerSize)
-
-        try {
-            val fileInputStream = FileInputStream(wavFile)
-            fileInputStream.read(buffer, 0, headerSize)
-            fileInputStream.close()
-        } catch (e: IOException) {
-            e.printStackTrace()
-            return false
-        }
-
-        // Verify the WAV file header
-        val riffHeaderStr = String(buffer, 0, 4, Charset.forName("US-ASCII"))
-        val formatHeaderStr = String(buffer, 8, 4, Charset.forName("US-ASCII"))
-        Log.d("riffHeader", riffHeaderStr)
-        Log.d("formatHeader", formatHeaderStr)
-
-        return riffHeaderStr == "RIFF" && formatHeaderStr == "WAVE"
-    }
-
-    fun hasWavData(wavFile: File): Boolean {
-        if (!wavFile.exists() || !wavFile.isFile()) {
-            return false
-        }
-
-        try {
-            val fileInputStream = FileInputStream(wavFile)
-
-            // Skip the WAV header (first 44 bytes)
-            val headerSize = 44
-            fileInputStream.skip(headerSize.toLong())
-
-            // Read the data chunk size (4 bytes, little-endian)
-            val dataSizeBuffer = ByteArray(4)
-            fileInputStream.read(dataSizeBuffer)
-
-            // Convert the 4 bytes to an integer (little-endian)
-            val dataSize = ByteBuffer.wrap(dataSizeBuffer).order(ByteOrder.LITTLE_ENDIAN).int
-
-            fileInputStream.close()
-
-            // If the dataSize is greater than zero, the WAV file contains audio data
-            return dataSize > 0
-        } catch (e: IOException) {
-            e.printStackTrace()
-        }
-
-        return false
     }
 }

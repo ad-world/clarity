@@ -29,7 +29,6 @@ class CardAdapter(private val cards: MutableList<Card>, private val dictionary: 
     // Local lock, to ensure there are no race conditions when clicking multiple delete buttons too fast successively
     private var deleteLock = false
     private var counter = 0
-    private var lastModifiedWord: Int = 0
     private var previousText: String = ""
     private var currentText: String = ""
     private var lockTextChanges: Boolean = false
@@ -80,31 +79,11 @@ class CardAdapter(private val cards: MutableList<Card>, private val dictionary: 
         val words = currentText.trim().split("\\s+".toRegex()).toTypedArray()
         return if (words.isNotEmpty()) words.last().length else 0
     }
-/*
-    private fun getLastModifiedWordIndex(oldText: String, newText: String): Int {
-        if (oldText.isEmpty() || newText.isEmpty()) {
-            return -1
-        }
-
-        val oldWords = oldText.trim().split("\\s+".toRegex()).toTypedArray()
-        val newWords = newText.trim().split("\\s+".toRegex()).toTypedArray()
-
-        for (i in oldWords.indices) {
-            if (i >= newWords.size || oldWords[i] != newWords[i]) {
-                return newText.indexOf(newWords[i])
-            }
-        }
-
-        return -1
-    }*/
-
 
     private fun getLastModifiedWordIndex(newText: String, oldText: String): Pair<Int, Int> {
         val noCurrentWord = Pair(-1, -1)
         val newTextWords = newText.split(" ")
         val oldTextWords = oldText.split(" ")
-        Log.d("newText", newText)
-        Log.d("oldText", oldText)
 
         if (kotlin.math.abs(newText.length - oldText.length) > 1) {
             return noCurrentWord
@@ -116,7 +95,6 @@ class CardAdapter(private val cards: MutableList<Card>, private val dictionary: 
 
         while(index < min) {
             if (newTextWords[index] != oldTextWords[index]) {
-                Log.d("returning Current Word: ", newTextWords[index])
                 return Pair(returnIndex, returnIndex + newTextWords[index].length)
             }
             returnIndex += newTextWords[index].length + 1
@@ -124,7 +102,6 @@ class CardAdapter(private val cards: MutableList<Card>, private val dictionary: 
         }
 
         if (index < newTextWords.size) {
-            Log.d("returning Current Word: ", newTextWords[index])
             return Pair(returnIndex, returnIndex + newTextWords[index].length)
         }
 
@@ -149,19 +126,12 @@ class CardAdapter(private val cards: MutableList<Card>, private val dictionary: 
                 etCardTitle.editableText.clear()
                 etCardTitle.editableText.insert(0, currentText)
                 lockTextChanges = false
-                Log.d("hi", "hi")
                 // Prevent the AutoCompleteTextView from automatically replacing the text
                 val currentText = etCardTitle.text.toString()
 
                 val lastModifiedWordIndex = getLastModifiedWordIndex(currentText, previousText)
-                Log.d("CurrentText: ", currentText)
-                Log.d("Previous Text", previousText)
-                Log.d("Index: ", lastModifiedWordIndex.first.toString())
                 if (lastModifiedWordIndex.first != -1) {
                     val editable = etCardTitle.editableText
-                    Log.d("Editable: ", editable.toString())
-                    Log.d("First Index: ", lastModifiedWordIndex.first.toString())
-                    Log.d("Second Index: ", lastModifiedWordIndex.second.toString())
                     editable.replace(lastModifiedWordIndex.first, lastModifiedWordIndex.second, selectedSuggestion)
                 }
 
@@ -191,8 +161,6 @@ class CardAdapter(private val cards: MutableList<Card>, private val dictionary: 
                 override fun afterTextChanged(s: Editable?) {
                     if (!lockTextChanges) {
                         card.phrase = etCardTitle.text.toString()
-                        Log.d("test", "test")
-                        Log.d("test", etCardTitle.isPerformingCompletion.toString())
                         if (s != null) {
                             highlightNonDictionaryWords(s, etCardTitle, dictionary.phrases, this)
                         }

@@ -2,7 +2,6 @@ package com.example.clarity.sets.activities
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Bundle
 import android.speech.tts.TextToSpeech
@@ -21,13 +20,9 @@ import com.example.clarity.sdk.ClaritySDK
 import com.example.clarity.R
 import com.example.clarity.SessionManager
 import com.example.clarity.sdk.CreateAttemptResponse
-import com.example.clarity.sets.audio.AndroidAudioPlayer
 import com.example.clarity.sets.data.Card
 import com.example.clarity.sets.data.Set
-import com.example.clarity.sets.audio.PrevAndroidAudioRecorder
-import com.example.clarity.sets.audio.WavPlayer
 import com.example.clarity.sets.audio.WavRecorder
-import com.example.clarity.sets.audio.WavUtils
 import com.example.clarity.sets.data.SetCategory
 import com.google.gson.Gson
 import kotlinx.coroutines.launch
@@ -47,14 +42,10 @@ import java.util.Locale
 class PracticeSetActivity() : AppCompatActivity() {
 
     // Recorder and Player
-    private val recorder by lazy { PrevAndroidAudioRecorder(applicationContext) }
     private var player: TextToSpeech? = null
-    // private val player by lazy { AndroidAudioPlayer(applicationContext) }
-
-    // Audio File
-    private var audioFile: File? = null
-    private var wavFile: File? = null
     private val wavRecorder = WavRecorder(this)
+
+    // Session Manager
     private val sessionManager: SessionManager by lazy { SessionManager(this) }
 
     // Toggle to check if we are currently recording
@@ -65,6 +56,8 @@ class PracticeSetActivity() : AppCompatActivity() {
 
     // Index that stores the current card being displayed
     private var index = 0
+
+    // User and Set
     var userid = 0
     var set: Set = Set(0, "", 0, mutableListOf<Card>(), 0, SetCategory.COMMUNITY_SET)
 
@@ -104,6 +97,7 @@ class PracticeSetActivity() : AppCompatActivity() {
         val progressBar = findViewById<ProgressBar>(R.id.progressBar)
         val tvCompletedCount = findViewById<TextView>(R.id.tvCompletedPhrases)
 
+        // Get Session Context Variables
         lifecycleScope.launch {
             userid = sessionManager.getUserId()
         }
@@ -121,10 +115,6 @@ class PracticeSetActivity() : AppCompatActivity() {
         // Handle Speaker button click
         iBtnSpeaker.setOnClickListener {
             player!!.speak(set.cards[index].phrase, TextToSpeech.QUEUE_ADD, null, null)
-            Log.d("isWavFile", isWavFile(File(this.filesDir, "audio.wav")).toString())
-            Log.d("hasWavData", hasWavData(File(this.filesDir, "audio.wav")).toString())
-
-            // player.playFile(File(this.filesDir, "audio.wav"))
         }
 
         // Handle Mic button click
@@ -142,14 +132,7 @@ class PracticeSetActivity() : AppCompatActivity() {
                 iBtnMic.setBackgroundResource(R.drawable.setclosebutton)
                 iBtnMic.setImageResource(R.drawable.baseline_mic_24_white)
 
-                // Create file, and start recording, while storing recording in file
-
-                /*
-                File(cacheDir, "audio.mp3").also {
-                    recorder.start(it)
-                    audioFile = it
-                }*/
-
+                // Start recording, while storing recording in file
                 wavRecorder.startRecording("audio.wav", true)
 
             // CASE 2: Recording -> Not Recording
@@ -159,12 +142,7 @@ class PracticeSetActivity() : AppCompatActivity() {
                 iBtnMic.setImageResource(R.drawable.baseline_mic_24)
 
                 // Stop Recording
-                // recorder.stop()
                 wavRecorder.stopRecording()
-                // wavFile = File(cacheDir, "audio.wav")
-                // WavUtils.convertMp3ToWav(audioFile!!.absolutePath, wavFile!!.absolutePath)
-
-                // val wavFile = File("")
 
                 // Return Accuracy Score and Display Popup
                 val score = getAccuracyScore(File(this.filesDir, "audio.wav"))
@@ -223,51 +201,36 @@ class PracticeSetActivity() : AppCompatActivity() {
 
     // Returns accuracy score
     private fun getAccuracyScore(wavFile: File): Int {
-        // TODO: make this work later
-        // val wavFile = convertMp3ToWav(file.absolutePath)
-        // val wavFile = file
-        // player.playFile(file)
-        Log.d("has mic connected: ", packageManager.hasSystemFeature(PackageManager.FEATURE_MICROPHONE).toString())
-        val wavPlayer = WavPlayer(applicationContext)
-        //wavPlayer.playWavFileFromCache("audio.wav")
-
-        Log.d("Wav File In Score: ", wavFile.toString())
-        Log.d("Is Wav File In Score: ", isWavFile(wavFile).toString())
-        Log.d("Does Wav file have data: ", hasWavData(wavFile).toString())
+        // Convert file to MultipartBody.Part
         val requestFile = RequestBody.create(MediaType.parse("audio/*"), wavFile)
         val part = MultipartBody.Part.createFormData("audio", wavFile.name, requestFile)
-        val response : Response<CreateAttemptResponse> = runBlocking {
+
+        // Make attempt call
+        val response: Response<CreateAttemptResponse> = runBlocking {
             return@runBlocking api.attemptCard(userid, set.cards[index].id, set.id, part)
         }
-        if (response.body()?.metadata?.accuracyScore == null) {
+
+        // Handle failed response case
+        if (response.body() == null || response.body()!!.metadata == null) {
             return 0
         }
-        // TODO: This currently fails with Error: 400, need to fix this
-        Log.d("response: ", "$response")
-        Log.d("response accuracy score", response.body()?.metadata?.accuracyScore.toString())
-        Log.d("response completeness score", response.body()?.metadata?.completenessScore.toString())
-        Log.d("response fluency score", response.body()?.metadata?.fluencyScore.toString())
-        Log.d("response mispronunciations score", response.body()?.metadata?.mispronunciations.toString())
-        Log.d("response omissions score", response.body()?.metadata?.omissions.toString())
-        Log.d("response insertions score", response.body()?.metadata?.insertions.toString())
-        Log.d("response pronunciation score", response.body()?.metadata?.pronunciationScore.toString())
-        Log.d("response is_complete score", response.body()?.metadata?.is_complete.toString())
 
-        val accuracyMetric = response.body()?.metadata?.accuracyScore?.toInt()!!
-
-
-        //Log.d("accuracy score: ", "${response.body()!!.metadata!!.accuracyScore}")
-        //return response.body()!!.metadata!!.accuracyScore.toInt()
-        return accuracyMetric
+        // Return with Accuracy Score
+        return response.body()?.metadata!!.accuracyScore.toInt()
     }
 
     // Display popup
     @SuppressLint("SetTextI18n")
     private fun displayMessagePopup(score: Int)  {
+        // Get Components
         val cvPopUp = findViewById<CardView>(R.id.cvPopUp)
         val tvResultMessage = findViewById<TextView>(R.id.tvResultMessage)
 
+        // TODO: Make this actually return the threshold later
+        // Get Difficulty Threshold
         val difficultyThreshold = 50
+
+        // Set Message Properties based on Difficulty Threshold
         if (score in 0 until difficultyThreshold)  {
             cvPopUp.setCardBackgroundColor(Color.YELLOW)
             tvResultMessage.text = resources.getString(R.string.try_again)
@@ -276,62 +239,7 @@ class PracticeSetActivity() : AppCompatActivity() {
             tvResultMessage.text = resources.getString(R.string.great_job)
         }
 
+        // Make Popup visible
         cvPopUp.visibility = View.VISIBLE
-    }
-
-    fun isWavFile(wavFile: File): Boolean {
-        if (!wavFile.exists() || wavFile == null) {
-            return false
-        }
-
-        val headerSize = 12 // The WAV header size is 12 bytes
-        val buffer = ByteArray(headerSize)
-
-        try {
-            val fileInputStream = FileInputStream(wavFile)
-            fileInputStream.read(buffer, 0, headerSize)
-            fileInputStream.close()
-        } catch (e: IOException) {
-            e.printStackTrace()
-            return false
-        }
-
-        // Verify the WAV file header
-        val riffHeaderStr = String(buffer, 0, 4, Charset.forName("US-ASCII"))
-        val formatHeaderStr = String(buffer, 8, 4, Charset.forName("US-ASCII"))
-        Log.d("riffHeader", riffHeaderStr)
-        Log.d("formatHeader", formatHeaderStr)
-
-        return riffHeaderStr == "RIFF" && formatHeaderStr == "WAVE"
-    }
-
-    fun hasWavData(wavFile: File): Boolean {
-        if (!wavFile.exists() || !wavFile.isFile()) {
-            return false
-        }
-
-        try {
-            val fileInputStream = FileInputStream(wavFile)
-
-            // Skip the WAV header (first 44 bytes)
-            val headerSize = 44
-            fileInputStream.skip(headerSize.toLong())
-
-            // Read the data chunk size (4 bytes, little-endian)
-            val dataSizeBuffer = ByteArray(4)
-            fileInputStream.read(dataSizeBuffer)
-
-            // Convert the 4 bytes to an integer (little-endian)
-            val dataSize = ByteBuffer.wrap(dataSizeBuffer).order(ByteOrder.LITTLE_ENDIAN).int
-
-            fileInputStream.close()
-
-            // If the dataSize is greater than zero, the WAV file contains audio data
-            return dataSize > 0
-        } catch (e: IOException) {
-            e.printStackTrace()
-        }
-
-        return false
     }
 }
