@@ -6,7 +6,9 @@ import android.content.pm.PackageManager
 import android.graphics.Color
 import android.media.*
 import android.os.Bundle
+import android.speech.tts.TextToSpeech
 import android.util.Log
+import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.Button
@@ -27,6 +29,8 @@ import com.example.clarity.sets.data.SetCategory
 import com.example.clarity.sets.audio.AndroidAudioPlayer
 import com.example.clarity.sets.audio.AndroidAudioRecorder
 import com.example.clarity.sets.audio.WavPlayer
+import com.example.clarity.sets.audio.WavRecorder
+import com.example.clarity.sets.audio.WavUtils
 import com.google.gson.Gson
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -39,6 +43,7 @@ import java.io.File
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.charset.Charset
+import java.util.Locale
 
 class TestSetActivity() : AppCompatActivity() {
 
@@ -49,16 +54,19 @@ class TestSetActivity() : AppCompatActivity() {
 
     // TODO: Not sure if they can hear the correct recording after answering?
     //  added this here in case they can
-    private val player by lazy {
+    /*private val player by lazy {
         AndroidAudioPlayer(applicationContext)
-    }
+    }*/
 
     private var audioFile: File? = null
+    private var wavFile: File? = null
+    private var player: TextToSpeech? = null
     // private var player: TextToSpeech? = null
 
     private var isRecording = false
     private var recordingCompleted = false
     private val api = ClaritySDK().apiService
+    private val wavRecorder = WavRecorder(this)
     private val sessionManager: SessionManager by lazy { SessionManager(this) }
 
     private val PERMISSIONS = arrayOf(
@@ -77,13 +85,13 @@ class TestSetActivity() : AppCompatActivity() {
         setContentView(R.layout.activity_test_set)
 
         // Create TTS Object
-        /*player = TextToSpeech(this, TextToSpeech.OnInitListener {
+        player = TextToSpeech(this, TextToSpeech.OnInitListener {
             if (it == TextToSpeech.SUCCESS) {
                 player!!.language = Locale.ENGLISH
             } else {
                 Log.d("TTS ERROR", it.toString())
             }
-        })*/
+        })
 
         val intent = intent
         val setJson = intent.getStringExtra("set")
@@ -110,7 +118,7 @@ class TestSetActivity() : AppCompatActivity() {
 
         // Handle Speaker button click
         iBtnSpeaker.setOnClickListener {
-            // player!!.speak(set.cards[index].phrase, TextToSpeech.QUEUE_ADD, null, null)
+            player!!.speak(set.cards[index].phrase, TextToSpeech.QUEUE_ADD, null, null)
         }
 
         iBtnMic.setOnClickListener {
@@ -120,10 +128,14 @@ class TestSetActivity() : AppCompatActivity() {
                     //  ...
                     iBtnMic.setBackgroundResource(R.drawable.setclosebutton)
                     iBtnMic.setImageResource(R.drawable.baseline_mic_24_white)
-                    File(cacheDir, "audio.wav").also {
+                    wavRecorder.startRecording("audio.wav", true)
+                    /*val path  = File(cacheDir, "audio.wav").also {
                         recorder.start(it)
                         audioFile = it
-                    }
+                    }.absolutePath
+
+                    wavFile = File(cacheDir, "audio.wav")
+                    WavUtils.convertMp3ToWav(path, wavFile!!.absolutePath)*/
                     /*if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
                         != PackageManager.PERMISSION_GRANTED ||
                         ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
@@ -138,12 +150,14 @@ class TestSetActivity() : AppCompatActivity() {
                     //  ...
                     iBtnMic.setBackgroundResource(R.drawable.roundcorner)
                     iBtnMic.setImageResource(R.drawable.baseline_mic_24)
-                    recorder.stop()
+                    wavRecorder.stopRecording()
+                    // recorder.stop()
                     // ClarityAudioRecorder.stopRecording()
                     recordingCompleted = true
 
-                    val score = getAccuracyScore(audioFile!!)
+                    val score = getAccuracyScore(File(this.filesDir, "audio.wav"))
                     displayMessagePopup(score)
+
                     val progressBar = findViewById<ProgressBar>(R.id.progressBar)
                     val tvCompletedCount = findViewById<TextView>(R.id.tvCompletedPhrases)
                     val tvPercentComplete = findViewById<TextView>(R.id.tvPercentComplete)
@@ -204,30 +218,46 @@ class TestSetActivity() : AppCompatActivity() {
         val requestFile = RequestBody.create(MediaType.parse("audio/*"), wavFile)
         val part = MultipartBody.Part.createFormData("audio", wavFile.name, requestFile)
         val response : Response<CreateAttemptResponse> = runBlocking {
-            return@runBlocking api.attemptCard(set.id, userid, set.cards[index].id, part)
+            return@runBlocking api.attemptCard(userid, set.cards[index].id, set.id, part)
+        }
+        if (response.body()?.metadata?.accuracyScore == null) {
+            return 0
         }
         // TODO: This currently fails with Error: 400, need to fix this
         Log.d("response: ", "$response")
+        Log.d("response accuracy score", response.body()?.metadata?.accuracyScore.toString())
+        Log.d("response completeness score", response.body()?.metadata?.completenessScore.toString())
+        Log.d("response fluency score", response.body()?.metadata?.fluencyScore.toString())
+        Log.d("response mispronunciations score", response.body()?.metadata?.mispronunciations.toString())
+        Log.d("response omissions score", response.body()?.metadata?.omissions.toString())
+        Log.d("response insertions score", response.body()?.metadata?.insertions.toString())
+        Log.d("response pronunciation score", response.body()?.metadata?.pronunciationScore.toString())
+        Log.d("response is_complete score", response.body()?.metadata?.is_complete.toString())
+
+        val accuracyMetric = response.body()?.metadata?.accuracyScore?.toInt()!!
+
 
         //Log.d("accuracy score: ", "${response.body()!!.metadata!!.accuracyScore}")
         //return response.body()!!.metadata!!.accuracyScore.toInt()
-        return 100
+        return accuracyMetric
     }
 
+    // Display popup
     @SuppressLint("SetTextI18n")
     private fun displayMessagePopup(score: Int)  {
         val cvPopUp = findViewById<CardView>(R.id.cvPopUp)
         val tvResultMessage = findViewById<TextView>(R.id.tvResultMessage)
-        if (score in 0..50)  {
+
+        val difficultyThreshold = 50
+        if (score in 0 until difficultyThreshold)  {
             cvPopUp.setCardBackgroundColor(Color.YELLOW)
             tvResultMessage.text = resources.getString(R.string.try_again)
-        } else if (score in 51..100) {
+        } else if (score in difficultyThreshold..100) {
             cvPopUp.setCardBackgroundColor(Color.GREEN)
             tvResultMessage.text = resources.getString(R.string.great_job)
         }
 
-        cvPopUp.visibility = VISIBLE
-        // Log.d("Tag Visibility 1", cvPopUp.visibility.toString())
+        cvPopUp.visibility = View.VISIBLE
     }
 
     /*

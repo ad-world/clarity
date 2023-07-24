@@ -1,6 +1,7 @@
 package com.example.clarity.sets.audio
 
 import android.content.Context
+import android.media.AudioFormat
 import android.media.MediaRecorder
 import java.io.File
 import java.io.FileOutputStream
@@ -19,7 +20,7 @@ class PrevAndroidAudioRecorder(
             setAudioSource(MediaRecorder.AudioSource.MIC)
             //TODO: currently MP3 (maybe use a different file)
             setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
-            setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
+            setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB)
             setOutputFile(FileOutputStream(outputFile).fd)
 
             prepare()
