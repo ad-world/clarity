@@ -57,6 +57,9 @@ class PracticeSetActivity() : AppCompatActivity() {
     // Index that stores the current card being displayed
     private var index = 0
 
+    // List that stores missing words
+    var ommisions: List<String>? = listOf()
+
     // User and Set
     var userid = 0
     var set: Set = Set(0, "", 0, mutableListOf<Card>(), 0, SetCategory.COMMUNITY_SET)
@@ -145,8 +148,8 @@ class PracticeSetActivity() : AppCompatActivity() {
                 wavRecorder.stopRecording()
 
                 // Return Accuracy Score and Display Popup
-                val score = getAccuracyScore(File(this.filesDir, "audio.wav"))
-                displayMessagePopup(score)
+                val isComplete = getAccuracyScore(File(this.filesDir, "audio.wav"))
+                displayMessagePopup(isComplete)
 
                 // Enable Navigation Buttons
                 iBtnNext.isEnabled = true
@@ -200,7 +203,7 @@ class PracticeSetActivity() : AppCompatActivity() {
     }
 
     // Returns accuracy score
-    private fun getAccuracyScore(wavFile: File): Int {
+    private fun getAccuracyScore(wavFile: File): Boolean {
         // Convert file to MultipartBody.Part
         val requestFile = RequestBody.create(MediaType.parse("audio/*"), wavFile)
         val part = MultipartBody.Part.createFormData("audio", wavFile.name, requestFile)
@@ -210,33 +213,38 @@ class PracticeSetActivity() : AppCompatActivity() {
             return@runBlocking api.attemptCard(userid, set.cards[index].id, set.id, part)
         }
 
+        Log.d("response", response.toString())
         // Handle failed response case
         if (response.body() == null || response.body()!!.metadata == null) {
-            return 0
+            ommisions = null
+            return false
         }
 
-        // Return with Accuracy Score
-        return response.body()?.metadata!!.accuracyScore.toInt()
+        Log.d("response metadata", response.body()!!.metadata.toString())
+
+        ommisions = response.body()!!.metadata?.omissions
+        // Return with isComplete
+        return response.body()?.metadata!!.is_complete
     }
 
     // Display popup
     @SuppressLint("SetTextI18n")
-    private fun displayMessagePopup(score: Int)  {
+    private fun displayMessagePopup(isComplete: Boolean)  {
         // Get Components
         val cvPopUp = findViewById<CardView>(R.id.cvPopUp)
         val tvResultMessage = findViewById<TextView>(R.id.tvResultMessage)
 
-        // TODO: Make this actually return the threshold later
-        // Get Difficulty Threshold
-        val difficultyThreshold = 50
-
         // Set Message Properties based on Difficulty Threshold
-        if (score in 0 until difficultyThreshold)  {
-            cvPopUp.setCardBackgroundColor(Color.YELLOW)
-            tvResultMessage.text = resources.getString(R.string.try_again)
-        } else if (score in difficultyThreshold..100) {
+        if (isComplete)  {
             cvPopUp.setCardBackgroundColor(Color.GREEN)
             tvResultMessage.text = resources.getString(R.string.great_job)
+        } else if (ommisions == null) {
+            cvPopUp.setCardBackgroundColor(Color.RED)
+            tvResultMessage.text = "Whoops, No audio was detected, ensure that your microphone is enabled and try again"
+        } else {
+            cvPopUp.setCardBackgroundColor(Color.YELLOW)
+            tvResultMessage.text =  resources.getString(R.string.try_again)
+            if ()
         }
 
         // Make Popup visible

@@ -23,39 +23,42 @@
         android:id="@+id/btnAddCard"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="48dp"
+        android:layout_marginBottom="20dp"
+        android:width="160dp"
         android:backgroundTint="#2196F3"
         android:fontFamily="@font/inter_semibold"
         android:text="@string/add_card"
-        app:layout_constraintBottom_toBottomOf="@+id/btnAddSet"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/btnAddSet"
-        app:layout_constraintVertical_bias="0.0" />
+        app:cornerRadius="5dp"
+        app:layout_constraintBottom_toTopOf="@+id/btnPublic"
+        app:layout_constraintEnd_toEndOf="@+id/btnPrivate" />
 
     <Button
         android:id="@+id/btnAddSet"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="50dp"
-        android:backgroundTint="#2196F3"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="535dp"
+        android:layout_marginEnd="30dp"
+        android:backgroundTint="#116DF5"
         android:fontFamily="@font/inter_semibold"
         android:text="@string/create_set"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:cornerRadius="5dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.121"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView" />
 
     <TextView
         android:id="@+id/textView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="10dp"
         android:fontFamily="@font/manrope_semibold"
         android:text="Cards"
         android:textColor="#00004D"
-        android:textSize="14sp"
+        android:textSize="16sp"
         app:layout_constraintStart_toStartOf="@+id/textView"
-        app:layout_constraintTop_toBottomOf="@+id/textInputLayout" />
+        app:layout_constraintTop_toBottomOf="@+id/etSetTitle" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvCards"
@@ -63,11 +66,10 @@
         android:layout_height="0dp"
         android:layout_marginTop="15dp"
         android:layout_marginEnd="20dp"
-        app:layout_constraintBottom_toTopOf="@+id/btnAddSet"
+        app:layout_constraintBottom_toTopOf="@+id/btnAddCard"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/textView"
-        app:layout_constraintTop_toBottomOf="@+id/textView2"
-        app:layout_constraintVertical_bias="0.0">
+        app:layout_constraintTop_toBottomOf="@+id/textView2">
 
     </androidx.recyclerview.widget.RecyclerView>
 
@@ -79,30 +81,49 @@
         android:fontFamily="@font/manrope_semibold"
         android:text="Set Title"
         android:textColor="#00004D"
-        android:textSize="18sp"
+        android:textSize="20sp"
         app:layout_constraintStart_toStartOf="@+id/textView"
         app:layout_constraintTop_toBottomOf="@+id/textView" />
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/textInputLayout"
+    <AutoCompleteTextView
+        android:id="@+id/etSetTitle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
         android:layout_marginEnd="36dp"
+        android:completionThreshold="0"
+        android:fontFamily="@font/manrope_semibold"
+        android:hint="Enter title"
+        android:padding="10dp"
+        android:paddingLeft="0dp"
+        android:textColor="#000000"
+        android:textColorHint="#9E9E9E"
+        android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/textView"
-        app:layout_constraintTop_toBottomOf="@+id/textView3">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView3" />
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/etSetTitle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/manrope_semibold"
-            android:hint="Enter title"
-            android:padding="10dp"
-            android:textColor="#000000"
-            android:textColorHint="#9E9E9E"
-            android:textSize="14sp" />
-    </com.google.android.material.textfield.TextInputLayout>
+    <Button
+        android:id="@+id/btnPublic"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="17dp"
+        android:width="160dp"
+        android:backgroundTint="#27959E"
+        android:text="Public"
+        app:cornerRadius="5dp"
+        app:layout_constraintBottom_toTopOf="@+id/btnAddSet"
+        app:layout_constraintStart_toStartOf="@+id/btnAddSet" />
 
+    <Button
+        android:id="@+id/btnPrivate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:width="160dp"
+        android:backgroundTint="#939393"
+        android:text="Private"
+        app:cornerRadius="5dp"
+        app:layout_constraintEnd_toEndOf="@+id/btnAddSet"
+        app:layout_constraintTop_toTopOf="@+id/btnPublic" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
