@@ -1,5 +1,6 @@
 package com.example.clarity.classroompage
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -42,19 +43,18 @@ class ClassProgressAdapter(
         return studentProgress.size
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: SetViewHolder, position: Int) {
         val student = studentProgress[position]
         println("Position: $position")
         holder.itemView.apply {
             val firstName = findViewById<TextView>(R.id.firstName)
             val lastName = findViewById<TextView>(R.id.lastName)
-            val numerator = findViewById<TextView>(R.id.numerator)
-            val denominator = findViewById<TextView>(R.id.denominator)
+            val cardsCompleted = findViewById<TextView>(R.id.cardsCompleted)
 
             firstName.text = student.firstName
             lastName.text = student.lastName
-            numerator.text = student.completed_count.toString()
-            denominator.text = totalCards.toString()
+            cardsCompleted.text = "${student.completed_count} / $totalCards"
         }
     }
 }

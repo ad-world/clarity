@@ -89,14 +89,6 @@ class ClassroomTeacherTaskProgressActivity() : AppCompatActivity() {
 
         studentProgressList = mutableListOf()
 
-//        val classroomTaskResponseObject = GetClassroomTaskProgressResponse(
-//            response = StatusResponse.Success,
-//            task_id = 0,
-//            card_count = 0,
-//            studentProgress = listOf(),
-//            message = "hello"
-//        )
-
         println(taskId)
         // make api call to get the progress for current task
         if (taskId != -1) {
