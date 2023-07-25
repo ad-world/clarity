@@ -1,8 +1,12 @@
 package com.example.clarity.sets
 
+import android.opengl.Visibility
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
@@ -50,6 +54,7 @@ class SetAdapter(
             val tvCompletedPhrases = findViewById<TextView>(R.id.tvCompletedPhrases)
             val tvCompletedPercent = findViewById<TextView>(R.id.tvCompletedPercent)
             val progressBarSet = findViewById<ProgressBar>(R.id.progressBarSet)
+            val completedCheck = findViewById<ImageView>(R.id.completedCheck)
 
             tvSetTitle.text = set.title
             if (set.cards.size == 1) {
@@ -58,8 +63,13 @@ class SetAdapter(
                 tvCardCount.text = "${set.cards.size} Cards"
             }
             tvCompletedPhrases.text = "${set.progress} Completed"
-            tvCompletedPercent.text = "${set.progress / set.cards.size} %"
-            progressBarSet.progress = set.progress / set.cards.size
+            tvCompletedPercent.text = "${(set.progress * 100) / set.cards.size} %"
+            progressBarSet.progress = (set.progress * 100) / set.cards.size
+            if (set.progress == set.cards.size) {
+                completedCheck.visibility = VISIBLE
+            } else {
+                completedCheck.visibility = GONE
+            }
         }
     }
 }

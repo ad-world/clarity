@@ -17,6 +17,8 @@ import com.example.clarity.databinding.FragmentSetsBinding
 import com.example.clarity.sdk.GetCardsInSetRequest
 import com.example.clarity.sdk.GetCardsInSetResponse
 import com.example.clarity.sdk.GetSetsByUsernameResponse
+import com.example.clarity.sdk.GetUserSetProgressRequest
+import com.example.clarity.sdk.GetUserSetProgressResponse
 import com.example.clarity.sets.activities.PracticeSetActivity
 import com.example.clarity.sets.activities.TestSetActivity
 import com.example.clarity.sets.data.Card
@@ -154,7 +156,13 @@ class SetsFragment : Fragment() {
                 val setData = response.body()?.data?.get(i)!!
                 val setId = setData.set_id
                 val setTitle = setData.title
-                val progress = 0
+
+                val progressResponse : Response<GetUserSetProgressResponse> = runBlocking {
+                    return@runBlocking api.getSetProgress(GetUserSetProgressRequest(setId, userid))
+                }
+
+                val progress = progressResponse.body()!!.numCompletedCards
+
                 val set = Set(setId, setTitle, userid, mutableListOf<Card>(), progress, SetCategory.CREATED_SET)
 
                 val cards : Response<GetCardsInSetResponse> = runBlocking {

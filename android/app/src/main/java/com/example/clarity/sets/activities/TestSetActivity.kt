@@ -152,13 +152,16 @@ class TestSetActivity() : AppCompatActivity() {
                     val score = getAccuracyScore(File(this.filesDir, "audio.wav"))
                     displayMessagePopup(score)
 
+                    // Increment Index and set Progress
+                    set.progress = index + 1
+
                     // Update Progress Components
                     val progressBar = findViewById<ProgressBar>(R.id.progressBar)
                     val tvCompletedCount = findViewById<TextView>(R.id.tvCompletedPhrases)
                     val tvPercentComplete = findViewById<TextView>(R.id.tvPercentComplete)
-                    progressBar.progress = (index * 100) / set.cards.size
-                    tvCompletedCount.text = "$index Complete"
-                    tvPercentComplete.text = "${(index * 100) / set.cards.size} %"
+                    progressBar.progress = ((index + 1) * 100) / set.cards.size
+                    tvCompletedCount.text = "${index + 1} Complete"
+                    tvPercentComplete.text = "${((index + 1) * 100) / set.cards.size} %"
                 }
 
                 // Toggle isRecording Value
