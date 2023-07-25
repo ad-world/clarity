@@ -5,18 +5,19 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/fragment_container"
-    tools:context=".classroompage.ClassTeacherTasks">
+    tools:context=".classroompage.ClassTeacherTaskProgress">
 
     <!-- TODO: Update blank fragment layout -->
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
         android:layout_marginTop="16dp"
-        android:text="Click on Task to check progress"
-        android:textSize="20dp"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:layout_editor_absoluteX="63dp" />
+        android:text="Click on each task to check student progress"
+        android:textSize="18dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvClasses"
