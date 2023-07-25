@@ -49,7 +49,7 @@ class ClassTeacherTaskProgress(private val classId: String) : Fragment() {
         println("tasks position: $position")
         val selectedTask = tasks[position]
         println("selected task: ${selectedTask}")
-        val taskId = selectedTask.taskId
+        var taskId = selectedTask.taskId
         val intent = Intent(activity, ClassroomTeacherTaskProgressActivity::class.java).apply {
             putExtra("taskId", taskId)
         }

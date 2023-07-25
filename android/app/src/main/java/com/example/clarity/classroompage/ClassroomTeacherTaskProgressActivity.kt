@@ -74,8 +74,7 @@ class ClassroomTeacherTaskProgressActivity() : AppCompatActivity() {
         setContentView(R.layout.activity_classroom_task)
 
         val intent = intent
-        val taskId = intent.getStringExtra("taskId")
-        val intTaskId = taskId?.toInt()
+        val taskId = intent.getIntExtra("taskId", -1)
 
         // connect the student list with the frontend design and set its layout
         recyclerView = findViewById(R.id.rvTasks)
@@ -99,12 +98,13 @@ class ClassroomTeacherTaskProgressActivity() : AppCompatActivity() {
 //        )
 
         // make api call to get the progress for current task
-        if (intTaskId != null) {
+        if (taskId != -1) {
             val taskProgressResponse: Response<GetClassroomTaskProgressResponse> = runBlocking {
-                return@runBlocking api.getTaskProgress(intTaskId)
+                return@runBlocking api.getTaskProgress(taskId)
             }
             // validate response
             if (taskProgressResponse.body()?.response == StatusResponse.Success) {
+                Log.i("progres", taskProgressResponse.body().toString())
                 totalCards = taskProgressResponse.body()!!.card_count!!
                 val studentList = taskProgressResponse.body()!!.studentProgress
                 if (studentList != null) {
@@ -118,6 +118,8 @@ class ClassroomTeacherTaskProgressActivity() : AppCompatActivity() {
                     recyclerView.adapter = classProgressAdapter
                 }
             }
+        } else {
+            println("task id is -1")
         }
     }
 }
