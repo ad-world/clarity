@@ -185,7 +185,7 @@ class ProfileFragment : Fragment() {
 
         println(cardDates)
         println(setDates)
-        sets()
+
         if(setDates.size == 0){
             binding.noProgress.visibility = View.VISIBLE
             binding.chartLabel.visibility = View.GONE
@@ -203,6 +203,7 @@ class ProfileFragment : Fragment() {
             binding.completedNum.visibility = View.VISIBLE
             binding.progress.visibility = View.VISIBLE
             binding.completedText.visibility = View.VISIBLE
+            sets()
         }
 
         binding.tabs.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
@@ -229,8 +230,9 @@ class ProfileFragment : Fragment() {
                         binding.completedNum.visibility = View.VISIBLE
                         binding.progress.visibility = View.VISIBLE
                         binding.completedText.visibility = View.VISIBLE
+                        sets()
                     }
-                    sets()
+
                 } else {
                     binding.lineChart.clear()
                     binding.pieChart.clear()
@@ -252,8 +254,9 @@ class ProfileFragment : Fragment() {
                         binding.completedNum.visibility = View.VISIBLE
                         binding.progress.visibility = View.VISIBLE
                         binding.completedText.visibility = View.VISIBLE
+                        cards()
                     }
-                    cards()
+
                 }
             }
             override fun onTabUnselected(tab: TabLayout.Tab?) {
@@ -273,6 +276,7 @@ class ProfileFragment : Fragment() {
         findNavController()?.navigate(R.id.SettingsFragment)
     }
     private fun cards() {
+        println("hereC")
         binding.progress.text = "Cards Progress"
         binding.completedText.text = "Completed Cards"
         binding.completedNum.text = completedCards.toString()
@@ -282,30 +286,51 @@ class ProfileFragment : Fragment() {
         val sortedDates = cardDates.sorted()
         val labels = ArrayList<String>()
 
-        val earliestDate = sortedDates.first()
-        val mostRecentDate = sortedDates.last()
+//        val earliestDate = sortedDates.first()
+//        val mostRecentDate = sortedDates.last()
 
-        val stepSize = (mostRecentDate.toEpochDay() - earliestDate.toEpochDay()) / 6
-
-        var currentDate = earliestDate
-
-        // Loop through 7 dates (earliestDate + 6 steps) and get the frequencies at each date
-        for (i in 0..6) {
-            val startDateRange = currentDate
-            val endDateRange = currentDate.plusDays(stepSize)
-            val currentDateCards = cardDates.count { it >= startDateRange && it < endDateRange }
-            attempts.add(Entry(i.toFloat(), currentDateCards.toFloat()))
-            labels.add(currentDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.getDefault())))
-            currentDate = currentDate.plusDays(stepSize)
-        }
-
-//        val dateCardCountMap = sortedDates.groupingBy { it }.eachCount()
-//        var index = 0f
-//        for ((date, count) in dateCardCountMap) {
-//            attempts.add(Entry(index, count.toFloat()))
-//            labels.add(date.toString())
-//            index++
+//        val numberOfDates = sortedDates.size
+//        val stepSize: Long = if (numberOfDates > 1) {
+//            (mostRecentDate.toEpochDay() - earliestDate.toEpochDay()) / (numberOfDates - 1)
+//        } else {
+//            // Handle the case where there is only one date
+//            1
 //        }
+//
+//        // Create a sequence of dates within the range to use as labels
+//        val dateLabels = generateSequence(earliestDate) { it.plusDays(stepSize) }
+//            .take(7) // Take at most 7 dates (or fewer if there are less than 7 available)
+//
+//        // Loop through 7 dates (or the number of dates available) and get the frequencies at each date range
+//        for ((i, currentDate) in dateLabels.withIndex()) {
+//            val startDateRange = currentDate
+//            val endDateRange = currentDate.plusDays(stepSize)
+//
+//            // Count the cards that fall within the current date range (exclusive on the end date)
+//            val currentDateCards = cardDates.count { it >= startDateRange && it < endDateRange }
+//            attempts.add(Entry(i.toFloat(), currentDateCards.toFloat()))
+//            labels.add(currentDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.getDefault())))
+//        }
+//        val stepSize = (mostRecentDate.toEpochDay() - earliestDate.toEpochDay()) / 6
+//
+//        var currentDate = earliestDate
+//
+//        for (i in 0..6) {
+//            val startDateRange = currentDate
+//            val endDateRange = currentDate.plusDays(stepSize)
+//            val currentDateCards = cardDates.count { it >= startDateRange && it <= endDateRange }
+//            attempts.add(Entry(i.toFloat(), currentDateCards.toFloat()))
+//            labels.add(currentDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.getDefault())))
+//            currentDate = currentDate.plusDays(stepSize)
+//        }
+
+        val dateCardCountMap = sortedDates.groupingBy { it }.eachCount()
+        var index = 0f
+        for ((date, count) in dateCardCountMap) {
+            attempts.add(Entry(index, count.toFloat()))
+            labels.add(date.toString())
+            index++
+        }
         val lineDataSet = LineDataSet(attempts, "Number of cards completed").apply {
             setDrawValues(false)
             color = Color.RED
@@ -360,6 +385,7 @@ class ProfileFragment : Fragment() {
         binding.completedNum.text = completedCards.toString()
     }
     private fun sets(){
+        println("hereS")
         binding.completedText.text = "Completed Sets"
         binding.progress.text = "Saved Sets Progress"
 
@@ -367,40 +393,40 @@ class ProfileFragment : Fragment() {
 
 
         var attempts = ArrayList<Entry>()
-        val sortedDates = cardDates.sorted()
+        val sortedDates = setDates.sorted()
+        println(cardDates)
         val labels = ArrayList<String>()
 
-        val earliestDate = sortedDates.first()
-        val mostRecentDate = sortedDates.last()
-
-        val stepSize = (mostRecentDate.toEpochDay() - earliestDate.toEpochDay()) / 6
-
-        var currentDate = earliestDate
+//        val earliestDate = sortedDates.first()
+//        val mostRecentDate = sortedDates.last()
+//
+//        val stepSize = (mostRecentDate.toEpochDay() - earliestDate.toEpochDay()) / 6
+//
+//        var currentDate = earliestDate
 
         // Loop through 7 dates (earliestDate + 6 steps) and get the frequencies at each date
-        for (i in 0..6) {
-            val startDateRange = currentDate
-            val endDateRange = currentDate.plusDays(stepSize)
-            val currentDateCards = cardDates.count { it >= startDateRange && it < endDateRange }
-            attempts.add(Entry(i.toFloat(), currentDateCards.toFloat()))
-            labels.add(currentDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.getDefault())))
-            currentDate = currentDate.plusDays(stepSize)
-        }
+//        for (i in 0..6) {
+//            val startDateRange = currentDate
+//            val endDateRange = currentDate.plusDays(stepSize)
+//            val currentDateCards = cardDates.count { it >= startDateRange && it < endDateRange }
+//            attempts.add(Entry(i.toFloat(), currentDateCards.toFloat()))
+//            labels.add(currentDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.getDefault())))
+//            currentDate = currentDate.plusDays(stepSize)
+//        }
 
-//        val dateCardCountMap = sortedDates.groupingBy { it }.eachCount()
-//        var index = 0f
-//        for ((date, count) in dateCardCountMap) {
-//            attempts.add(Entry(index, count.toFloat()))
-//            labels.add(date.toString())
-//            index++
-//        }
-        //val dateCardCountMap = sortedDates.groupingBy { it }.eachCount()
-        //var index = 0f
-//        for ((date, count) in dateCardCountMap) {
-//            attempts.add(Entry(index, count.toFloat()))
-//            labels.add(date.toString())
-//            index++
-//        }
+        val dateCardCountMap = sortedDates.groupingBy { it }.eachCount()
+        var index = 0f
+        for ((date, count) in dateCardCountMap) {
+            attempts.add(Entry(index, count.toFloat()))
+            labels.add(date.toString())
+            index++
+        }
+        if (attempts.size == 1) {
+            val singleDataPoint = attempts[0]
+            val fillerDataPoint = Entry(1f, singleDataPoint.y) // You can set the x-value to any value you like
+            attempts.add(fillerDataPoint)
+            labels.add("") // Add an empty label for the filler data point
+        }
         val lineDataSet = LineDataSet(attempts, "Number of cards completed").apply {
             setDrawValues(false)
             color = Color.RED
