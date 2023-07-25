@@ -90,12 +90,6 @@ class SettingsFragment : Fragment() {
         }
         var newLevel = level
         binding.difficulty.setOnCheckedChangeListener { _, checkedId ->
-            val radioButton: RadioButton = when (checkedId) {
-                binding.easy.id -> binding.easy
-                binding.medium.id -> binding.medium
-                binding.hard.id -> binding.hard
-                else -> binding.easy // Default value
-            }
             difficulty = when (checkedId) {
                 binding.easy.id -> Difficulty.Easy
                 binding.medium.id -> Difficulty.Medium

@@ -41,10 +41,13 @@ import com.google.android.material.tabs.TabLayout
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import retrofit2.Response
+import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 import java.util.Date
+import java.util.Locale
 
 
 class ProfileFragment : Fragment() {
@@ -278,16 +281,34 @@ class ProfileFragment : Fragment() {
         var attempts = ArrayList<Entry>()
         val sortedDates = cardDates.sorted()
         val labels = ArrayList<String>()
-        val dateCardCountMap = sortedDates.groupingBy { it }.eachCount()
-        var index = 0f
-        for ((date, count) in dateCardCountMap) {
-            attempts.add(Entry(index, count.toFloat()))
-            labels.add(date.toString())
-            index++
+
+        val earliestDate = sortedDates.first()
+        val mostRecentDate = sortedDates.last()
+
+        // Calculate the step size for the x-axis (date) values
+        val stepSize = (mostRecentDate.toEpochDay() - earliestDate.toEpochDay()) / 6
+
+        // Initialize the current date to the earliest date
+        var currentDate = earliestDate
+
+        // Loop through 7 dates (earliestDate + 6 steps) and get the frequencies at each date
+        for (i in 0..6) {
+            val currentDateCards = cardDates.count { it == currentDate }
+            attempts.add(Entry(i.toFloat(), currentDateCards.toFloat()))
+            labels.add(currentDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.getDefault())))
+            currentDate = currentDate.plusDays(stepSize)
         }
+
+//        val dateCardCountMap = sortedDates.groupingBy { it }.eachCount()
+//        var index = 0f
+//        for ((date, count) in dateCardCountMap) {
+//            attempts.add(Entry(index, count.toFloat()))
+//            labels.add(date.toString())
+//            index++
+//        }
         val lineDataSet = LineDataSet(attempts, "Number of cards completed").apply {
             setDrawValues(false)
-            color = Color.BLUE
+            color = Color.RED
             lineWidth = 2f
         }
 
@@ -327,6 +348,7 @@ class ProfileFragment : Fragment() {
         )
         dataSet.colors = colourList
         val data = PieData(dataSet)
+        dataSet.valueTextSize = 12f
         pieChart.setUsePercentValues(true)
         pieChart.setDrawEntryLabels(false)
         pieChart.description.isEnabled = false
@@ -356,7 +378,7 @@ class ProfileFragment : Fragment() {
         }
         val lineDataSet = LineDataSet(attempts, "Number of cards completed").apply {
             setDrawValues(false)
-            color = Color.BLUE
+            color = Color.RED
             lineWidth = 2f
         }
         val lineData = LineData(lineDataSet)
@@ -398,6 +420,7 @@ class ProfileFragment : Fragment() {
         pieChart.setDrawEntryLabels(false)
         pieChart.description.isEnabled = false
         pieChart.data = data
+        dataSet.valueTextSize = 12f
         pieChart.invalidate()
 
 
