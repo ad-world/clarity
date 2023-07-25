@@ -43,9 +43,12 @@ Entries with start time and end times that span multiple days with have exactly 
 | Find words with errors (omission, insertion, pronunciation) and refactor attempts endpoint | 2 hours | July 16th, 4:00 PM | July 17th, 4:00 PM | July 16th - July 17th, 2023 | [Find words w/ errors, refactor attemps](https://github.com/ad-world/clarity/commit/90a8089b212eebbd385544cd1c5b7e880099efec) |
 | Create classroom progress functionality, create card completeness functionality, create user progress functionality | ~5 hours | 5:00 PM | 11:59 PM | July 18th, 2023 | [User progress, classroom progress, card completeness](https://github.com/ad-world/clarity/commit/83b1531e9d42324fdfd2fc8115c71e2ad1b66e72) |
 | D5 Meeting | 1 hour | 3:00 PM | 4:00 PM | July 19th, 2023 | N/A |
+| D5 Call w/ Dhir | 0.5 hours | 6:00 PM | 6:30 PM | July 19th, 2023 | N/A |
 | D5 Work (Observer Pattern) | 1 hour | 11:00 PM | 11:59PM | July 20th, 2023 | N/A |
-| D5 Wrap up + Projec meeting | 1 hour | 12:00 PM | 1:00 PM | July 21st, 2023 | N/A |
+| D5 Wrap up + Project meeting | 1 hour | 12:00 PM | 1:00 PM | July 21st, 2023 | N/A |
 | Add user / task difficulty with factor pattern | 5 hours | 1:00 PM | 6:00 PM | July 21st, 2023 | [Add user / task difficulty with factory pattern](https://github.com/ad-world/clarity/commit/b8b894c335de8671212e63ca14e725c2b49577ee) |
 | Add edit user / change password | 1.5 hours | 6:00 PM | 7:30 PM | July 21st, 2023 | [Add edit user / change password](https://github.com/ad-world/clarity/commit/bdef8618effaab8e6e1e9a4f9fc849872bb61907) |
+| D6 Meeting | 1 hour | 7:00 PM | 8:00 PM | July 24th, 2023 | N/A |
+| Add practice user and task attempts | 2 hours | 9:00 AM | 11:00 AM | July 25th, 2023 | [Add practice user and task attempts](https://github.com/ad-world/clarity/commit/581de83d8b115737a2a08bab95a55b82b0cb7ffc) |
 
-Total time spent as of July 21st, 2023: 59.5 hours
+Total time spent as of July 25th, 2023: 63 hours

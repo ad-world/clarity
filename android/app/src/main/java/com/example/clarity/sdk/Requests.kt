@@ -10,7 +10,6 @@ data class CreateUserEntity(val username: String, val email: String, val passwor
 data class JoinClassroomEntity(val privateCode: String, val userID: String)
 data class CreateClassroomEntity(val name: String, val teacher: Int)
 data class CreateCardSetEntity(val creator_id: Int, val title: String, val type: String)
-data class GetDataForSetRequest(val set_id: Int)
 data class CreateCardEntity(val phrase: String, val title: String, val setId: Int? = null)
 data class AddCardToSetRequest(val card_id: Int, val set_id: Int)
 data class DeleteCardFromSetRequest(val card_id: Int, val set_id: Int)
@@ -33,3 +32,7 @@ data class UpdateDifficultyEntity(val userId: Int, val newDifficulty: Difficulty
 data class UpdateTaskDifficultyEntity(val task_id: Int, val newDifficulty: Difficulty)
 data class EditUserEntity(val user_id: Int, val firstname: String? = null, val lastname: String? = null, val email: String? = null)
 data class ChangePasswordEntity(val user_id: Int, val old_password: String, val new_password: String)
+data class GetSetDataRequest(val set_id: Int)
+data class ClonePublicSetRequest(val set_id: Int, val user_id: Int)
+
+

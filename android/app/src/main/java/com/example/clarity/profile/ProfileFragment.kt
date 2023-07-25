@@ -474,7 +474,7 @@ class ProfileFragment : Fragment() {
                 var latestDate = LocalDate.MIN
                 if (completedList != null) {
                     for (c in completedList) {
-                        val date = LocalDate.parse(c.completion_date)
+                        val date = LocalDate.parse(c.completion_date, DateTimeFormatter.ISO_DATE_TIME)
                         cardDates.add(date)
                         if(date > latestDate) {
                             latestDate = date

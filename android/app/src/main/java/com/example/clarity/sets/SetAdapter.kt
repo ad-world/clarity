@@ -7,6 +7,7 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.clarity.R
+import com.example.clarity.sets.data.Set
 
 class SetAdapter(
     private val sets: MutableList<Set>,

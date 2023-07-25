@@ -68,21 +68,21 @@ interface API {
     @POST("getCardsForSet")
     suspend fun getCards(@Body set: GetCardsInSetRequest) : Response<GetCardsInSetResponse>
 
-    @GET("getSets")
-    suspend fun getAllSets() : Response<GetSetsResponse>
-
-    @POST("getDataForSet")
-    suspend fun  getDataForSet(@Body set: GetDataForSetRequest) : Response<GetDataForSetResponse>
+    @GET("getSetIDs")
+    suspend fun getSetIDs() : Response<GetSetIDsResponse>
 
     @GET("getSetsByUsername")
     suspend fun getSetsByUsername(@Query("username") username: String): Response<GetSetsByUsernameResponse>
 
-    @GET("getCardSetsOrderedByLikes")
-    suspend fun getCardSetsOrderedByLikes(): Response<GetCardSetsOrderedByLikesResponse>
+    @GET("getPublicCardSetsOrderedByLikes")
+    suspend fun getPublicCardSetsOrderedByLikes(): Response<getPublicCardSetsOrderedByLikesResponse>
 
     @Multipart
     @POST("attemptCard")
     suspend fun attemptCard(@Part("user_id") userId: Int, @Part("card_id") cardId: Int, @Part("set_id") setId: Int, @Part audio: MultipartBody.Part): Response<CreateAttemptResponse>
+    @Multipart
+    @POST("practiceAttemptCard")
+    suspend fun practiceAttemptCard(@Part("user_id") userId: Int, @Part("card_id") cardId: Int, @Part("set_id") setId: Int, @Part audio: MultipartBody.Part): Response<PracticeAttemptResponse>
 
     @POST("getAttemptAverage")
     suspend fun getUserAverageAttempts(@Body request: GetUserAverageAttemptsRequest): Response<GetUserAverageAttemptsResponse>
@@ -105,6 +105,10 @@ interface API {
     @Multipart
     @POST("classroom/attemptCard")
     suspend fun attemptClassroomCard(@Part("user_id") userId: Int, @Part("card_id") cardId: Int, @Part("task_id") task_id: Int, @Part audio: MultipartBody.Part): Response<CreateClassroomAttemptResponse>
+
+    @Multipart
+    @POST("classroom/practiceAttemptCard")
+    suspend fun practiceAttemptClassroomCard(@Part("user_id") userId: Int, @Part("card_id") cardId: Int, @Part("task_id") task_id: Int, @Part audio: MultipartBody.Part): Response<PracticeClassroomAttemptResponse>
 
     @GET("classroom/getTaskAttempts")
     suspend fun getTaskAttempts(@Query("task") task: Int): Response<GetTaskAttemptsResponse>
@@ -151,6 +155,15 @@ interface API {
     @POST("toggleCardSetVisibility")
     suspend fun toggleCardSetVisibility(@Body request: ToggleCardSetRequest): Response<ToggleCardSetResponse>
 
+    @GET("getWords")
+    suspend fun getWords(): Response<GetWordsResponse>
+
+//    @POST("getProgressForSet")
+//    suspend fun getProgressForSet(@Body req: GetProgressForSetRequest) : Response<GetProgressForSetResponse>
+//
+//    @POST("updateProgressForSet")
+//    suspend fun updateProgressForSet(@Body req: UpdateProgressForSetRequest) : Response<UpdateProgressForSetResponse>
+  
     @POST("updateDifficulty")
     suspend fun updateDifficulty(@Body request: UpdateDifficultyEntity): Response<UpdateDifficultyResponse>
 
@@ -162,4 +175,11 @@ interface API {
 
     @POST("changePassword")
     suspend fun changePassword(@Body request: ChangePasswordEntity): Response<ChangePasswordResponse>
+
+    @GET("getPublicCardSets")
+    suspend fun getPublicCardSets(): Response<GetPublicCardSetsResponse>
+
+    @POST("clonePublicSet")
+    suspend fun clonePublicSet(@Body request: ClonePublicSetRequest): Response<ClonePublicSetResponse>
 }
+

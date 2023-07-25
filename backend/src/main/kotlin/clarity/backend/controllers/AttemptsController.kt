@@ -80,4 +80,21 @@ class AttemptsController {
             ResponseEntity.badRequest().body(attemptsResponse)
         }
     }
+
+    @PostMapping("/practiceAttemptCard")
+    fun practiceAttemptCard(@RequestParam("user_id") user_id: Int, @RequestParam("card_id") card_id: Int, @RequestParam("set_id") set_id: Int, @RequestParam("audio") audio: MultipartFile): ResponseEntity<PracticeAttemptResponse> {
+        val request = PracticeAttemptEntity(
+            user_id = user_id,
+            set_id = set_id,
+            card_id = card_id,
+            audio = audio
+        )
+        val practiceResponse = attemptEntity.practiceAttemptCard(request)
+
+        return if(practiceResponse.response == StatusResponse.Success) {
+            ResponseEntity.ok(practiceResponse)
+        } else {
+            ResponseEntity.badRequest().body(practiceResponse)
+        }
+    }
 }

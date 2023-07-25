@@ -19,18 +19,24 @@ data class CompleteCardRequest(val user_id: Int, val card: Int, val set: Int)
 data class LikeCardSetRequest(val user_id: Int, val set_id: Int)
 data class UnlikeCardSetRequest(val user_id: Int, val set_id: Int)
 data class ToggleCardSetRequest(val set_id: Int)
+data class ClonePublicSetRequest(val set_id: Int, val user_id: Int)
+data class GetSetDataRequest(val set_id: Int)
 
 // Response Formats.
 data class CreateCardSetResponse(val response: StatusResponse, val msg: String, val set: SetMetadata? = null)
 data class AddCardToSetResponse(val response: StatusResponse, val msg: String)
 data class DeleteCardFromSetResponse(val response: StatusResponse, val msg: String)
 data class GetCardsInSetResponse(val response: StatusResponse, val cards: List<Card>)
-data class GetSetsResponse(val response: StatusResponse, val sets: List<String>)
+data class GetSetIDsResponse(val response: StatusResponse, val sets: List<String>)
+data class GetSetDataResponse(val response: StatusResponse, val set: CardSet? = null)
 data class GetDataForSetResponse(val response: StatusResponse, val data: List<String>)
 data class GetSetsByUsernameResponse(val response: StatusResponse, val data: List<SetMetadata>)
 data class CompleteCardResponse(val response: StatusResponse, val msg: String, val card_id: Int, val set_id: Int, val user_id: Int)
 data class GetCompletedCardsInSetResponse(val response: StatusResponse, val cards: List<CardInSet>)
 data class ToggleCardSetResponse(val response: StatusResponse, val is_public: Int)
+data class GetPublicCardSetsResponse(val response: StatusResponse, val sets: List<SetMetadata>)
+data class ClonePublicSetResponse(val response: StatusResponse, val new_set_id: Int, val msg: String)
+
 
 data class GetUserSetProgressResponse(
     val response: StatusResponse, 
@@ -41,12 +47,24 @@ data class GetUserSetProgressResponse(
     val cards: List<Card>, 
     val completedCard: List<CardInSet>
 )
-data class GetCardSetsOrderedByLikesResponse(val response: StatusResponse, val sets: List<SetMetadata>)
+data class getPublicCardSetsOrderedByLikesResponse(val response: StatusResponse, val sets: List<SetMetadata>)
 data class LikeCardSetResponse(val response: StatusResponse, val message: String)
 data class UnlikeCardSetResponse(val response: StatusResponse, val message: String)
 
 // Util Formats
-data class SetMetadata(val set_id: Int, val title: String, val type: String, val is_public: Boolean, val likes: Int)
+data class CardSet(
+    val metadata: SetMetadata,
+    val cards: List<Card>
+)
+
+data class SetMetadata(
+    val set_id: Int, 
+    val title: String, 
+    val type: String, 
+    val is_public: Boolean, 
+    val likes: Int, 
+    val cloned_from_set: Int
+)
 data class GetUserSetProgressRequest(val set_id: Int, val user_id: Int)
 data class CardInSet(val card_id: Int, val set_id: Int, val completion_date: String?)
 
@@ -57,8 +75,8 @@ class CardSetEntity() {
         try {
             val statement = db!!.createStatement()
             val query = """
-                INSERT INTO CardSet(creator_id, title, type, is_public_ind, likes)
-                VALUES (${set.creator_id}, '${set.title}', '${set.type}', 0, 0);
+                INSERT INTO CardSet(creator_id, title, type, is_public_ind, likes, cloned_from_set)
+                VALUES (${set.creator_id}, '${set.title}', '${set.type}', 0, 0, NULL);
             """.trimIndent()
             val insertedRows = statement.executeUpdate(query, Statement.RETURN_GENERATED_KEYS)
 
@@ -71,6 +89,7 @@ class CardSetEntity() {
                     title = set.title,
                     type = set.type,
                     false,
+                    0,
                     0
                 )
             }
@@ -116,30 +135,43 @@ class CardSetEntity() {
         return DeleteCardFromSetResponse(StatusResponse.Success, "Deleted card from set.")
     }
 
-    fun getDataForSet(request: GetDataForSetRequest) : GetDataForSetResponse {
+    fun getSetData(request: GetSetDataRequest): GetSetDataResponse {
         val db = DataManager.conn()
         try {
             val statement = db!!.createStatement()
-            val query = """
-                SELECT * FROM CardSet
-                WHERE [set_id] = ${request.set_id};
-            """.trimIndent()
-            val resultSet = statement.executeQuery(query)
-            val resultList: MutableList<String> = mutableListOf()
-            
-            // Since it will only return one row, just extract val of all the columns and return
-            // a list of strings.
-            if (resultSet.next()) {
-                val columnCount = resultSet.metaData.columnCount
-                for (i in 1..columnCount) {
-                    val columnValue: String = resultSet.getString(i)
-                    resultList.add(columnValue)
+            val query = "SELECT * FROM CardSet WHERE [set_id] = ${request.set_id};"
+            val row = statement.executeQuery(query)
+            if (row.next()) {
+                val get_total_cards_resp = this.getTotalCardsFromSet(
+                    GetCardsInSetRequest(set_id=request.set_id)
+                )
+
+                if (get_total_cards_resp.response == StatusResponse.Failure) {
+                    return GetSetDataResponse(StatusResponse.Failure, null)
                 }
+
+                val cards = get_total_cards_resp.cards
+
+                return GetSetDataResponse(
+                    StatusResponse.Success,
+                    CardSet(
+                        metadata=SetMetadata(
+                            set_id = row.getInt("set_id"),
+                            title = row.getString("title"),
+                            type = row.getString("type"),
+                            is_public = (row.getInt("is_public_ind") == 1),
+                            likes = row.getInt("likes"),
+                            cloned_from_set = row.getInt("cloned_from_set")
+                        ),
+                        cards=cards
+                    )
+                )
+            } else {
+                return GetSetDataResponse(StatusResponse.Failure, null)
             }
-            return GetDataForSetResponse(StatusResponse.Success, resultList.toList())
         } catch (e: Exception) {
             e.printStackTrace()
-            return GetDataForSetResponse(StatusResponse.Failure, listOf(e.message ?: "Unknown error"))
+            return GetSetDataResponse(StatusResponse.Failure, null)
         }
     }
 
@@ -175,7 +207,7 @@ class CardSetEntity() {
         }
     }
 
-    fun getSets() : GetSetsResponse {
+    fun getSetIDs() : GetSetIDsResponse {
         val db = DataManager.conn()
 
         try {
@@ -190,10 +222,10 @@ class CardSetEntity() {
                 setList.add(setId)
             }
             resultSet.close()
-            return GetSetsResponse(StatusResponse.Success, setList.toList())
+            return GetSetIDsResponse(StatusResponse.Success, setList.toList())
         } catch (e: Exception) {
             e.printStackTrace()
-            return GetSetsResponse(StatusResponse.Failure, emptyList())
+            return GetSetIDsResponse(StatusResponse.Failure, emptyList())
         }
     }
 
@@ -202,7 +234,11 @@ class CardSetEntity() {
         val username = request.username
         try {
             val statement = db!!.createStatement();
-            val query = "SELECT c.[set_id], c.title, c.type, c.is_public_ind, c.likes FROM CardSet c, User u WHERE u.username = '$username' AND u.user_id = c.creator_id"
+            val query = """
+                SELECT c.[set_id], c.title, c.type, c.is_public_ind, c.likes, c.cloned_from_set
+                FROM CardSet c, User u
+                WHERE u.username = '$username' AND u.user_id = c.creator_id;
+            """.trimIndent()
             val resultSet = statement.executeQuery(query);
 
             val setList = mutableListOf<SetMetadata>()
@@ -212,7 +248,9 @@ class CardSetEntity() {
                     title = resultSet.getString("title"),
                     type = resultSet.getString("type"),
                     is_public = resultSet.getInt("is_public_ind") == 1,
-                    likes = resultSet.getInt("likes")
+                    likes = resultSet.getInt("likes"),
+                    // NULL is set to 0, so it indicates a new set.
+                    cloned_from_set = resultSet.getInt("cloned_from_set") 
                 )
                 setList.add(set)
             }
@@ -329,7 +367,7 @@ class CardSetEntity() {
         }
     }
 
-    fun getCardSetsOrderedByLikes() : GetCardSetsOrderedByLikesResponse {
+    fun getPublicCardSetsOrderedByLikes() : getPublicCardSetsOrderedByLikesResponse {
         val db = DataManager.conn()
         try {
             val statement = db!!.createStatement()
@@ -343,15 +381,16 @@ class CardSetEntity() {
                     title = resultSet.getString("title"),
                     type = resultSet.getString("type"),
                     is_public = resultSet.getInt("is_public_ind") == 1,
-                    likes = resultSet.getInt("likes")
+                    likes = resultSet.getInt("likes"),
+                    cloned_from_set = resultSet.getInt("cloned_from_set")
                 )
                 sets.add(set)
             }
             resultSet.close()
-            return GetCardSetsOrderedByLikesResponse(StatusResponse.Success, sets)
+            return getPublicCardSetsOrderedByLikesResponse(StatusResponse.Success, sets)
         } catch (e: Exception) {
             e.printStackTrace()
-            return GetCardSetsOrderedByLikesResponse(StatusResponse.Failure, emptyList())
+            return getPublicCardSetsOrderedByLikesResponse(StatusResponse.Failure, emptyList())
         }
     }
 
@@ -427,5 +466,107 @@ class CardSetEntity() {
             e.printStackTrace()
             return ToggleCardSetResponse(StatusResponse.Failure, -1)
         }
-    }   
+    }
+
+    fun getPublicCardSets(): GetPublicCardSetsResponse {
+        val db = DataManager.conn()
+        try {
+            val statement = db!!.createStatement()
+            val query = "SELECT * FROM CardSet WHERE is_public_ind = 1;"
+            val rows = statement.executeQuery(query)
+            val sets = mutableListOf<SetMetadata>()
+
+            while (rows.next()) {
+                val currentSet = SetMetadata(
+                    set_id = rows.getInt("set_id"),
+                    title = rows.getString("title"),
+                    type = rows.getString("type"),
+                    is_public = true,
+                    likes = rows.getInt("likes"),
+                    cloned_from_set = rows.getInt("cloned_from_set")
+                )
+                sets.add(currentSet)
+            }
+            return GetPublicCardSetsResponse(StatusResponse.Success, sets.toList())
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return GetPublicCardSetsResponse(StatusResponse.Failure, emptyList())
+        }
+    }
+
+    fun clonePublicSet(request: ClonePublicSetRequest): ClonePublicSetResponse {
+        val db = DataManager.conn()
+        try {
+            val statement = db!!.createStatement()
+            val getSetDataResp = this.getSetData(GetSetDataRequest(set_id=request.set_id))
+            val setData = getSetDataResp.set
+            
+            // If we couldn't get the associated set data, then we return failure.
+            if (getSetDataResp.response == StatusResponse.Failure) {
+                return ClonePublicSetResponse(
+                    StatusResponse.Failure, 
+                    -1, 
+                    "Could not get data of set (${request.set_id}) for cloning."
+                )
+            }
+
+            // If the response was successful, then the data is present.
+            val metadata: SetMetadata = setData!!.metadata
+            val cards: List<Card> = setData!!.cards
+
+            // We cannot clone private sets.
+            if (!metadata.is_public) {
+                return ClonePublicSetResponse(
+                    StatusResponse.Failure,
+                    -1,
+                    "Cannot clone private set (set_id: ${request.set_id})."
+                )
+            }
+            
+            // Insert the new set and get back the set id.
+            val insertQuery = """
+                INSERT INTO CardSet (creator_id, title, type, is_public_ind, likes, cloned_from_set)
+                VALUES (${request.user_id}, '${metadata.title}', '${metadata.type}', 0, 0, ${metadata.set_id});
+            """.trimIndent()
+
+            val affectedRows: Int = statement.executeUpdate(insertQuery)
+
+            if (affectedRows <= 0) {
+                return ClonePublicSetResponse(
+                    StatusResponse.Failure, 
+                    -1, 
+                    "Could not insert cloned set (cloned_set_id: ${request.set_id}) into CardSet table."
+                )
+            }
+
+            // If the above insert passed, get the associated set_id.
+            val result = statement.executeQuery("SELECT last_insert_rowid() AS new_set_id;")
+            var new_set_id = -1
+
+            if (result.next()) {
+                new_set_id = result.getInt("new_set_id")
+
+                // Now add the same cards to the new set as the one we want to clone.
+                for (card in cards) {
+                    val resp: AddCardToSetResponse = 
+                        this.addCardToSet(AddCardToSetRequest(card_id=card.card_id, set_id=new_set_id))
+                    if (resp.response == StatusResponse.Failure) {
+                        return ClonePublicSetResponse(StatusResponse.Failure, -1, resp.msg)
+                    }
+                }
+                
+            } else {
+                return ClonePublicSetResponse(
+                    StatusResponse.Failure,
+                    -1,
+                    "Could not get set_id for the newly cloned set that was inserted into CardSet."
+                )
+            }
+
+            return ClonePublicSetResponse(StatusResponse.Success, new_set_id, "")
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return ClonePublicSetResponse(StatusResponse.Failure, -1, e.message ?: "Unknown Error")
+        }
+    }
 }

@@ -1,4 +1,4 @@
-package com.example.clarity.sets
+package com.example.clarity.sets.data
 data class Card(
     val id: Int,
     var phrase: String,
