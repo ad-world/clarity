@@ -76,11 +76,11 @@
         android:layout_height="30dp"
         android:layout_marginTop="32dp"
         android:layout_marginEnd="28dp"
-        android:background="@drawable/setclosebutton"
+        android:backgroundTint="#FFFFFF"
         android:contentDescription="@string/exit_set"
-        android:scaleX="1.2"
-        android:scaleY="1.2"
-        android:src="@drawable/baseline_close_24_white"
+        android:scaleX="1.8"
+        android:scaleY="1.8"
+        android:src="@drawable/baseline_exit_to_app_24"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -88,7 +88,7 @@
         android:id="@+id/iBtnMic"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:layout_marginTop="76dp"
+        android:layout_marginTop="68dp"
         android:layout_marginEnd="100dp"
         android:background="@drawable/roundcorner"
         android:contentDescription="@string/record_voice"
@@ -104,7 +104,7 @@
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_marginStart="100dp"
-        android:layout_marginTop="76dp"
+        android:layout_marginTop="68dp"
         android:background="@drawable/roundcorner"
         android:contentDescription="@string/record_voice"
         android:scaleX="2"
@@ -116,15 +116,16 @@
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cvPopUp"
-        android:layout_width="match_parent"
-        android:layout_height="35dp"
-        android:layout_marginStart="100dp"
+        android:layout_width="0dp"
+        android:layout_height="45dp"
+        android:layout_marginStart="30dp"
         android:layout_marginTop="52dp"
-        android:layout_marginEnd="100dp"
+        android:layout_marginEnd="30dp"
         android:layout_marginBottom="20dp"
-        android:backgroundTint="#DEFDBB"
+        android:backgroundTint="#FDFCBB"
         android:visibility="gone"
         app:cardCornerRadius="10dp"
+        app:flow_verticalAlign="center"
         app:layout_constraintBottom_toTopOf="@+id/tvCompletedPhrases"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -138,7 +139,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:text="@string/great_job"
-            android:textSize="15sp" />
+            android:textSize="18sp" />
 
     </androidx.cardview.widget.CardView>
 
@@ -158,29 +159,59 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.329">
 
-        <TextView
-            android:id="@+id/tvCardPhrase"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="@string/rome"
-            android:textColor="@color/white"
-            android:textSize="40sp"
-            tools:fontFamily="@font/inter_semibold"
-            tools:layout_margin="5dp" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-        <ImageButton
-            android:id="@+id/iBtnNext"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:backgroundTint="#00FFFFFF"
-            android:contentDescription="@string/navigate_to_next_card"
-            android:scaleX="2"
-            android:scaleY="2"
-            android:translationX="310dp"
-            android:visibility="gone"
-            app:srcCompat="@drawable/baseline_navigate_next_24" />
+            <ImageButton
+                android:id="@+id/iBtnNext"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:backgroundTint="#00FFFFFF"
+                android:contentDescription="@string/navigate_to_next_card"
+                android:scaleX="2"
+                android:scaleY="2"
+                android:translationX="0dp"
+                android:visibility="invisible"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/baseline_navigate_next_24" />
+
+            <ImageButton
+                android:id="@+id/iBtnNext2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:backgroundTint="#00FFFFFF"
+                android:contentDescription="@string/navigate_to_next_card"
+                android:scaleX="2"
+                android:scaleY="2"
+                android:translationX="0dp"
+                android:visibility="invisible"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/baseline_navigate_next_24" />
+
+            <TextView
+                android:id="@+id/tvCardPhrase"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center|center_horizontal|center_vertical"
+                android:maxWidth="275dp"
+                android:text="@string/rome"
+                android:textColor="@color/white"
+                android:textSize="28sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/iBtnNext"
+                app:layout_constraintStart_toEndOf="@+id/iBtnNext2"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:fontFamily="@font/inter_semibold"
+                tools:layout_margin="5dp" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.cardview.widget.CardView>
 

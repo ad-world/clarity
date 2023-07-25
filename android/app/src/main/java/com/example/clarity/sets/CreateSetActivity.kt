@@ -15,6 +15,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.AdapterView
 import android.widget.AutoCompleteTextView
 import android.widget.Button
+import android.widget.ImageButton
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -115,11 +116,17 @@ class CreateSetActivity : AppCompatActivity() {
         val btnPrivate = findViewById<Button>(R.id.btnPrivate)
         val btnAddSet = findViewById<Button>(R.id.btnAddSet)
         val btnAddCard = findViewById<Button>(R.id.btnAddCard)
+        val iBtnClose = findViewById<ImageButton>(R.id.iBtnClose)
 
+        // Handle Exiting
+        iBtnClose.setOnClickListener {
+            finish()
+        }
+
+        // Handle Visibility Stuff
         btnPublic.backgroundTintList = getColorStateList(R.color.not_selected)
         btnPrivate.backgroundTintList = getColorStateList(R.color.selected)
 
-        // Handle Visibility Stuff
         btnPublic.setOnClickListener {
             if (visibility == Visibility.PRIVATE) {
                 btnPublic.backgroundTintList = getColorStateList(R.color.selected)

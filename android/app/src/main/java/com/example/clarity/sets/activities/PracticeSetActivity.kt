@@ -216,7 +216,7 @@ class PracticeSetActivity() : AppCompatActivity() {
         Log.d("response", response.toString())
         // Handle failed response case
         if (response.body() == null || response.body()!!.metadata == null) {
-            ommisions = null
+            // ommisions = null
             return false
         }
 
@@ -236,18 +236,34 @@ class PracticeSetActivity() : AppCompatActivity() {
 
         // Set Message Properties based on Difficulty Threshold
         if (isComplete)  {
-            cvPopUp.setCardBackgroundColor(Color.GREEN)
+            cvPopUp.backgroundTintList = getColorStateList(R.color.passed)
             tvResultMessage.text = resources.getString(R.string.great_job)
         } else if (ommisions == null) {
-            cvPopUp.setCardBackgroundColor(Color.RED)
+            cvPopUp.backgroundTintList = getColorStateList(R.color.failed)
             tvResultMessage.text = "Whoops, No audio was detected, ensure that your microphone is enabled and try again"
         } else {
-            cvPopUp.setCardBackgroundColor(Color.YELLOW)
-            tvResultMessage.text =  resources.getString(R.string.try_again)
-            if ()
+            cvPopUp.backgroundTintList = getColorStateList(R.color.failed)
+            tvResultMessage.text =  resources.getString(R.string.just_a_little_off_keep_practicing)
+            /*if (omissions!!.isNotEmpty()) {
+                tvResultMessage.text = tvResultMessage.text as String + "\n The following words weren't picked up: " + getOmittedWords(
+                    omissions!!
+                )
+            }*/
         }
 
         // Make Popup visible
         cvPopUp.visibility = View.VISIBLE
+    }
+
+    private fun getOmmittedWords(ommitions: List<String>): String {
+        var result = ""
+        for (i in ommitions.indices) {
+            result += ommitions[i]
+            if (i != ommitions.size - 1) {
+                result += ", "
+            }
+        }
+
+        return result
     }
 }
