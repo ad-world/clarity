@@ -152,10 +152,6 @@ class TestSetActivity() : AppCompatActivity() {
                     val score = getAccuracyScore(File(this.filesDir, "audio.wav"))
                     displayMessagePopup(score)
 
-                    // Increment Index and set Progress
-                    index++
-                    set.progress = index
-
                     // Update Progress Components
                     val progressBar = findViewById<ProgressBar>(R.id.progressBar)
                     val tvCompletedCount = findViewById<TextView>(R.id.tvCompletedPhrases)
@@ -173,6 +169,9 @@ class TestSetActivity() : AppCompatActivity() {
         // Handle Forward Navigation
         iBtnNext.setOnClickListener {
             iBtnMic.isEnabled = true
+            // Increment Index and set Progress
+            index++
+            set.progress = index
             if (index < set.cards.size) {
                 iBtnNext.visibility = GONE
                 cvPopUp.visibility = GONE
@@ -214,7 +213,6 @@ class TestSetActivity() : AppCompatActivity() {
         val response: Response<CreateAttemptResponse> = runBlocking {
             return@runBlocking api.attemptCard(userid, set.cards[index].id, set.id, part)
         }
-
         // Handle failed response case
         if (response.body() == null || response.body()!!.metadata == null) {
             return 0
