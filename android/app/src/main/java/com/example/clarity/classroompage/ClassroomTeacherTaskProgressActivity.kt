@@ -97,6 +97,7 @@ class ClassroomTeacherTaskProgressActivity() : AppCompatActivity() {
 //            message = "hello"
 //        )
 
+        println(taskId)
         // make api call to get the progress for current task
         if (taskId != -1) {
             val taskProgressResponse: Response<GetClassroomTaskProgressResponse> = runBlocking {
