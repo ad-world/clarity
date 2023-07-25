@@ -148,6 +148,9 @@ interface API {
     @POST("toggleCardSetVisibility")
     suspend fun toggleCardSetVisibility(@Body request: ToggleCardSetRequest): Response<ToggleCardSetResponse>
 
+    @GET("getWords")
+    suspend fun getWords(): Response<GetWordsResponse>
+
 //    @POST("getProgressForSet")
 //    suspend fun getProgressForSet(@Body req: GetProgressForSetRequest) : Response<GetProgressForSetResponse>
 //
