@@ -35,7 +35,7 @@ class AnnouncementEntity {
         try {
             val statement = db!!.createStatement()
             val deleteStatement = """
-                DELETE FROM Announcements WHERE announcement_id ='${id}'
+                DELETE FROM Announcements WHERE announcement_id =${id}
             """.trimIndent()
             statement.executeUpdate(deleteStatement)
             return AnnouncementResponse(StatusResponse.Success, "Successfully deleted announcement.")

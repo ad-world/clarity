@@ -22,6 +22,8 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.10.1'
     implementation 'io.github.cdimascio:dotenv-kotlin:6.4.0'
     implementation group: 'com.microsoft.cognitiveservices.speech', name: 'client-sdk', version: "1.30.0", ext: "jar"
+    implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.0"
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'com.fasterxml.jackson.module:jackson-module-kotlin'
     implementation 'org.jetbrains.kotlin:kotlin-reflect'
