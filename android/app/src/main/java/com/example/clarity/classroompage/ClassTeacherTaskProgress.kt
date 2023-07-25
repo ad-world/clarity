@@ -15,6 +15,7 @@ import com.example.clarity.sdk.GetTasksEntity
 import com.example.clarity.sdk.GetTasksResponse
 import com.example.clarity.sdk.StatusResponse
 import com.example.clarity.sdk.Task
+import com.example.clarity.sets.activities.TestSetActivity
 import kotlinx.coroutines.runBlocking
 import retrofit2.Response
 
@@ -29,6 +30,8 @@ class ClassTeacherTaskProgress(private val classId: String) : Fragment() {
     private lateinit var classTeacherTaskAdapter: ClassroomTeacherTaskAdapter
     private val api = ClaritySDK().apiService
 
+    private lateinit var tasks: MutableList<Task>
+
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
@@ -42,10 +45,21 @@ class ClassTeacherTaskProgress(private val classId: String) : Fragment() {
         return binding.root
     }
 
+    private fun onSetClick(position: Int) {
+        println("tasks position: $position")
+        val selectedTask = tasks[position]
+        println("selected task: ${selectedTask}")
+        val taskId = selectedTask.taskId
+        val intent = Intent(activity, ClassroomTeacherTaskProgressActivity::class.java).apply {
+            putExtra("taskId", taskId)
+        }
+        startActivity(intent)
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val tasks: MutableList<Task> = mutableListOf()
+        tasks = mutableListOf()
 
         // update list with current tasks
         val getTaskEntity = GetTasksEntity(classId)
@@ -61,8 +75,7 @@ class ClassTeacherTaskProgress(private val classId: String) : Fragment() {
                 for (task in listOfTasks) {
                     tasks.add(task)
                 }
-                classTeacherTaskAdapter = ClassroomTeacherTaskAdapter(tasks) {task ->
-                }
+                classTeacherTaskAdapter = ClassroomTeacherTaskAdapter(tasks) { position -> onSetClick(position) }
                 binding.rvClasses.adapter = classTeacherTaskAdapter
                 binding.rvClasses.layoutManager = LinearLayoutManager(context)
             }
