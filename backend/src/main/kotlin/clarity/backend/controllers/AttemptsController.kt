@@ -80,4 +80,15 @@ class AttemptsController {
             ResponseEntity.badRequest().body(attemptsResponse)
         }
     }
+
+    @PostMapping("/practiceAttemptCard")
+    fun practiceAttemptCard(@RequestBody request: PracticeAttemptEntity): ResponseEntity<PracticeAttemptResponse> {
+        val practiceResponse = attemptEntity.practiceAttemptCard(request)
+
+        return if(practiceResponse.response == StatusResponse.Success) {
+            ResponseEntity.ok(practiceResponse)
+        } else {
+            ResponseEntity.badRequest().body(practiceResponse)
+        }
+    }
 }

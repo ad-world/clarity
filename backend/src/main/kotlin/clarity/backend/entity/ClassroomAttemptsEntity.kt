@@ -8,8 +8,9 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 data class CreateClassroomAttemptEntity(val task_id: Int, val user_id: Int, val card_id: Int, val audio: MultipartFile)
+data class PracticeClassroomAttemptEntity(val task_id: Int, val user_id: Int, val card_id: Int, val audio: MultipartFile)
 data class CreateClassroomAttemptResponse(val response: StatusResponse, val metadata: ClassroomAttemptMetadata?, val message: String)
-
+data class PracticeClassroomAttemptResponse(val response: StatusResponse, val metadata: ClassroomAttemptMetadata?, val message: String)
 data class ClassroomAttemptMetadata(
     val task_id: Int, val user_id: Int, val card_id: Int, val mispronunciations: List<String>,
     val omissions: List<String>, val insertions: List<String>, val pronunciationScore: Double, val accuracyScore: Double,
@@ -34,11 +35,10 @@ data class StudentProgress(val user_id: Int, val completed_count: Int, val first
 
 class ClassroomAttemptsEntity {
     private val db = DataManager.conn();
+    private val speechAnalyzer = SpeechAnalysis()
 
     fun createClassroomAttempts(attempt: CreateClassroomAttemptEntity): CreateClassroomAttemptResponse {
         val statement = db!!.createStatement()
-        val speechAnalyzer = SpeechAnalysis()
-
 
         try {
             val (task_id, user_id, card_id, audio) = attempt;
@@ -240,6 +240,55 @@ class ClassroomAttemptsEntity {
                 card_count = null,
                 studentProgress = null,
                 message = e.message ?: "Unknown error"
+            )
+        }
+    }
+
+    fun practiceClassroomAttempt(request: PracticeClassroomAttemptEntity): PracticeClassroomAttemptResponse {
+        try {
+            val (task_id, user_id, card_id, audio) = request;
+
+            val card = CardEntity().getCard(card_id)
+
+            val user = UserEntity().getUserById(userId = user_id.toString())
+            val difficulty = user.user?.difficulty
+
+            val analysis = card?.let { speechAnalyzer.analyzeAudio(audio, it.phrase) }
+                ?: throw Exception("Speech analysis returned null - unknown error")
+
+            val json = analysis.json
+            val result = analysis.assessmentResult
+                ?: throw Exception("Speech analysis result was null - don't record this attempt")
+
+            val omissions = speechAnalyzer.findErrorType(json, ErrorType.Omission)
+            val mispronunciations = speechAnalyzer.findErrorType(json, ErrorType.Mispronunciation)
+            val insertions = speechAnalyzer.findErrorType(json, ErrorType.Insertion)
+            val pronunciationScore = result.pronunciationScore
+            val fluencyScore = result.fluencyScore
+            val accuracyScore = result.accuracyScore
+            val completenessScore = result.completenessScore
+            val analyzer: ErrorAnalysis = when(difficulty) {
+                Difficulty.Easy -> EasyErrorAnalysis()
+                Difficulty.Medium -> MediumErrorAnalysis()
+                Difficulty.Hard -> HardErrorAnalysis()
+                else -> EasyErrorAnalysis()
+            }
+
+            val shouldComplete = analyzer.shouldCompleteCard(result, omissions, mispronunciations, insertions)
+
+            val classroomAttemptMetadata = ClassroomAttemptMetadata(task_id, user_id, card_id, mispronunciations, omissions, insertions,
+                pronunciationScore, accuracyScore, fluencyScore, completenessScore, json, shouldComplete)
+
+            return PracticeClassroomAttemptResponse(
+                StatusResponse.Success,
+                classroomAttemptMetadata,
+                "Practice card analyzed successfully"
+            )
+        } catch (e: Exception) {
+            return PracticeClassroomAttemptResponse(
+                StatusResponse.Failure,
+                null,
+                "Could not analyze practice card."
             )
         }
     }
