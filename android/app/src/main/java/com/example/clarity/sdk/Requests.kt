@@ -34,3 +34,5 @@ data class EditUserEntity(val user_id: Int, val firstname: String? = null, val l
 data class ChangePasswordEntity(val user_id: Int, val old_password: String, val new_password: String)
 data class GetSetDataRequest(val set_id: Int)
 data class ClonePublicSetRequest(val set_id: Int, val user_id: Int)
+
+
