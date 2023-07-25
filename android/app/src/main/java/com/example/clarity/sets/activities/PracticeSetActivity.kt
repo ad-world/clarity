@@ -1,4 +1,4 @@
-package com.example.clarity.sets
+package com.example.clarity.sets.activities
 
 import android.Manifest
 import android.annotation.SuppressLint
@@ -15,24 +15,38 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.core.app.ActivityCompat
+import androidx.lifecycle.lifecycleScope
 import com.example.clarity.sdk.ClaritySDK
 import com.example.clarity.R
-import com.example.clarity.sets.audio.AndroidAudioPlayer
-import com.example.clarity.sets.audio.AndroidAudioRecorder
+import com.example.clarity.SessionManager
+import com.example.clarity.sdk.CreateAttemptResponse
+import com.example.clarity.sets.data.Card
+import com.example.clarity.sets.data.Set
+import com.example.clarity.sets.audio.WavRecorder
+import com.example.clarity.sets.data.SetCategory
 import com.google.gson.Gson
-import org.w3c.dom.Text
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import okhttp3.MediaType
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import retrofit2.Response
 import java.io.File
+import java.io.FileInputStream
+import java.io.IOException
+import java.nio.ByteBuffer
+import java.nio.ByteOrder
+import java.nio.charset.Charset
 import java.util.Locale
 
 class PracticeSetActivity() : AppCompatActivity() {
 
     // Recorder and Player
-    private val recorder by lazy { AndroidAudioRecorder(applicationContext) }
     private var player: TextToSpeech? = null
-    // private val player by lazy { AndroidAudioPlayer(applicationContext) }
+    private val wavRecorder = WavRecorder(this)
 
-    // Audio File
-    private var audioFile: File? = null
+    // Session Manager
+    private val sessionManager: SessionManager by lazy { SessionManager(this) }
 
     // Toggle to check if we are currently recording
     private var isRecording = false
@@ -41,7 +55,11 @@ class PracticeSetActivity() : AppCompatActivity() {
     private val api = ClaritySDK().apiService
 
     // Index that stores the current card being displayed
-    var index = 0
+    private var index = 0
+
+    // User and Set
+    var userid = 0
+    var set: Set = Set(0, "", 0, mutableListOf<Card>(), 0, SetCategory.COMMUNITY_SET)
 
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -66,7 +84,7 @@ class PracticeSetActivity() : AppCompatActivity() {
         val intent = intent
         val setJson = intent.getStringExtra("set")
         val gson = Gson()
-        val set = gson.fromJson(setJson, Set::class.java)
+        set = gson.fromJson(setJson, Set::class.java)
 
         // Get all view components
         val tvTitle = findViewById<TextView>(R.id.tvTitle)
@@ -78,6 +96,11 @@ class PracticeSetActivity() : AppCompatActivity() {
         val cvPopUp = findViewById<CardView>(R.id.cvPopUp)
         val progressBar = findViewById<ProgressBar>(R.id.progressBar)
         val tvCompletedCount = findViewById<TextView>(R.id.tvCompletedPhrases)
+
+        // Get Session Context Variables
+        lifecycleScope.launch {
+            userid = sessionManager.getUserId()
+        }
 
         // Initialize Progress Bar, Completed Count, and Title
         progressBar.progress = ((index + 1) * 100) / set.cards.size
@@ -109,11 +132,8 @@ class PracticeSetActivity() : AppCompatActivity() {
                 iBtnMic.setBackgroundResource(R.drawable.setclosebutton)
                 iBtnMic.setImageResource(R.drawable.baseline_mic_24_white)
 
-                // Create file, and start recording, while storing recording in file
-                File(cacheDir, "audio.wav").also {
-                    recorder.start(it)
-                    audioFile = it
-                }
+                // Start recording, while storing recording in file
+                wavRecorder.startRecording("audio.wav", true)
 
             // CASE 2: Recording -> Not Recording
             } else {
@@ -122,10 +142,10 @@ class PracticeSetActivity() : AppCompatActivity() {
                 iBtnMic.setImageResource(R.drawable.baseline_mic_24)
 
                 // Stop Recording
-                recorder.stop()
+                wavRecorder.stopRecording()
 
                 // Return Accuracy Score and Display Popup
-                val score = getAccuracyScore(File(cacheDir, "audio.wav"))
+                val score = getAccuracyScore(File(this.filesDir, "audio.wav"))
                 displayMessagePopup(score)
 
                 // Enable Navigation Buttons
@@ -180,24 +200,46 @@ class PracticeSetActivity() : AppCompatActivity() {
     }
 
     // Returns accuracy score
-    private fun getAccuracyScore(file: File): Int {
-        // TODO: make this work later
-        return 100
+    private fun getAccuracyScore(wavFile: File): Int {
+        // Convert file to MultipartBody.Part
+        val requestFile = RequestBody.create(MediaType.parse("audio/*"), wavFile)
+        val part = MultipartBody.Part.createFormData("audio", wavFile.name, requestFile)
+
+        // Make attempt call
+        val response: Response<CreateAttemptResponse> = runBlocking {
+            return@runBlocking api.attemptCard(userid, set.cards[index].id, set.id, part)
+        }
+
+        // Handle failed response case
+        if (response.body() == null || response.body()!!.metadata == null) {
+            return 0
+        }
+
+        // Return with Accuracy Score
+        return response.body()?.metadata!!.accuracyScore.toInt()
     }
 
     // Display popup
     @SuppressLint("SetTextI18n")
     private fun displayMessagePopup(score: Int)  {
+        // Get Components
         val cvPopUp = findViewById<CardView>(R.id.cvPopUp)
         val tvResultMessage = findViewById<TextView>(R.id.tvResultMessage)
-        if (score in 0..50)  {
+
+        // TODO: Make this actually return the threshold later
+        // Get Difficulty Threshold
+        val difficultyThreshold = 50
+
+        // Set Message Properties based on Difficulty Threshold
+        if (score in 0 until difficultyThreshold)  {
             cvPopUp.setCardBackgroundColor(Color.YELLOW)
             tvResultMessage.text = resources.getString(R.string.try_again)
-        } else if (score in 51..100) {
+        } else if (score in difficultyThreshold..100) {
             cvPopUp.setCardBackgroundColor(Color.GREEN)
             tvResultMessage.text = resources.getString(R.string.great_job)
         }
 
+        // Make Popup visible
         cvPopUp.visibility = View.VISIBLE
     }
 }

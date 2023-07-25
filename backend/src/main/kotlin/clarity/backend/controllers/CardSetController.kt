@@ -51,9 +51,9 @@ class CardController {
         }
     }
 
-    @GetMapping("/getSets")
-    fun getAllSets() : ResponseEntity<GetSetsResponse> {
-        val resp = CardSetEntity().getSets()
+    @GetMapping("/getSetIDs")
+    fun getSetIDs() : ResponseEntity<GetSetIDsResponse> {
+        val resp = CardSetEntity().getSetIDs()
         return if (resp.response == StatusResponse.Success) {
             ResponseEntity.ok(resp)
         } else {
@@ -61,9 +61,9 @@ class CardController {
         }
     }
 
-    @PostMapping("/getDataForSet")
-    fun getDataForSet(@RequestBody req: GetDataForSetRequest) : ResponseEntity<GetDataForSetResponse> {
-        val resp = CardSetEntity().getDataForSet(req)
+    @PostMapping("/getSetData")
+    fun getSetData(@RequestBody request: GetSetDataRequest): ResponseEntity<GetSetDataResponse> {
+        val resp = CardSetEntity().getSetData(request)
         return if (resp.response == StatusResponse.Success) {
             ResponseEntity.ok(resp)
         } else {
@@ -122,9 +122,9 @@ class CardController {
         }
     }
 
-    @GetMapping("/getCardSetsOrderedByLikes")
-    fun getCardSetsOrderedByLikes(): ResponseEntity<GetCardSetsOrderedByLikesResponse> {
-        val resp = CardSetEntity().getCardSetsOrderedByLikes()
+    @GetMapping("/getPublicCardSetsOrderedByLikes")
+    fun getPublicCardSetsOrderedByLikes(): ResponseEntity<getPublicCardSetsOrderedByLikesResponse> {
+        val resp = CardSetEntity().getPublicCardSetsOrderedByLikes()
         return if (resp.response == StatusResponse.Success) {
             ResponseEntity.ok(resp)
         } else {
@@ -161,4 +161,25 @@ class CardController {
             ResponseEntity.badRequest().body(resp)
         }
     }
+
+    @GetMapping("/getPublicCardSets")
+    fun getPublicCardSets(): ResponseEntity<GetPublicCardSetsResponse> {
+        val resp = CardSetEntity().getPublicCardSets()
+        return if (resp.response == StatusResponse.Success) {
+            ResponseEntity.ok(resp)
+        } else {
+            ResponseEntity.badRequest().body(resp)
+        }
+    }
+
+    @PostMapping("/clonePublicSet")
+    fun clonePublicSet(@RequestBody request: ClonePublicSetRequest): ResponseEntity<ClonePublicSetResponse> {
+        val resp = CardSetEntity().clonePublicSet(request)
+        return if (resp.response == StatusResponse.Success) {
+            ResponseEntity.ok(resp)
+        } else {
+            ResponseEntity.badRequest().body(resp)
+        }
+    }
+
 }

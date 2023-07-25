@@ -1,6 +1,5 @@
 package clarity.backend.controllers
 
-import clarity.backend.DataManager
 import clarity.backend.entity.*
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
@@ -10,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-class LoginController {
+class UserController {
     @PostMapping("/login")
     fun login(@RequestBody user: UserLoginEntity): ResponseEntity<LoginResponse> {
         val username = user.username
@@ -61,6 +60,27 @@ class LoginController {
         }
     }
 
+    @GetMapping("/getUserById")
+    fun getUserById(@RequestParam userId: String): ResponseEntity<GetUserResponse> {
+        val userEntity = UserEntity()
+        val getUserResponse = userEntity.getUserById(userId)
+
+        return if(userId.isNotEmpty()) {
+            if(getUserResponse.response == StatusResponse.Success) {
+                ResponseEntity.ok(getUserResponse)
+            } else {
+                ResponseEntity.badRequest().body(getUserResponse)
+            }
+        } else {
+            ResponseEntity.badRequest().body(
+                GetUserResponse(
+                    StatusResponse.Failure,
+                    null,
+                    "Please pass a username as a request param and try again."
+                )
+            )
+        }
+    }
     @GetMapping("/getAllUsers")
     fun getAllUsers(): ResponseEntity<GetAllUsersResponse> {
         val resp = UserEntity().getAllUsers()
@@ -71,4 +91,36 @@ class LoginController {
         }
     }
 
+    @PostMapping("/updateDifficulty")
+    fun updateDifficulty(@RequestBody request: UpdateDifficultyEntity): ResponseEntity<UpdateDifficultyResponse> {
+        val resp = UserEntity().updateDifficulty(request)
+
+        return if(resp.response == StatusResponse.Success) {
+            ResponseEntity.ok(resp)
+        } else {
+            ResponseEntity.badRequest().body(resp)
+        }
+    }
+
+    @PostMapping("/updateUser")
+    fun updateUser(@RequestBody request: EditUserEntity): ResponseEntity<EditUserResponse> {
+        val resp = UserEntity().editUser(request)
+
+        return if(resp.response == StatusResponse.Success) {
+            ResponseEntity.ok(resp)
+        } else {
+            ResponseEntity.badRequest().body(resp)
+        }
+    }
+
+    @PostMapping("/changePassword")
+    fun changePassword(@RequestBody request: ChangePasswordEntity): ResponseEntity<ChangePasswordResponse> {
+        val resp = UserEntity().changePassword(request)
+
+        return if(resp.response == StatusResponse.Success) {
+            ResponseEntity.ok(resp)
+        } else {
+            ResponseEntity.badRequest().body(resp)
+        }
+    }
 }

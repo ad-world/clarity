@@ -15,12 +15,8 @@ import com.example.clarity.sdk.CreateCardSetEntity
 import com.example.clarity.sdk.CreateCardSetResponse
 import com.example.clarity.R
 import com.example.clarity.SessionManager
-import com.example.clarity.sdk.AddCardToSetRequest
-import com.example.clarity.sdk.AddCardToSetResponse
 import com.example.clarity.sdk.CreateCardEntity
-import com.example.clarity.sdk.CreateCardResponse
-import com.example.clarity.sdk.CreateUserEntity
-import com.example.clarity.sdk.CreateUserResponse
+import com.example.clarity.sets.data.PhraseDictionary
 import com.google.android.material.textfield.TextInputEditText
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -29,6 +25,7 @@ import retrofit2.Response
 class CreateSetActivity : AppCompatActivity() {
     // CardAdapter that keeps track of all cards being created in recyclerview
     private lateinit var cardAdapter: CardAdapter
+    private lateinit var dictionary: PhraseDictionary
     // ClaritySDK api for endpoint calls
     private val api = ClaritySDK().apiService
     // sessionManager to interact with global datastore
@@ -40,13 +37,42 @@ class CreateSetActivity : AppCompatActivity() {
         inputMethodManager.hideSoftInputFromWindow(View(this).windowToken, 0)
     }
 
+    private fun allWordsInDictionary(phrase: String): Boolean {
+        val phraseWords = phrase.split(" ")
+        for (word in phraseWords) {
+            if (!dictionary.phrases.contains(word)) {
+                Log.d("faled here", word)
+                return false
+            }
+        }
+        return true
+    }
+
+    private fun trimCard(phrase: String): String {
+        val phraseWords = phrase.split("\\s+".toRegex()).toTypedArray()
+        Log.d("trimCard words", phraseWords[0])
+        if (phraseWords.isEmpty()) return ""
+        var newPhraseWords = ""
+        for (word in phraseWords) {
+            Log.d("trimCard words", word)
+            if (word != "") {
+                if (newPhraseWords != "") {
+                    newPhraseWords += " "
+                }
+                newPhraseWords += word
+            }
+        }
+        return newPhraseWords
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         // Set View
         setContentView(R.layout.activity_create_set)
 
         // Create Card Adapter, and update RecyclerView properties
-        cardAdapter = CardAdapter(mutableListOf()){ hideKeyboard() }
+        dictionary = PhraseDictionary(arrayOf("alien", "break", "phone", "rover", "japan", "faint"))
+        cardAdapter = CardAdapter(mutableListOf(), dictionary){ hideKeyboard() }
         val rvCards = findViewById<RecyclerView>(R.id.rvCards)
         rvCards.adapter = cardAdapter
         rvCards.layoutManager = LinearLayoutManager(this)
@@ -67,15 +93,18 @@ class CreateSetActivity : AppCompatActivity() {
             // Get title from editText
             val setTitle = etSetTitle.text.toString()
             // Check that there are no empty cards
-            var allCardsFull = true
+            var allCardsValid = true
             for (card in cardAdapter.getCards()) {
-                if (card.phrase == "") {
-                    allCardsFull = false
+                card.phrase = trimCard(card.phrase)
+                Log.d("phrase: ", card.phrase)
+                if (card.phrase == "" || !allWordsInDictionary(card.phrase)) {
+                    Log.d("broken here", card.phrase)
+                    allCardsValid = false
                     break
                 }
             }
             // Verify that there is a title, there is at least one card, and there are no empty cards
-            if (setTitle.isNotEmpty() && cardAdapter.getCards().size > 0 && allCardsFull) {
+            if (setTitle.isNotEmpty() && cardAdapter.getCards().size > 0 && allCardsValid) {
                 // Create Set
                 val newSet : Response<CreateCardSetResponse> = runBlocking {
                     return@runBlocking api.addSet(CreateCardSetEntity(userid, setTitle, ""))

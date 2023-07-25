@@ -1,4 +1,4 @@
-package com.example.clarity.sets
+package com.example.clarity.sets.data
 
 data class Set(
     val id: Int,
@@ -6,5 +6,5 @@ data class Set(
     val userId: Int,
     val cards: MutableList<Card>,
     var progress: Int,
-    val category:SetCategory,
+    val category: SetCategory,
 )
