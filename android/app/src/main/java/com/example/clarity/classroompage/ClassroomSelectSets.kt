@@ -103,7 +103,7 @@ class ClassroomSelectSets(private val classId: String) : Fragment() {
         }
 
         // ensure we only add the same type of set once for a task
-        if (selectedSetsId.size > 0 && selectedSet.id !in selectedSetsId) {
+        if (selectedSet.id !in selectedSetsId) {
             // create fields for making new task
             val setIdForTask = selectedSet.id.toString()
             val setNameForTask = selectedSet.title
@@ -123,7 +123,7 @@ class ClassroomSelectSets(private val classId: String) : Fragment() {
             }
         }
         else {
-            Toast.makeText(requireContext(), "Task Already Added.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), "Task was already added.", Toast.LENGTH_SHORT).show();
         }
     }
 

@@ -73,6 +73,8 @@ class ClassTask(private val classId: String, private val classTeacherId: String)
         val tvPopupSetTitle = binding.tvPopupSetTitle
         val tvNumCards = binding.tvNumCards
 
+        val taskId = tasks[position].taskId
+
         // Make sure that cvStartActivity is not already up, otherwise the button won't work
         if (cvStartActivity.visibility != VISIBLE) {
             //
@@ -89,8 +91,9 @@ class ClassTask(private val classId: String, private val classTeacherId: String)
                 val set = sets[position]
                 val gson = Gson()
                 val setJson = gson.toJson(set)
-                val intent = Intent(activity, TestSetActivity::class.java).apply {
+                val intent = Intent(activity, ClassroomTaskTestActivity::class.java).apply {
                     putExtra("set", setJson)
+                    putExtra("taskId", taskId.toString())
                 }
                 startActivity(intent)
             }
@@ -100,7 +103,7 @@ class ClassTask(private val classId: String, private val classTeacherId: String)
                 val set = sets[position]
                 val gson = Gson()
                 val setJson = gson.toJson(set)
-                val intent = Intent(activity, PracticeSetActivity::class.java).apply {
+                val intent = Intent(activity, ClassroomTaskPracticeActivity::class.java).apply {
                     putExtra("set", setJson)
                 }
                 startActivity(intent)
