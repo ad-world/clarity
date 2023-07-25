@@ -62,11 +62,6 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-
-
-
-        <!-- Add more TextViews as needed -->
-
     </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

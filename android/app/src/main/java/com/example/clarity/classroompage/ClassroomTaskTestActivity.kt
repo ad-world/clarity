@@ -1,4 +1,4 @@
-package com.example.clarity.sets.activities
+package com.example.clarity.classroompage
 
 import android.Manifest
 import android.annotation.SuppressLint
@@ -23,6 +23,7 @@ import com.example.clarity.sdk.ClaritySDK
 import com.example.clarity.R
 import com.example.clarity.SessionManager
 import com.example.clarity.sdk.CreateAttemptResponse
+import com.example.clarity.sdk.CreateClassroomAttemptResponse
 import com.example.clarity.sets.data.Card
 import com.example.clarity.sets.data.Set
 import com.example.clarity.sets.data.SetCategory
@@ -34,6 +35,7 @@ import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Response
+import retrofit2.http.Part
 import java.io.*
 import java.io.File
 import java.nio.ByteBuffer
@@ -41,7 +43,7 @@ import java.nio.ByteOrder
 import java.nio.charset.Charset
 import java.util.Locale
 
-class TestSetActivity() : AppCompatActivity() {
+class ClassroomTaskTestActivity() : AppCompatActivity() {
 
     // Recorder and Player
     private var player: TextToSpeech? = null
@@ -62,9 +64,10 @@ class TestSetActivity() : AppCompatActivity() {
     // Index that stores the current card being displayed
     private var index = 0
 
-    // User and Set
+    // User, Set adn taskId
     var userid = 0
     var set: Set = Set(0, "", 0, mutableListOf<Card>(), 0, SetCategory.COMMUNITY_SET)
+    private var taskId: Int = 0
 
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -90,6 +93,7 @@ class TestSetActivity() : AppCompatActivity() {
         val setJson = intent.getStringExtra("set")
         val gson = Gson()
         set = gson.fromJson(setJson, Set::class.java)
+        taskId = intent.getStringExtra("taskId")?.toInt()!!
 
         // Get all view components
         val tvTitle = findViewById<TextView>(R.id.tvTitle)
@@ -209,15 +213,15 @@ class TestSetActivity() : AppCompatActivity() {
         val requestFile = RequestBody.create(MediaType.parse("audio/*"), wavFile)
         val part = MultipartBody.Part.createFormData("audio", wavFile.name, requestFile)
 
-        // Make attempt call
-        val response: Response<CreateAttemptResponse> = runBlocking {
-            return@runBlocking api.attemptCard(userid, set.cards[index].id, set.id, part)
+        // Make classroom attempt call for tasks
+        val response: Response<CreateClassroomAttemptResponse> = runBlocking {
+            return@runBlocking api.attemptClassroomCard(userid, set.cards[index].id, taskId, part)
         }
         // Handle failed response case
         if (response.body() == null || response.body()!!.metadata == null) {
             return 0
         }
-
+        println("success response")
         // Return with Accuracy Score
         return response.body()?.metadata!!.accuracyScore.toInt()
     }
