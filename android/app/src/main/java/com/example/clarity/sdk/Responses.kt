@@ -44,3 +44,5 @@ data class ChangePasswordResponse(val response: StatusResponse, val message: Str
 data class GetPublicCardSetsResponse(val response: StatusResponse, val sets: List<SetMetadata>)
 data class GetSetDataResponse(val response: StatusResponse, val set: CardSet? = null)
 data class ClonePublicSetResponse(val response: StatusResponse, val new_set_id: Int, val msg: String)
+data class PracticeAttemptResponse(val response: StatusResponse, val metadata: AttemptMetadata?, val message: String)
+data class PracticeClassroomAttemptResponse(val response: StatusResponse, val metadata: ClassroomAttemptMetadata?, val message: String)
