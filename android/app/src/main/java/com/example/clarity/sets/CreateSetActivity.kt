@@ -16,6 +16,7 @@ import com.example.clarity.sdk.CreateCardSetResponse
 import com.example.clarity.R
 import com.example.clarity.SessionManager
 import com.example.clarity.sdk.CreateCardEntity
+import com.example.clarity.sdk.GetWordsResponse
 import com.example.clarity.sets.data.PhraseDictionary
 import com.google.android.material.textfield.TextInputEditText
 import kotlinx.coroutines.launch
@@ -70,8 +71,15 @@ class CreateSetActivity : AppCompatActivity() {
         // Set View
         setContentView(R.layout.activity_create_set)
 
+        // Get Words and set Dictionary
+        val words : Response<GetWordsResponse> = runBlocking {
+            return@runBlocking api.getWords()
+        }
+
+        val wordList = words.body()!!.result.toTypedArray()
+
         // Create Card Adapter, and update RecyclerView properties
-        dictionary = PhraseDictionary(arrayOf("alien", "break", "phone", "rover", "japan", "faint"))
+        dictionary = PhraseDictionary(wordList)
         cardAdapter = CardAdapter(mutableListOf(), dictionary){ hideKeyboard() }
         val rvCards = findViewById<RecyclerView>(R.id.rvCards)
         rvCards.adapter = cardAdapter
