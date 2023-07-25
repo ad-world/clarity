@@ -48,5 +48,6 @@ Entries with start time and end times that span multiple days with have exactly 
 | D5 Wrap up + Project meeting | 1 hour | 12:00 PM | 1:00 PM | July 21st, 2023 | N/A |
 | Add user / task difficulty with factor pattern | 5 hours | 1:00 PM | 6:00 PM | July 21st, 2023 | [Add user / task difficulty with factory pattern](https://github.com/ad-world/clarity/commit/b8b894c335de8671212e63ca14e725c2b49577ee) |
 | Add edit user / change password | 1.5 hours | 6:00 PM | 7:30 PM | July 21st, 2023 | [Add edit user / change password](https://github.com/ad-world/clarity/commit/bdef8618effaab8e6e1e9a4f9fc849872bb61907) |
+| D6 Meeting | 1 hour | 7:00 PM | 8:00 PM | July 24th, 2023 | N/A |
 
-Total time spent as of July 21st, 2023: 60 hours
+Total time spent as of July 24th, 2023: 61 hours
