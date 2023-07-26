@@ -44,3 +44,5 @@ data class ChangePasswordResponse(val response: StatusResponse, val message: Str
 data class GetPublicCardSetsResponse(val response: StatusResponse, val sets: List<SetMetadata>)
 data class GetSetDataResponse(val response: StatusResponse, val set: CardSet? = null)
 data class ClonePublicSetResponse(val response: StatusResponse, val new_set_id: Int, val msg: String)
+data class GetUnreadResponse(val response: StatusResponse, val messages: List<Notification>)
+data class NotificationResponse(val response: StatusResponse, val message: String)
