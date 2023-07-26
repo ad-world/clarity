@@ -35,4 +35,6 @@ data class ChangePasswordEntity(val user_id: Int, val old_password: String, val 
 data class GetSetDataRequest(val set_id: Int)
 data class ClonePublicSetRequest(val set_id: Int, val user_id: Int)
 data class MarkMessage(val notificationId: Int, val isRead: Int)
+data class GetCardSetsForFollowingRequest(val user_id: Int)
+
 

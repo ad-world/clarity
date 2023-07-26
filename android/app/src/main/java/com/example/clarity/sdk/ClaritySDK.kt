@@ -182,6 +182,10 @@ interface API {
     @POST("clonePublicSet")
     suspend fun clonePublicSet(@Body request: ClonePublicSetRequest): Response<ClonePublicSetResponse>
 
+    @POST("getCardSetsForFollowing")
+    suspend fun getCardSetsForFollowing(@Body request: GetCardSetsForFollowingRequest): Response<GetCardSetsForFollowingResponse>
+}
+
     @GET("getUnread")
     suspend fun getUnread(@Query("userId") userId: Int): Response<GetUnreadResponse>
 
