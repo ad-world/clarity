@@ -20,6 +20,7 @@ import androidx.lifecycle.lifecycleScope
 import com.example.clarity.sdk.ClaritySDK
 import com.example.clarity.R
 import com.example.clarity.SessionManager
+import com.example.clarity.sdk.PracticeAttemptResponse
 import com.example.clarity.sdk.PracticeClassroomAttemptResponse
 import com.example.clarity.sets.data.Card
 import com.example.clarity.sets.data.Set
@@ -55,7 +56,7 @@ class ClassroomTaskPracticeActivity() : AppCompatActivity() {
     private var taskId = -1
 
     // List that stores missing words
-    var ommisions: List<String>? = listOf()
+    var failedWords: List<String>? = listOf()
 
     // User and Set
     var userid = 0
@@ -211,18 +212,23 @@ class ClassroomTaskPracticeActivity() : AppCompatActivity() {
         val requestFile = RequestBody.create(MediaType.parse("audio/*"), wavFile)
         val part = MultipartBody.Part.createFormData("audio", wavFile.name, requestFile)
 
-        // Make classroom attempt call for tasks
-        val response: Response<PracticeClassroomAttemptResponse> = runBlocking {
-            return@runBlocking api.practiceAttemptClassroomCard(userid, set.cards[index].id, taskId, part)
+        // Make attempt call
+        val response: Response<PracticeAttemptResponse> = runBlocking {
+            return@runBlocking api.practiceAttemptCard(userid, set.cards[index].id, set.id, part)
         }
 
+        Log.d("response", response.toString())
         // Handle failed response case
         if (response.body() == null || response.body()!!.metadata == null) {
+            failedWords = null
             return false
         }
 
-        ommisions = response.body()!!.metadata?.omissions
+        Log.d("response metadata", response.body()!!.metadata.toString())
 
+        val omissions = response.body()!!.metadata?.omissions!!
+        val mispronunciations = response.body()!!.metadata?.mispronunciations!!
+        failedWords = omissions + mispronunciations
         // Return with isComplete
         return response.body()?.metadata!!.is_complete
     }
@@ -238,20 +244,32 @@ class ClassroomTaskPracticeActivity() : AppCompatActivity() {
         if (isComplete)  {
             cvPopUp.backgroundTintList = getColorStateList(R.color.passed)
             tvResultMessage.text = resources.getString(R.string.great_job)
-        } else if (ommisions == null) {
+        } else if (failedWords == null) {
             cvPopUp.backgroundTintList = getColorStateList(R.color.failed)
             tvResultMessage.text = "Whoops, No audio was detected, ensure that your microphone is enabled and try again"
         } else {
             cvPopUp.backgroundTintList = getColorStateList(R.color.failed)
             tvResultMessage.text =  resources.getString(R.string.just_a_little_off_keep_practicing)
-            /*if (omissions!!.isNotEmpty()) {
-                tvResultMessage.text = tvResultMessage.text as String + "\n The following words weren't picked up: " + getOmittedWords(
-                    omissions!!
+            if (failedWords!!.isNotEmpty()) {
+                tvResultMessage.text = tvResultMessage.text as String + "\n The following words weren't picked up: " + getFailedWords(
+                    failedWords!!
                 )
-            }*/
+            }
         }
 
         // Make Popup visible
         cvPopUp.visibility = View.VISIBLE
+    }
+
+    private fun getFailedWords(failedWords: List<String>): String {
+        var result = ""
+        for (i in failedWords.indices) {
+            result += failedWords[i]
+            if (i != failedWords.size - 1) {
+                result += ", "
+            }
+        }
+
+        return result
     }
 }
