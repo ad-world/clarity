@@ -39,7 +39,7 @@ data class GetPublicCardSetsResponse(val response: StatusResponse, val sets: Lis
 data class ClonePublicSetResponse(val response: StatusResponse, val new_set_id: Int, val msg: String)
 data class GetCardSetsForFollowingResponse(
     val response: StatusResponse, 
-    val data: List<UserCreatedCardSet>, 
+    val data: List<CardSet>, 
     val msg: String
 )
 
@@ -620,7 +620,7 @@ class CardSetEntity() {
                 WHERE creator_id IN (${id_list}) AND is_public_ind = 1;
             """.trimIndent()
             val resultRows = statement.executeQuery(query)
-            var data_map = mutableMapOf<Int, MutableList<CardSet>>();
+            var card_sets = mutableListOf<CardSet>()
 
             while (resultRows.next()) {
                 val set_id = resultRows.getInt("set_id")
@@ -634,22 +634,12 @@ class CardSetEntity() {
                         "Could not get set data for Set (${set_id}) in /getCardSetsForFollowing"
                     )
                 }
-
-                if (data_map.containsKey(creator_id)) {
-                    data_map[creator_id]!!.add(set_data_resp.set!!)
-                } else {
-                    data_map[creator_id] = mutableListOf<CardSet>(set_data_resp.set!!)
-                }
-            }
-
-            var data = mutableListOf<UserCreatedCardSet>()
-            for ((user_id, cardset_list) in data_map) {
-                data.add(UserCreatedCardSet(user_id=user_id, card_sets=cardset_list.toList()))
+                card_sets.add(set_data_resp.set!!)
             }
 
             return GetCardSetsForFollowingResponse(
                 StatusResponse.Success,
-                data.toList(),
+                card_sets.toList(),
                 ""
             )
         } catch (e: Exception) {
