@@ -69,7 +69,11 @@
         android:label="Community Fragment"
         tools:layout="@layout/fragment_community">
     </fragment>
-
-
+    <fragment
+        android:id="@+id/NotificationsFragment"
+        android:name="com.example.clarity.profile.NotificationsFragment"
+        android:label="Notifications Fragment"
+        tools:layout="@layout/fragment_notifications">
+    </fragment>
 
 </navigation>

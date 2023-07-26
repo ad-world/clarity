@@ -3,6 +3,7 @@ package com.example.clarity.profile
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
+import android.graphics.Color.RED
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -22,9 +23,11 @@ import com.example.clarity.databinding.FragmentProfileBinding
 import com.example.clarity.sdk.ClaritySDK
 import com.example.clarity.sdk.FollowerListResponse
 import com.example.clarity.sdk.GetSetsByUsernameResponse
+import com.example.clarity.sdk.GetUnreadResponse
 import com.example.clarity.sdk.GetUserResponse
 import com.example.clarity.sdk.GetUserSetProgressRequest
 import com.example.clarity.sdk.GetUserSetProgressResponse
+import com.example.clarity.sdk.Notification
 import com.github.mikephil.charting.animation.Easing
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.charts.PieChart
@@ -48,6 +51,8 @@ import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 import java.util.Date
 import java.util.Locale
+import com.google.android.material.badge.BadgeDrawable
+import com.google.android.material.badge.BadgeUtils
 
 
 class ProfileFragment : Fragment() {
@@ -158,48 +163,32 @@ class ProfileFragment : Fragment() {
 
         var selectedTab = 0
         updateInfo()
-        val sampleTimes: List<LocalDate> = listOf(
-            LocalDate.now().minusDays(1),
-            LocalDate.now().minusDays(1),
-            LocalDate.now().minusDays(1),
-            LocalDate.now().minusDays(1),
-            LocalDate.now().minusDays(1),// 1 day ago
-            LocalDate.now().minusDays(7),           // 7 days ago (1 week)
-            LocalDate.now().minusDays(30),          // 30 days ago (1 month, approximately)
-            LocalDate.now().minusDays(90),          // 90 days ago (3 months, approximately)
-            LocalDate.now().minusDays(365)          // 365 days ago (1 year)
-        )
-        val sampleTimes2: List<LocalDate> = listOf(
-            LocalDate.now().minusDays(1),
-            LocalDate.now().minusDays(1),
-            LocalDate.now().minusDays(1),
-            LocalDate.now().minusDays(1),
-            LocalDate.now().minusDays(1),// 1 day ago
-            LocalDate.now().minusDays(7),           // 7 days ago (1 week)
-            LocalDate.now().minusDays(30),          // 30 days ago (1 month, approximately)
-            LocalDate.now().minusDays(90),          // 90 days ago (3 months, approximately)
-            LocalDate.now().minusDays(365)          // 365 days ago (1 year)
-        )
-        //cardDates = sampleTimes as MutableList<LocalDate>
-        //setDates = sampleTimes2 as MutableList<LocalDate>
+        binding.noProgressInside.visibility = View.GONE
 
-        println(cardDates)
-        println(setDates)
-
-        if(setDates.size == 0){
+        if(setDates.size == 0 && cardDates.size == 0){
             binding.noProgress.visibility = View.VISIBLE
+            binding.noProgressInside.visibility = View.GONE
             binding.chartLabel.visibility = View.GONE
             binding.lineChart.visibility = View.GONE
             binding.pieChart.visibility = View.GONE
-            binding.tabs.visibility = View.GONE
+            binding.completedNum.visibility = View.GONE
+            binding.progress.visibility = View.GONE
+            binding.completedText.visibility = View.GONE
+        } else if (setDates.size == 0) {
+            binding.noProgressInside.visibility = View.VISIBLE
+            binding.noProgress.visibility = View.GONE
+            binding.noProgressInside.text = "Complete Sets to View Progress!"
+            binding.lineChart.visibility = View.GONE
+            binding.pieChart.visibility = View.GONE
+            binding.chartLabel.visibility = View.GONE
             binding.completedNum.visibility = View.GONE
             binding.progress.visibility = View.GONE
             binding.completedText.visibility = View.GONE
         } else {
             binding.noProgress.visibility = View.GONE
+            binding.noProgressInside.visibility = View.GONE
             binding.lineChart.visibility = View.VISIBLE
             binding.pieChart.visibility = View.VISIBLE
-            binding.tabs.visibility = View.VISIBLE
             binding.completedNum.visibility = View.VISIBLE
             binding.progress.visibility = View.VISIBLE
             binding.completedText.visibility = View.VISIBLE
@@ -214,19 +203,20 @@ class ProfileFragment : Fragment() {
                     binding.pieChart.clear()
                     updateInfo()
                     if(setDates.size == 0){
-                        binding.noProgress.visibility = View.VISIBLE
+                        binding.noProgressInside.visibility = View.VISIBLE
+                        binding.noProgress.visibility = View.GONE
+                        binding.noProgressInside.text = "Complete Sets to View Progress!"
                         binding.lineChart.visibility = View.GONE
                         binding.pieChart.visibility = View.GONE
-                        binding.tabs.visibility = View.GONE
                         binding.chartLabel.visibility = View.GONE
                         binding.completedNum.visibility = View.GONE
                         binding.progress.visibility = View.GONE
                         binding.completedText.visibility = View.GONE
                     } else {
+                        binding.noProgressInside.visibility = View.GONE
                         binding.noProgress.visibility = View.GONE
                         binding.lineChart.visibility = View.VISIBLE
                         binding.pieChart.visibility = View.VISIBLE
-                        binding.tabs.visibility = View.VISIBLE
                         binding.completedNum.visibility = View.VISIBLE
                         binding.progress.visibility = View.VISIBLE
                         binding.completedText.visibility = View.VISIBLE
@@ -238,19 +228,20 @@ class ProfileFragment : Fragment() {
                     binding.pieChart.clear()
                     updateInfo()
                     if(cardDates.size == 0){
-                        binding.noProgress.visibility = View.VISIBLE
+                        binding.noProgressInside.visibility = View.VISIBLE
+                        binding.noProgress.visibility = View.GONE
                         binding.lineChart.visibility = View.GONE
+                        binding.noProgressInside.text = "Complete Cards to View Progress!"
                         binding.chartLabel.visibility = View.GONE
                         binding.pieChart.visibility = View.GONE
-                        binding.tabs.visibility = View.GONE
                         binding.completedNum.visibility = View.GONE
                         binding.progress.visibility = View.GONE
                         binding.completedText.visibility = View.GONE
                     } else {
                         binding.noProgress.visibility = View.GONE
+                        binding.noProgressInside.visibility = View.GONE
                         binding.lineChart.visibility = View.VISIBLE
                         binding.pieChart.visibility = View.VISIBLE
-                        binding.tabs.visibility = View.VISIBLE
                         binding.completedNum.visibility = View.VISIBLE
                         binding.progress.visibility = View.VISIBLE
                         binding.completedText.visibility = View.VISIBLE
@@ -266,8 +257,17 @@ class ProfileFragment : Fragment() {
             }
         })
 
+        binding.notifications.setOnClickListener {
+            findNavController()?.navigate(R.id.NotificationsFragment)
+        }
     }
 
+    private fun getNotifications(): List<Notification>? {
+        val response : Response<GetUnreadResponse> = runBlocking {
+            return@runBlocking api.getUnread(userId)
+        }
+        return response.body()?.messages
+    }
     private fun logout() {
         val intent = Intent(activity, MainActivity::class.java)
         startActivity(intent)
@@ -276,53 +276,16 @@ class ProfileFragment : Fragment() {
         findNavController()?.navigate(R.id.SettingsFragment)
     }
     private fun cards() {
-        println("hereC")
         binding.progress.text = "Cards Progress"
         binding.completedText.text = "Completed Cards"
         binding.completedNum.text = completedCards.toString()
         //get cards
+        print("cards:")
+        println(cardDates)
 
         var attempts = ArrayList<Entry>()
         val sortedDates = cardDates.sorted()
         val labels = ArrayList<String>()
-
-//        val earliestDate = sortedDates.first()
-//        val mostRecentDate = sortedDates.last()
-
-//        val numberOfDates = sortedDates.size
-//        val stepSize: Long = if (numberOfDates > 1) {
-//            (mostRecentDate.toEpochDay() - earliestDate.toEpochDay()) / (numberOfDates - 1)
-//        } else {
-//            // Handle the case where there is only one date
-//            1
-//        }
-//
-//        // Create a sequence of dates within the range to use as labels
-//        val dateLabels = generateSequence(earliestDate) { it.plusDays(stepSize) }
-//            .take(7) // Take at most 7 dates (or fewer if there are less than 7 available)
-//
-//        // Loop through 7 dates (or the number of dates available) and get the frequencies at each date range
-//        for ((i, currentDate) in dateLabels.withIndex()) {
-//            val startDateRange = currentDate
-//            val endDateRange = currentDate.plusDays(stepSize)
-//
-//            // Count the cards that fall within the current date range (exclusive on the end date)
-//            val currentDateCards = cardDates.count { it >= startDateRange && it < endDateRange }
-//            attempts.add(Entry(i.toFloat(), currentDateCards.toFloat()))
-//            labels.add(currentDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.getDefault())))
-//        }
-//        val stepSize = (mostRecentDate.toEpochDay() - earliestDate.toEpochDay()) / 6
-//
-//        var currentDate = earliestDate
-//
-//        for (i in 0..6) {
-//            val startDateRange = currentDate
-//            val endDateRange = currentDate.plusDays(stepSize)
-//            val currentDateCards = cardDates.count { it >= startDateRange && it <= endDateRange }
-//            attempts.add(Entry(i.toFloat(), currentDateCards.toFloat()))
-//            labels.add(currentDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.getDefault())))
-//            currentDate = currentDate.plusDays(stepSize)
-//        }
 
         val dateCardCountMap = sortedDates.groupingBy { it }.eachCount()
         var index = 0f
@@ -330,6 +293,12 @@ class ProfileFragment : Fragment() {
             attempts.add(Entry(index, count.toFloat()))
             labels.add(date.toString())
             index++
+        }
+        if (attempts.size == 1) {
+            val singleDataPoint = attempts[0]
+            val fillerDataPoint = Entry(1f, singleDataPoint.y) // You can set the x-value to any value you like
+            attempts.add(fillerDataPoint)
+            labels.add("") // Add an empty label for the filler data point
         }
         val lineDataSet = LineDataSet(attempts, "Number of cards completed").apply {
             setDrawValues(false)
@@ -390,29 +359,12 @@ class ProfileFragment : Fragment() {
         binding.progress.text = "Saved Sets Progress"
 
         binding.completedNum.text = completedSets.toString()
-
+        print("sets:")
+        println(setDates)
 
         var attempts = ArrayList<Entry>()
         val sortedDates = setDates.sorted()
-        println(cardDates)
         val labels = ArrayList<String>()
-
-//        val earliestDate = sortedDates.first()
-//        val mostRecentDate = sortedDates.last()
-//
-//        val stepSize = (mostRecentDate.toEpochDay() - earliestDate.toEpochDay()) / 6
-//
-//        var currentDate = earliestDate
-
-        // Loop through 7 dates (earliestDate + 6 steps) and get the frequencies at each date
-//        for (i in 0..6) {
-//            val startDateRange = currentDate
-//            val endDateRange = currentDate.plusDays(stepSize)
-//            val currentDateCards = cardDates.count { it >= startDateRange && it < endDateRange }
-//            attempts.add(Entry(i.toFloat(), currentDateCards.toFloat()))
-//            labels.add(currentDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.getDefault())))
-//            currentDate = currentDate.plusDays(stepSize)
-//        }
 
         val dateCardCountMap = sortedDates.groupingBy { it }.eachCount()
         var index = 0f
@@ -427,7 +379,7 @@ class ProfileFragment : Fragment() {
             attempts.add(fillerDataPoint)
             labels.add("") // Add an empty label for the filler data point
         }
-        val lineDataSet = LineDataSet(attempts, "Number of cards completed").apply {
+        val lineDataSet = LineDataSet(attempts, "Number of sets completed").apply {
             setDrawValues(false)
             color = Color.RED
             lineWidth = 2f
@@ -452,7 +404,7 @@ class ProfileFragment : Fragment() {
             animateX(1800, Easing.EaseInOutQuart)
             invalidate() // refresh
         }
-        binding.chartLabel.text = "Number of Cards Completed"
+        binding.chartLabel.text = "Number of Sets Completed"
 
         pieChart = binding.pieChart
         val entries = mutableListOf<PieEntry>()
@@ -508,7 +460,8 @@ class ProfileFragment : Fragment() {
         completedSets = 0
         incompleteCards = 0
         incompleteSets = 0
-
+        cardDates.clear()
+        setDates.clear()
 
         if (sets != null) {
             for (s in sets){
