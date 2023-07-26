@@ -26,10 +26,34 @@
             <ImageView
                 android:id="@+id/icon"
                 android:layout_width="109dp"
+                android:layout_marginEnd="109dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:layout_marginEnd="200dp"
                 android:src="@drawable/claritylogo" />
+
+            <ImageView
+                android:id="@+id/notifications"
+                android:layout_width="77dp"
+                android:layout_height="wrap_content"
+                android:src="@drawable/inbox_foreground" />
+            <FrameLayout
+                android:id="@+id/badgeContainer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@id/notifications"
+                android:layout_alignEnd="@id/notifications">
+
+                <!-- TextView for the badge -->
+                <TextView
+                    android:id="@+id/notificationBadge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@android:color/white"
+                    android:textSize="12sp"
+                    android:visibility="gone"
+                    app:badgeTextAppearance="@style/Widget.MaterialComponents.Badge" />
+
+            </FrameLayout>
 
             <ImageView
                 android:id="@+id/dropdown"
