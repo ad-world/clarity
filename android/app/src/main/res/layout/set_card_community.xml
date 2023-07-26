@@ -126,6 +126,7 @@
                     android:layout_width="48dp"
                     android:layout_height="60dp"
                     android:scaleX="1.0"
+                    app:tint="@android:color/white"
                     app:srcCompat="@drawable/download_foreground" />
 
                 <ImageView
@@ -134,6 +135,7 @@
                     android:layout_width="51dp"
                     android:layout_height="60dp"
                     android:scaleX="1.0"
+                    app:tint="@android:color/white"
                     android:visibility="visible"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
@@ -142,6 +144,7 @@
                     android:id="@+id/liked"
                     android:paddingBottom="5dp"
                     android:visibility="gone"
+                    app:tint="@android:color/white"
                     android:layout_width="60dp"
                     android:layout_height="60dp"
                     android:scaleX="1.0"

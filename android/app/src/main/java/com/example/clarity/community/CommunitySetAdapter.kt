@@ -100,12 +100,12 @@ class CommunitySetAdapter(
 
             val following = getFollowing()
             if(doesFollow(following, userId)) {
-                follow.text = "Unfollow"
+                follow.text = "Unfollow?"
             } else {
-                follow.text = "Follow"
+                follow.text = "Follow?"
             }
             follow.setOnClickListener {
-                if(follow.text == "Unfollow") {
+                if(follow.text == "Unfollow?") {
                     //going to unfollow
                     if(userId != null) {
                         runBlocking {
@@ -115,7 +115,7 @@ class CommunitySetAdapter(
                             notifyItemRemoved(position)
                         }
 
-                        follow.text = "Follow"
+                        follow.text = "Follow?"
                     }
 
                 } else {
@@ -124,7 +124,7 @@ class CommunitySetAdapter(
                         runBlocking {
                             return@runBlocking api.follow(FollowingRequestEntity(userid, userId))
                         }
-                        follow.text = "Unfollow"
+                        follow.text = "Unfollow?"
                     }
                 }
             }
