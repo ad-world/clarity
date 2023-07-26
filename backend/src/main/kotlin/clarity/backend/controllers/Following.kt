@@ -2,6 +2,8 @@ package clarity.backend.controllers
 
 import clarity.backend.DataManager
 import clarity.backend.entity.*
+import clarity.backend.util.EmailService
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
@@ -10,13 +12,13 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-class Following {
-
+class Following @Autowired constructor(val emailService: EmailService){
     @PostMapping("/follow")
     fun follow(@RequestBody request: FollowingRequestEntity) : ResponseEntity<FollowingResponse> {
         val followingEntity = FollowingEntity()
         val response = followingEntity.follow(request)
         return if(response.response == StatusResponse.Success) {
+            emailService.sendEmailNewFollow(request)
             ResponseEntity.ok(response)
         } else {
             ResponseEntity.badRequest().body(response)
