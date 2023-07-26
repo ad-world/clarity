@@ -7,6 +7,7 @@ import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
 import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
@@ -61,6 +62,8 @@ class SetsFragment : Fragment() {
     // sessionManager to interact with global datastore
     private val sessionManager: SessionManager by lazy { SessionManager(requireContext()) }
 
+    // Filter stuff
+    private var showFilters = false
     private var filterText = ""
     private var showCompleted = true
 
@@ -209,6 +212,23 @@ class SetsFragment : Fragment() {
         binding.btnCreateSet.setOnClickListener {
             val intent = Intent(activity, CreateSetActivity::class.java)
             startActivity(intent)
+        }
+
+        binding.btnFilterToggle.setBackgroundResource(R.drawable.baseline_filter_list_off_24)
+        binding.btnToggleCompleted.visibility = GONE
+        binding.etSearchSets.visibility = GONE
+        showFilters = false
+        binding.btnFilterToggle.setOnClickListener {
+            showFilters = !showFilters
+            if (showFilters) {
+                binding.btnFilterToggle.setBackgroundResource(R.drawable.baseline_filter_list_24)
+                binding.btnToggleCompleted.visibility = VISIBLE
+                binding.etSearchSets.visibility = VISIBLE
+            } else {
+                binding.btnFilterToggle.setBackgroundResource(R.drawable.baseline_filter_list_off_24)
+                binding.btnToggleCompleted.visibility = GONE
+                binding.etSearchSets.visibility = GONE
+            }
         }
 
         showCompleted = true
