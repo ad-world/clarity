@@ -69,7 +69,9 @@ class NotificationsFragment : Fragment() {
         recyclerView.layoutManager = LinearLayoutManager(context)
         recyclerView.adapter = getNotifications()?.let { NotificationsAdapter(it, userId) }
 
-
+        binding.back.setOnClickListener {
+            findNavController().navigate(R.id.ProfileFragment)
+        }
     }
 
 

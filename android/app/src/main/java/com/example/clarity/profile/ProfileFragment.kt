@@ -271,16 +271,6 @@ class ProfileFragment : Fragment() {
             }
         })
 
-        val notificationBadge = binding.notificationBadge
-
-        val badgeDrawable = BadgeDrawable.create(requireContext())
-        badgeDrawable.backgroundColor = RED
-        badgeDrawable.badgeGravity = BadgeDrawable.TOP_END
-
-        val notifications = getNotifications()
-        badgeDrawable.number = notifications?.size!!
-
-        BadgeUtils.attachBadgeDrawable(badgeDrawable, notificationBadge, binding.badgeContainer)
         binding.notifications.setOnClickListener {
             findNavController()?.navigate(R.id.NotificationsFragment)
         }
