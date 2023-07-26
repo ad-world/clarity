@@ -205,22 +205,40 @@ class ClassroomAttemptsEntity {
             FROM (
                      SELECT DISTINCT is_complete, card_id, user_id
                      FROM ClassroomAttempts
-                     WHERE task_id = ${request.task_id}
+                     WHERE task_id = ${request.task_id} AND is_complete = 1
                  ) AS c
                      JOIN User u ON u.user_id = c.user_id
             GROUP BY c.user_id, u.first_name, u.last_name;
             """.trimIndent()
+            val taskObject = TaskEntity().getTaskById(request.task_id)
+            val classroomStudents = ClassroomEntity().getStudentsInClass(taskObject.task?.classId?: "").toMutableList()
 
             val progress = mutableListOf<StudentProgress>()
             val completedAttempts = statement.executeQuery(getAttemptsQuery)
 
             while(completedAttempts.next()) {
+                val userId = completedAttempts.getInt("user_id")
+                classroomStudents.remove(userId)
                 progress.add(
                     StudentProgress(
-                        user_id = completedAttempts.getInt("user_id"),
+                        user_id = userId ,
                         completed_count = completedAttempts.getInt("completed_count"),
                         firstName = completedAttempts.getString("first_name"),
                         lastName = completedAttempts.getString("last_name")
+                    )
+                )
+            }
+
+            while(classroomStudents.isNotEmpty()) {
+                val userId = classroomStudents.removeAt(0)
+                val userObject = UserEntity().getUserById(userId.toString())
+
+                progress.add(
+                    StudentProgress(
+                        user_id = userId,
+                        completed_count = 0,
+                        firstName = userObject.user?.firstname ?: "",
+                        lastName = userObject.user?.lastname ?: ""
                     )
                 )
             }

@@ -22,6 +22,8 @@ data class TaskAttemptWithName(val task_id: Int, val user_id: Int, val card_id: 
 data class TaskAttemptWithNameAndClass(val classroom: String, val task_id: Int, val user_id: Int, val card_id: Int, val pronunciationScore: Int,
                                        val accuracyScore: Int, val fluencyScore: Int, val completenessScore: Int, val attempt_date: String,
                                        val firstName: String, val lastName: String)
+data class TaskWithProgress(val taskId: Int, val classId: String, val setId: Int, val name: String, val description: String, val dueDate: String?, val difficulty: Difficulty, val card_count: Int, val completed_card_count: Int)
+
 
 data class StudentProgress(val user_id: Int, val completed_count: Int, val firstName: String, val lastName: String)
 

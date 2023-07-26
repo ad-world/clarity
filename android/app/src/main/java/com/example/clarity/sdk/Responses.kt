@@ -26,7 +26,7 @@ data class GetAttemptsForSetResponse(val user_id: Int, val set_id: Int, val atte
 data class GetTaskAttemptsResponse(val task_id: Int, val attempts: List<TaskAttemptWithName>, val response: StatusResponse)
 data class GetClassAttemptsResponse(val classroom: String, val attempts: List<TaskAttemptWithNameAndClass>, val response: StatusResponse)
 data class CreateTaskResponse(val response: StatusResponse, val id: String)
-data class GetTasksResponse(val response: StatusResponse, val id: List<Task>)
+data class GetTasksResponse(val response: StatusResponse, val id: List<TaskWithProgress>)
 data class Announcement(val announcementId: Int, val classId: String, val text: String, val description: String, val dateCreated: String)
 data class AnnouncementResponse(val response: StatusResponse, val message: String)
 data class GetAnnouncementsResponse(val response: StatusResponse, val result: List<Announcement>)

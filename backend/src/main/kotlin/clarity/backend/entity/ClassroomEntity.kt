@@ -126,4 +126,22 @@ class ClassroomEntity() {
             return GetClassroomResponse(StatusResponse.Failure, resultPlaceholder)
         }
     }
+
+    fun getStudentsInClass(classCode: String): List<Int> {
+        val db = DataManager.conn()
+        val list = mutableListOf<Int>()
+        return try {
+            val statement = db!!.createStatement()
+            val select = "SELECT user_id FROM ClassroomStudents WHERE class_id = '$classCode'"
+            val result = statement.executeQuery(select)
+
+            while(result.next()) {
+                list.add(result.getInt("user_id"))
+            }
+            list
+        } catch (e: Exception) {
+            e.printStackTrace()
+            list
+        }
+    }
 }

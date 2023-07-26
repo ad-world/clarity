@@ -6,14 +6,18 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.clarity.R
+import com.example.clarity.SessionManager
 import com.example.clarity.databinding.FragmentClassTeacherTaskBinding
 import com.example.clarity.sdk.ClaritySDK
 import com.example.clarity.sdk.GetTasksEntity
 import com.example.clarity.sdk.GetTasksResponse
 import com.example.clarity.sdk.StatusResponse
 import com.example.clarity.sdk.Task
+import com.example.clarity.sdk.TaskWithProgress
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import retrofit2.Response
 
@@ -31,11 +35,16 @@ class ClassTeacherTasks(private val classId: String) : Fragment() {
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
+    private val sessionManager: SessionManager by lazy { SessionManager(requireContext()) }
+    var userId: Int = -1
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        lifecycleScope.launch {
+            userId = sessionManager.getUserId()
+        }
 
         _binding = FragmentClassTeacherTaskBinding.inflate(inflater, container, false)
         return binding.root
@@ -44,10 +53,10 @@ class ClassTeacherTasks(private val classId: String) : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val tasks: MutableList<Task> = mutableListOf()
+        val tasks: MutableList<TaskWithProgress> = mutableListOf()
 
         // update list with current tasks
-        val getTaskEntity = GetTasksEntity(classId)
+        val getTaskEntity = GetTasksEntity(classId, userId)
         // call api to get the list of tasks
         val response: Response<GetTasksResponse> = runBlocking {
             return@runBlocking api.getTasks(getTaskEntity)
