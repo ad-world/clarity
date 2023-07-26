@@ -93,7 +93,7 @@ class ClassTask(private val classId: String, private val classTeacherId: String)
                 val setJson = gson.toJson(set)
                 val intent = Intent(activity, ClassroomTaskTestActivity::class.java).apply {
                     putExtra("set", setJson)
-                    putExtra("taskId", taskId.toString())
+                    putExtra("taskId", taskId)
                 }
                 startActivity(intent)
             }
@@ -105,6 +105,7 @@ class ClassTask(private val classId: String, private val classTeacherId: String)
                 val setJson = gson.toJson(set)
                 val intent = Intent(activity, ClassroomTaskPracticeActivity::class.java).apply {
                     putExtra("set", setJson)
+                    putExtra("taskId", taskId)
                 }
                 startActivity(intent)
             }
