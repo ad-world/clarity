@@ -175,7 +175,8 @@ class ClassTask(private val classId: String, private val classTeacherId: String)
                 val singleTask = tasks.get(i)
                 val setId = singleTask.setId
                 val setTitle = singleTask.name
-                val progress = 0
+                val progress = singleTask.completed_card_count
+                val totalCards = singleTask.card_count
                 val set = Set(setId, setTitle, classTeacherId.toInt(), mutableListOf<Card>(), progress, SetCategory.CREATED_SET)
 
                 // get the cards corresponding to the task/set

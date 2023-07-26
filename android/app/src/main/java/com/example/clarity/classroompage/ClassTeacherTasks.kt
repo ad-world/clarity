@@ -76,7 +76,7 @@ class ClassTeacherTasks(private val classId: String) : Fragment() {
             }
         }
 
-        // teacher can add announcements to class
+        // teacher can add tasks to class
         binding.addTask.setOnClickListener {
             val intent = Intent(requireContext(), ClassroomTeacher::class.java)
             intent.putExtra("classId", classId)

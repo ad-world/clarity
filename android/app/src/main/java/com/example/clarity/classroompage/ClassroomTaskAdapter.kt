@@ -3,6 +3,7 @@ package com.example.clarity.classroompage
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
@@ -49,6 +50,7 @@ class ClassroomTaskAdapter(
             val tvCompletedPhrases = findViewById<TextView>(R.id.tvCompletedPhrases)
             val tvCompletedPercent = findViewById<TextView>(R.id.tvCompletedPercent)
             val progressBarSet = findViewById<ProgressBar>(R.id.progressBarSet)
+            val completedCheck = findViewById<ImageView>(R.id.completedCheck)
 
             tvSetTitle.text = set.title
             if (set.cards.size == 1) {
@@ -57,8 +59,13 @@ class ClassroomTaskAdapter(
                 tvCardCount.text = "${set.cards.size} Cards"
             }
             tvCompletedPhrases.text = "${set.progress} Completed"
-            tvCompletedPercent.text = "${set.progress / set.cards.size} %"
-            progressBarSet.progress = set.progress / set.cards.size
+            tvCompletedPercent.text = "${(set.progress * 100) / set.cards.size} %"
+            progressBarSet.progress = (set.progress * 100) / set.cards.size
+            if (set.progress == set.cards.size) {
+                completedCheck.visibility = View.VISIBLE
+            } else {
+                completedCheck.visibility = View.GONE
+            }
         }
     }
 }
