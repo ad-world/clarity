@@ -10,8 +10,10 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.clarity.SessionManager
-import com.example.clarity.databinding.FragmentSetsBinding
+import com.example.clarity.databinding.FragmentDisplaySetsBinding
 import com.example.clarity.sdk.ClaritySDK
+import com.example.clarity.sdk.GetCardSetsForFollowingRequest
+import com.example.clarity.sdk.GetCardSetsForFollowingResponse
 import com.example.clarity.sdk.GetCardsInSetRequest
 import com.example.clarity.sdk.GetCardsInSetResponse
 import com.example.clarity.sdk.GetSetsByUsernameResponse
@@ -29,7 +31,7 @@ import retrofit2.Response
 
 class DisplaySetsFragment(page: Int) : Fragment() {
     // Fragment binding
-    private var _binding: FragmentSetsBinding? = null
+    private var _binding: FragmentDisplaySetsBinding? = null
     private var page = page
 
     // Set Adapter for list of sets
@@ -52,7 +54,6 @@ class DisplaySetsFragment(page: Int) : Fragment() {
 
     private fun onSetClick(position: Int) {
         // Get all Variables
-        val btnTest = binding.btnTest
         val btnPractice = binding.btnPractice
         val btnCancel = binding.iBtnCancel
         val cvStartActivity = binding.cvStartActivity
@@ -93,7 +94,7 @@ class DisplaySetsFragment(page: Int) : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         // Inflate the layout for this fragment
-        _binding = FragmentSetsBinding.inflate(inflater, container, false)
+        _binding = FragmentDisplaySetsBinding.inflate(inflater, container, false)
 
         return binding.root
     }
@@ -119,18 +120,49 @@ class DisplaySetsFragment(page: Int) : Fragment() {
             Log.d("Username is: ", username)
         }
         sets = mutableListOf()
-        // TODO: Replace following lines with a query for all sets with our userId, and then parse
-        //  through the object returned, creating a set data class for each set, and appending it
-        //  to the sets array
 
 
 //        if(page == 0) {
 //            //page is the recommended
 //
 //
-//        } else if (page == 1) {
-//            //page is the those that you are following
-//        } else {
+//        } else
+        if (page == 1 || page == 0) { //dont know where the recommended sets api is
+            //page is the those that you are following
+
+            val response : Response<GetCardSetsForFollowingResponse> = runBlocking {
+                return@runBlocking api.getCardSetsForFollowing(GetCardSetsForFollowingRequest(userid))
+            }
+
+            if (response.isSuccessful) {
+                val size = response.body()!!.sets.size
+
+                for(i in 0 until size) {
+                    val setData = response.body()?.sets?.get(i)!!
+                    val setId = setData.metadata.set_id
+                    val setTitle = setData.metadata.title
+                    val progress = 0
+                    val set = Set(
+                        setId,
+                        setTitle,
+                        userid,
+                        mutableListOf<Card>(),
+                        progress,
+                        SetCategory.COMMUNITY_SET
+                    )
+
+                    val cards : Response<GetCardsInSetResponse> = runBlocking {
+                        return@runBlocking api.getCards(GetCardsInSetRequest(setId))
+                    }
+                    if (cards.isSuccessful) {
+                        for (card in cards.body()!!.cards) {
+                            set.cards.add(Card(card.card_id, card.phrase, false))
+                        }
+                    }
+                    sets.add(set)
+                }
+            }
+        } else {
             //page is the explore page ordered in terms of likes
             val response : Response<getPublicCardSetsOrderedByLikesResponse> = runBlocking {
                 return@runBlocking api.getPublicCardSetsOrderedByLikes()
@@ -150,7 +182,7 @@ class DisplaySetsFragment(page: Int) : Fragment() {
                         userid,
                         mutableListOf<Card>(),
                         progress,
-                        SetCategory.CREATED_SET
+                        SetCategory.COMMUNITY_SET
                     )
 
                     val cards : Response<GetCardsInSetResponse> = runBlocking {
@@ -164,17 +196,12 @@ class DisplaySetsFragment(page: Int) : Fragment() {
                     sets.add(set)
                 }
             }
-//        }
-
-
-
-        setAdapter = CommunitySetAdapter(sets) { position -> onSetClick(position) }
+        }
+        println(page)
+        println(sets)
+        setAdapter = CommunitySetAdapter(sets, userid, page) { position -> onSetClick(position) }
         binding.rvSets.adapter = setAdapter
         binding.rvSets.layoutManager = LinearLayoutManager(context)
-        binding.btnCreateSet.setOnClickListener {
-            val intent = Intent(activity, CreateSetActivity::class.java)
-            startActivity(intent)
-        }
     }
 
     companion object {

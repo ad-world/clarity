@@ -36,16 +36,11 @@ class IndexActivity : AppCompatActivity() {
             navController.navigate(R.id.ClassroomFragment)
         }
 
-        if (screen == "mainCommunity") {
-            binding.bottomNav.selectedItemId = R.id.community
-            navController.navigate(R.id.DisplaySetsFragment)
-        }
-
         binding.bottomNav.setOnItemSelectedListener {
             when(it.itemId){
                 R.id.profile -> navController.navigate(R.id.ProfileFragment)
                 R.id.sets -> navController.navigate(R.id.SetsFragment)
-                R.id.community -> navController.navigate(R.id.DisplaySetsFragment)
+                R.id.community -> navController.navigate(R.id.CommunityFragment)
                 R.id.classroom -> navController.navigate(R.id.ClassroomFragment)
                 else -> {}
             }
