@@ -25,30 +25,4 @@ class EmailController @Autowired constructor(private val emailService: EmailServ
         val body = emailRequest.body
         emailService.sendEmailList(to, subject, body)
     }
-
-//    fun sdd() {
-//        // get all students in the class
-//        val getUsersStatement = db!!.createStatement()
-//        val selectStatement = """
-//                    SELECT user_id FROM ClassroomStudents WHERE class_id=${post.classId}
-//                """.trimIndent()
-//        val resultUsers = getUsersStatement.executeQuery(selectStatement)
-//        val userIds = mutableListOf<String>()
-//        while (resultUsers.next()) {
-//            userIds.add(resultUsers.getString("user_id"))
-//        }
-//
-//        val emails = mutableListOf<String>()
-//        for (user in userIds) {
-//            val getEmailStatement = db!!.createStatement()
-//            val selectEmailStatement = """
-//                    SELECT email FROM User WHERE enable_notifications=${1} AND user_id=${user}
-//                """.trimIndent()
-//            val resultEmail = getUsersStatement.executeQuery(selectEmailStatement)
-//            if (resultEmail.next()) {
-//                emails.add(resultEmail.getString("email"))
-//            }
-//        }
-//        emailService.sendEmailList(emails, "New Announcement", "New Announcement for Class ${post.classId}")
-//    }
 }
