@@ -213,8 +213,8 @@ class ClassroomTaskPracticeActivity() : AppCompatActivity() {
         val part = MultipartBody.Part.createFormData("audio", wavFile.name, requestFile)
 
         // Make attempt call
-        val response: Response<PracticeAttemptResponse> = runBlocking {
-            return@runBlocking api.practiceAttemptCard(userid, set.cards[index].id, set.id, part)
+        val response: Response<PracticeClassroomAttemptResponse> = runBlocking {
+            return@runBlocking api.practiceAttemptClassroomCard(userid, set.cards[index].id, taskId, part)
         }
 
         Log.d("response", response.toString())

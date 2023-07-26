@@ -234,8 +234,8 @@ class ClassroomTaskTestActivity() : AppCompatActivity() {
         val part = MultipartBody.Part.createFormData("audio", wavFile.name, requestFile)
 
         // Make attempt call
-        val response: Response<CreateAttemptResponse> = runBlocking {
-            return@runBlocking api.attemptCard(userid, set.cards[index].id, set.id, part)
+        val response: Response<CreateClassroomAttemptResponse> = runBlocking {
+            return@runBlocking api.attemptClassroomCard(userid, set.cards[index].id, taskId, part)
         }
         // Handle failed response case
         if (response.body() == null || response.body()!!.metadata == null) {

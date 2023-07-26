@@ -246,7 +246,7 @@ class ClassroomFragment : Fragment() {
 
                     // create a popup to notify the user about the new class code created
                     val dialogBuilder = AlertDialog.Builder(context)
-                    dialogBuilder.setTitle("Label Dialog")
+                    dialogBuilder.setTitle("Classroom created successfully")
                     dialogBuilder.setMessage("Your classroom code is $code")
                     dialogBuilder.setPositiveButton("OK") { dialog, _ ->
                         dialog.dismiss()
