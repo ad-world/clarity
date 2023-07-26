@@ -49,3 +49,4 @@ data class NotificationResponse(val response: StatusResponse, val message: Strin
 data class Notification(val notificationId: Int, val userId: Int, val message: String, val notificationDate: String, val messageRead: Int)
 data class PracticeAttemptResponse(val response: StatusResponse, val metadata: AttemptMetadata?, val message: String)
 data class PracticeClassroomAttemptResponse(val response: StatusResponse, val metadata: ClassroomAttemptMetadata?, val message: String)
+data class GetCardSetsForFollowingResponse(val response: StatusResponse, val sets: List<CardSet>, val msg: String)

@@ -21,6 +21,7 @@ data class UnlikeCardSetRequest(val user_id: Int, val set_id: Int)
 data class ToggleCardSetRequest(val set_id: Int)
 data class ClonePublicSetRequest(val set_id: Int, val user_id: Int)
 data class GetSetDataRequest(val set_id: Int)
+data class GetCardSetsForFollowingRequest(val user_id: Int)
 
 // Response Formats.
 data class CreateCardSetResponse(val response: StatusResponse, val msg: String, val set: SetMetadata? = null)
@@ -36,6 +37,7 @@ data class GetCompletedCardsInSetResponse(val response: StatusResponse, val card
 data class ToggleCardSetResponse(val response: StatusResponse, val is_public: Int)
 data class GetPublicCardSetsResponse(val response: StatusResponse, val sets: List<SetMetadata>)
 data class ClonePublicSetResponse(val response: StatusResponse, val new_set_id: Int, val msg: String)
+data class GetCardSetsForFollowingResponse(val response: StatusResponse, val sets: List<CardSet>, val msg: String)
 
 
 data class GetUserSetProgressResponse(
@@ -567,6 +569,63 @@ class CardSetEntity() {
         } catch (e: Exception) {
             e.printStackTrace()
             return ClonePublicSetResponse(StatusResponse.Failure, -1, e.message ?: "Unknown Error")
+        }
+    }
+
+    fun getCardSetsForFollowing(request: GetCardSetsForFollowingRequest): GetCardSetsForFollowingResponse {
+        val db = DataManager.conn()
+        try {
+            val following_resp: FollowerListResponse = FollowingEntity().getFollowing(request.user_id);
+            if (following_resp.response == StatusResponse.Failure) {
+                return GetCardSetsForFollowingResponse(
+                    StatusResponse.Failure,
+                    emptyList(),
+                    "Could not get users that User (${request.user_id}) follows from /getFollowing endpoint."
+                )
+            }
+
+            // Get the user ids that request.user_id follows.
+            val following: List<Int> = following_resp.followers
+
+            if (following.isEmpty()) {
+                return GetCardSetsForFollowingResponse(
+                    StatusResponse.Success,
+                    emptyList(),
+                    "User (${request.user_id}) is not following anyone."
+                )
+            }
+
+            // Get PUBLIC sets created by users that request.user_id is following.
+            val statement = db!!.createStatement()
+            val id_list = following.joinToString(", ")
+            val query = "SELECT [set_id] FROM CardSet WHERE creator_id IN (${id_list}) AND is_public_ind = 1;"
+            val resultRows = statement.executeQuery(query)
+            var cardset_list = mutableListOf<CardSet>()
+
+            while (resultRows.next()) {
+                val set_id = resultRows.getInt("set_id")
+                val set_data_resp: GetSetDataResponse = this.getSetData(GetSetDataRequest(set_id));
+
+                if (set_data_resp.response == StatusResponse.Failure) {
+                    return GetCardSetsForFollowingResponse(
+                        StatusResponse.Failure,
+                        emptyList(),
+                        "Could not get set data for Set (${set_id}) in /getCardSetsForFollowing"
+                    )
+                }
+                cardset_list.add(set_data_resp.set!!)
+            }
+            return GetCardSetsForFollowingResponse(
+                StatusResponse.Success,
+                cardset_list,
+                ""
+            )
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return GetCardSetsForFollowingResponse(
+                StatusResponse.Failure, 
+                emptyList(), 
+                e.message ?: "Unknown error in /getCardSetsForFollowing")
         }
     }
 }
