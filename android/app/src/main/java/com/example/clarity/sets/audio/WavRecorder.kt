@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.media.AudioRecord
 import android.media.MediaRecorder
+import android.util.Log
 import androidx.core.app.ActivityCompat
 import java.io.FileNotFoundException
 import java.io.FileOutputStream
@@ -79,6 +80,7 @@ class WavRecorder(val context: Context) {
         try {
             os = FileOutputStream(path)
         } catch (e: FileNotFoundException) {
+            Log.d("Error in WavRecorder", "Error opening file: $path")
             e.printStackTrace()
         }
 
