@@ -23,7 +23,7 @@
                 app:titleCentered="true"
                 app:titleTextColor="#116DF5"
                 app:titleTextAppearance="@style/MyTitleTextAppearance"
-                app:navigationIcon="@drawable/baseline_add_box_24" />
+                app:navigationIcon="@drawable/baseline_navigate_before_black_24" />
 
         </com.google.android.material.appbar.AppBarLayout>
 
