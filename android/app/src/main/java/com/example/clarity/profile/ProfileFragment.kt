@@ -158,21 +158,32 @@ class ProfileFragment : Fragment() {
 
         var selectedTab = 0
         updateInfo()
+        binding.noProgressInside.visibility = View.GONE
 
-        if(setDates.size == 0){
+        if(setDates.size == 0 && cardDates.size == 0){
             binding.noProgress.visibility = View.VISIBLE
+            binding.noProgressInside.visibility = View.GONE
             binding.chartLabel.visibility = View.GONE
             binding.lineChart.visibility = View.GONE
             binding.pieChart.visibility = View.GONE
-            binding.tabs.visibility = View.GONE
+            binding.completedNum.visibility = View.GONE
+            binding.progress.visibility = View.GONE
+            binding.completedText.visibility = View.GONE
+        } else if (setDates.size == 0) {
+            binding.noProgressInside.visibility = View.VISIBLE
+            binding.noProgress.visibility = View.GONE
+            binding.noProgressInside.text = "Complete Sets to View Progress!"
+            binding.lineChart.visibility = View.GONE
+            binding.pieChart.visibility = View.GONE
+            binding.chartLabel.visibility = View.GONE
             binding.completedNum.visibility = View.GONE
             binding.progress.visibility = View.GONE
             binding.completedText.visibility = View.GONE
         } else {
             binding.noProgress.visibility = View.GONE
+            binding.noProgressInside.visibility = View.GONE
             binding.lineChart.visibility = View.VISIBLE
             binding.pieChart.visibility = View.VISIBLE
-            binding.tabs.visibility = View.VISIBLE
             binding.completedNum.visibility = View.VISIBLE
             binding.progress.visibility = View.VISIBLE
             binding.completedText.visibility = View.VISIBLE
@@ -187,19 +198,20 @@ class ProfileFragment : Fragment() {
                     binding.pieChart.clear()
                     updateInfo()
                     if(setDates.size == 0){
-                        binding.noProgress.visibility = View.VISIBLE
+                        binding.noProgressInside.visibility = View.VISIBLE
+                        binding.noProgress.visibility = View.GONE
+                        binding.noProgressInside.text = "Complete Sets to View Progress!"
                         binding.lineChart.visibility = View.GONE
                         binding.pieChart.visibility = View.GONE
-                        binding.tabs.visibility = View.GONE
                         binding.chartLabel.visibility = View.GONE
                         binding.completedNum.visibility = View.GONE
                         binding.progress.visibility = View.GONE
                         binding.completedText.visibility = View.GONE
                     } else {
+                        binding.noProgressInside.visibility = View.GONE
                         binding.noProgress.visibility = View.GONE
                         binding.lineChart.visibility = View.VISIBLE
                         binding.pieChart.visibility = View.VISIBLE
-                        binding.tabs.visibility = View.VISIBLE
                         binding.completedNum.visibility = View.VISIBLE
                         binding.progress.visibility = View.VISIBLE
                         binding.completedText.visibility = View.VISIBLE
@@ -211,19 +223,20 @@ class ProfileFragment : Fragment() {
                     binding.pieChart.clear()
                     updateInfo()
                     if(cardDates.size == 0){
-                        binding.noProgress.visibility = View.VISIBLE
+                        binding.noProgressInside.visibility = View.VISIBLE
+                        binding.noProgress.visibility = View.GONE
                         binding.lineChart.visibility = View.GONE
+                        binding.noProgressInside.text = "Complete Cards to View Progress!"
                         binding.chartLabel.visibility = View.GONE
                         binding.pieChart.visibility = View.GONE
-                        binding.tabs.visibility = View.GONE
                         binding.completedNum.visibility = View.GONE
                         binding.progress.visibility = View.GONE
                         binding.completedText.visibility = View.GONE
                     } else {
                         binding.noProgress.visibility = View.GONE
+                        binding.noProgressInside.visibility = View.GONE
                         binding.lineChart.visibility = View.VISIBLE
                         binding.pieChart.visibility = View.VISIBLE
-                        binding.tabs.visibility = View.VISIBLE
                         binding.completedNum.visibility = View.VISIBLE
                         binding.progress.visibility = View.VISIBLE
                         binding.completedText.visibility = View.VISIBLE
