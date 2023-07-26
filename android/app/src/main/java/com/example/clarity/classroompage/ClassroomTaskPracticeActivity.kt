@@ -8,6 +8,7 @@ import android.speech.tts.TextToSpeech
 import android.util.Log
 import android.view.View
 import android.view.View.GONE
+import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
 import android.widget.ImageButton
 import android.widget.ProgressBar
@@ -52,6 +53,9 @@ class ClassroomTaskPracticeActivity() : AppCompatActivity() {
     // Index that stores the current card being displayed
     private var index = 0
     private var taskId = -1
+
+    // List that stores missing words
+    var ommisions: List<String>? = listOf()
 
     // User and Set
     var userid = 0
@@ -142,8 +146,8 @@ class ClassroomTaskPracticeActivity() : AppCompatActivity() {
                 wavRecorder.stopRecording()
 
                 // Return Accuracy Score and Display Popup
-                val score = getAccuracyScore(File(this.filesDir, "audio.wav"))
-                displayMessagePopup(score)
+                val isComplete = getAccuracyScore(File(this.filesDir, "audio.wav"))
+                displayMessagePopup(isComplete)
 
                 // Enable Navigation Buttons
                 iBtnNext.isEnabled = true
@@ -152,6 +156,11 @@ class ClassroomTaskPracticeActivity() : AppCompatActivity() {
 
             // Toggle isRecording Value
             isRecording = !isRecording
+        }
+
+        // Set invisible if no next card
+        if (set.cards.size == 1) {
+            iBtnNext.visibility = View.INVISIBLE
         }
 
         // Handle Forward Navigation
@@ -164,7 +173,7 @@ class ClassroomTaskPracticeActivity() : AppCompatActivity() {
                 cvPopUp.visibility = View.GONE
                 loadCard(set.cards[index])
                 if(index == set.cards.size - 1) {
-                    iBtnNext.visibility = GONE
+                    iBtnNext.visibility = INVISIBLE
                 }
                 iBtnPrev.visibility = VISIBLE
             }
@@ -180,7 +189,7 @@ class ClassroomTaskPracticeActivity() : AppCompatActivity() {
                 cvPopUp.visibility = View.GONE
                 loadCard(set.cards[index])
                 if(index == 0) {
-                    iBtnPrev.visibility = GONE
+                    iBtnPrev.visibility = INVISIBLE
                 }
                 iBtnNext.visibility = VISIBLE
             }
@@ -197,7 +206,7 @@ class ClassroomTaskPracticeActivity() : AppCompatActivity() {
     }
 
     // Returns accuracy score
-    private fun getAccuracyScore(wavFile: File): Int {
+    private fun getAccuracyScore(wavFile: File): Boolean {
         // Convert file to MultipartBody.Part
         val requestFile = RequestBody.create(MediaType.parse("audio/*"), wavFile)
         val part = MultipartBody.Part.createFormData("audio", wavFile.name, requestFile)
@@ -209,31 +218,37 @@ class ClassroomTaskPracticeActivity() : AppCompatActivity() {
 
         // Handle failed response case
         if (response.body() == null || response.body()!!.metadata == null) {
-            return 0
+            return false
         }
 
-        // Return with Accuracy Score
-        return response.body()?.metadata!!.accuracyScore.toInt()
+        ommisions = response.body()!!.metadata?.omissions
+
+        // Return with isComplete
+        return response.body()?.metadata!!.is_complete
     }
 
     // Display popup
     @SuppressLint("SetTextI18n")
-    private fun displayMessagePopup(score: Int)  {
+    private fun displayMessagePopup(isComplete: Boolean)  {
         // Get Components
         val cvPopUp = findViewById<CardView>(R.id.cvPopUp)
         val tvResultMessage = findViewById<TextView>(R.id.tvResultMessage)
 
-        // TODO: Make this actually return the threshold later
-        // Get Difficulty Threshold
-        val difficultyThreshold = 50
-
         // Set Message Properties based on Difficulty Threshold
-        if (score in 0 until difficultyThreshold)  {
-            cvPopUp.setCardBackgroundColor(Color.YELLOW)
-            tvResultMessage.text = resources.getString(R.string.try_again)
-        } else if (score in difficultyThreshold..100) {
-            cvPopUp.setCardBackgroundColor(Color.GREEN)
+        if (isComplete)  {
+            cvPopUp.backgroundTintList = getColorStateList(R.color.passed)
             tvResultMessage.text = resources.getString(R.string.great_job)
+        } else if (ommisions == null) {
+            cvPopUp.backgroundTintList = getColorStateList(R.color.failed)
+            tvResultMessage.text = "Whoops, No audio was detected, ensure that your microphone is enabled and try again"
+        } else {
+            cvPopUp.backgroundTintList = getColorStateList(R.color.failed)
+            tvResultMessage.text =  resources.getString(R.string.just_a_little_off_keep_practicing)
+            /*if (omissions!!.isNotEmpty()) {
+                tvResultMessage.text = tvResultMessage.text as String + "\n The following words weren't picked up: " + getOmittedWords(
+                    omissions!!
+                )
+            }*/
         }
 
         // Make Popup visible
