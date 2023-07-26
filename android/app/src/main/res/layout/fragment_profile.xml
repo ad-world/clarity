@@ -26,10 +26,16 @@
             <ImageView
                 android:id="@+id/icon"
                 android:layout_width="109dp"
+                android:layout_marginEnd="109dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:layout_marginEnd="200dp"
                 android:src="@drawable/claritylogo" />
+
+            <ImageView
+                android:id="@+id/notifications"
+                android:layout_width="77dp"
+                android:layout_height="wrap_content"
+                android:src="@drawable/inbox_foreground" />
 
             <ImageView
                 android:id="@+id/dropdown"

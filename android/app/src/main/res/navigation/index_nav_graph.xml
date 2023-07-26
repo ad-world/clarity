@@ -69,6 +69,12 @@
         android:label="Settings Fragment"
         tools:layout="@layout/fragment_settings">
     </fragment>
+    <fragment
+        android:id="@+id/NotificationsFragment"
+        android:name="com.example.clarity.profile.NotificationsFragment"
+        android:label="Notifications Fragment"
+        tools:layout="@layout/fragment_notifications">
+    </fragment>
 
 
 </navigation>
