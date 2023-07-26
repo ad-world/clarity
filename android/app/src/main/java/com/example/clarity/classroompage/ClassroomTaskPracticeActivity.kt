@@ -19,8 +19,7 @@ import androidx.lifecycle.lifecycleScope
 import com.example.clarity.sdk.ClaritySDK
 import com.example.clarity.R
 import com.example.clarity.SessionManager
-import com.example.clarity.sdk.CreateAttemptResponse
-import com.example.clarity.sdk.CreateClassroomAttemptResponse
+import com.example.clarity.sdk.PracticeClassroomAttemptResponse
 import com.example.clarity.sets.data.Card
 import com.example.clarity.sets.data.Set
 import com.example.clarity.sets.audio.WavRecorder
@@ -33,11 +32,6 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Response
 import java.io.File
-import java.io.FileInputStream
-import java.io.IOException
-import java.nio.ByteBuffer
-import java.nio.ByteOrder
-import java.nio.charset.Charset
 import java.util.Locale
 
 class ClassroomTaskPracticeActivity() : AppCompatActivity() {
@@ -57,6 +51,7 @@ class ClassroomTaskPracticeActivity() : AppCompatActivity() {
 
     // Index that stores the current card being displayed
     private var index = 0
+    private var taskId = -1
 
     // User and Set
     var userid = 0
@@ -75,6 +70,7 @@ class ClassroomTaskPracticeActivity() : AppCompatActivity() {
             }
         })
 
+        taskId = intent.getIntExtra("taskId", -1)
         // Request permission to record
         ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.RECORD_AUDIO), 0)
 
@@ -207,8 +203,8 @@ class ClassroomTaskPracticeActivity() : AppCompatActivity() {
         val part = MultipartBody.Part.createFormData("audio", wavFile.name, requestFile)
 
         // Make classroom attempt call for tasks
-        val response: Response<CreateClassroomAttemptResponse> = runBlocking {
-            return@runBlocking api.attemptClassroomCard(userid, set.cards[index].id, taskId, part)
+        val response: Response<PracticeClassroomAttemptResponse> = runBlocking {
+            return@runBlocking api.practiceAttemptClassroomCard(userid, set.cards[index].id, taskId, part)
         }
 
         // Handle failed response case

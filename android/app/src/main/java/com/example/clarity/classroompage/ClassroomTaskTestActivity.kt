@@ -93,7 +93,7 @@ class ClassroomTaskTestActivity() : AppCompatActivity() {
         val setJson = intent.getStringExtra("set")
         val gson = Gson()
         set = gson.fromJson(setJson, Set::class.java)
-        taskId = intent.getStringExtra("taskId")?.toInt()!!
+        taskId = intent.getIntExtra("taskId", -1)
 
         // Get all view components
         val tvTitle = findViewById<TextView>(R.id.tvTitle)
