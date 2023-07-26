@@ -75,7 +75,6 @@ class SettingsFragment : Fragment() {
         var enabledNotifs = user?.enableNotifications
         var enabledBool = true
         if(enabledNotifs == 0) {
-            println("heresfoisjfo")
             enabledBool = false
         }
 
@@ -170,8 +169,6 @@ class SettingsFragment : Fragment() {
                 null
             }
 
-            println("go")
-            println(notifsChanged)
 
             if(notNull || newLevel != level || notifsChanged == true) {
                 var response: Response<EditUserResponse>? = null
@@ -186,12 +183,9 @@ class SettingsFragment : Fragment() {
                     response = runBlocking {
                         return@runBlocking api.updateUser(user)
                     }
-                    println("the response")
-                    println(response)
                 }
 
                 if(newLevel != level) {
-                    println("it is different")
                     var diff = UpdateDifficultyEntity(userId, difficulty)
                     responseDiff = runBlocking {
                         return@runBlocking api.updateDifficulty(diff)
