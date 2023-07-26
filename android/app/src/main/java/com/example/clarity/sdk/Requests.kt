@@ -22,7 +22,7 @@ data class GetUserAverageAttemptsRequest(val user_id: Int)
 data class PhraseSearchEntity(val phrase: String)
 data class GetAttemptsForSetEntity(val user: Int, val set: Int)
 data class CreateTaskEntity(val classId: String, val sets: String, val name: String, val description: String, val dueDate: String, val difficulty: Difficulty)
-data class GetTasksEntity(val classId: String)
+data class GetTasksEntity(val classId: String, val user_id: Int)
 data class CreateAnnouncementEntity(val classId: String, val text: String, val description: String, val date: String)
 data class FollowingRequestEntity(val userId: Int, val followingId: Int)
 data class LikeCardSetRequest(val user_id: Int, val set_id: Int)
@@ -35,4 +35,6 @@ data class ChangePasswordEntity(val user_id: Int, val old_password: String, val 
 data class GetSetDataRequest(val set_id: Int)
 data class ClonePublicSetRequest(val set_id: Int, val user_id: Int)
 data class MarkMessage(val notificationId: Int, val isRead: Int)
+data class GetCardSetsForFollowingRequest(val user_id: Int)
+
 

@@ -35,10 +35,9 @@
                 android:paddingStart="16dp"
                 android:text="First Name"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.6" />
+                app:layout_constraintVertical_bias="0.0" />
 
             <TextView
                 android:id="@+id/lastName"
@@ -55,12 +54,24 @@
 
             <TextView
                 android:id="@+id/cardsCompleted"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="324dp"
+                android:layout_width="69dp"
+                android:layout_height="39dp"
+                android:layout_marginStart="248dp"
                 android:padding="10dp"
                 android:paddingStart="16dp"
                 android:text="10 /"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.0" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="320dp"
+                android:padding="10dp"
+                android:paddingStart="16dp"
+                android:text="Cards"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"

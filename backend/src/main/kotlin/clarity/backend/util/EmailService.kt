@@ -19,28 +19,18 @@ class EmailService(
 
     private val db = DataManager.conn();
 
-    fun sendEmail(to: String, subject: String, body: String) {
-        val message = mailSender.createMimeMessage()
-        val helper = MimeMessageHelper(message, true)
-        if (from != null) {
-            helper.setFrom(from)
-        }
-        helper.setTo(to)
-        helper.setSubject(subject)
-        helper.setText(body, true)
-        mailSender.send(message)
-    }
-
     fun sendEmailList(to: List<String>, subject: String, body: String) {
-        val message = mailSender.createMimeMessage()
-        val helper = MimeMessageHelper(message, true)
-        if (from != null) {
-            helper.setFrom(from)
+        if (to.isNotEmpty()) {
+            val message = mailSender.createMimeMessage()
+            val helper = MimeMessageHelper(message, true)
+            if (from != null) {
+                helper.setFrom(from)
+            }
+            helper.setTo(to.toTypedArray())
+            helper.setSubject(subject)
+            helper.setText(body, true)
+            mailSender.send(message)
         }
-        helper.setTo(to.toTypedArray())
-        helper.setSubject(subject)
-        helper.setText(body, true)
-        mailSender.send(message)
     }
 
     fun sendEmailNewAnnouncement(post: CreateAnnouncementEntity) {
@@ -56,9 +46,9 @@ class EmailService(
         }
         val emails = mutableListOf<String>()
         for (user in userIds) {
-            val getEmailStatement = db!!.createStatement()
+            val getEmailStatement = db.createStatement()
             val selectEmailStatement = """
-                    SELECT email FROM User WHERE enable_notifications=${1} AND user_id=${user}
+                    SELECT email FROM User WHERE enable_notifications=1 AND user_id=${user}
                 """.trimIndent()
             val resultEmail = getEmailStatement.executeQuery(selectEmailStatement)
             if (resultEmail.next()) {
@@ -75,10 +65,20 @@ class EmailService(
                 )
             )
         }
+
+        val classname = "SELECT * FROM Classroom WHERE private_code = '${post.classId}'"
+        val results = getUsersStatement.executeQuery(classname)
+        var className = ""
+        if(results.next()) {
+            className = results.getString("name")
+        }
+
+        val emailBody = "New Notification from $className\n\n\n${post.text}\n\nDescription: ${post.description}"
+
         sendEmailList(
             emails,
             "New Announcement for Class ${post.classId}",
-            post.text + "\nDescription: " + post.description
+            emailBody
         )
     }
 

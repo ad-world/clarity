@@ -182,4 +182,14 @@ class CardController {
         }
     }
 
+    @PostMapping("/getCardSetsForFollowing")
+    fun getCardSetsForFollowing(@RequestBody request: GetCardSetsForFollowingRequest)
+    : ResponseEntity<GetCardSetsForFollowingResponse> {
+        val resp = CardSetEntity().getCardSetsForFollowing(request)
+        return if (resp.response == StatusResponse.Success) {
+            ResponseEntity.ok(resp)
+        } else {
+            ResponseEntity.badRequest().body(resp)
+        }
+    }
 }

@@ -27,6 +27,10 @@
 | D5 Meeting | 1 hour | 3:00 pm | 4:00 pm | July 19th, 2023 | N/A |
 | Work on card set functionality (2) + merge | 1.5 hours | 4:30 pm | 6:00 pm | July 19th, 2023 | [Set Functionality](https://github.com/ad-world/clarity/pull/50) |
 | Work on D5 (Singleton) + D5 / Project Meeting | 2.25 hours | 10:45 am | 1:00 pm | July 21st, 2023 | N/A |
-| Add more card/card set functionality | 5.5 hours | 11:30 am | 5:00 pm | July 23rd, 2023 | [More Set Functionality](https://github.com/ad-world/clarity/pull/61)
+| Add more card/card set functionality | 5.5 hours | 11:30 am | 5:00 pm | July 23rd, 2023 | [More Set Functionality](https://github.com/ad-world/clarity/pull/61)|
+| Demo Walkthrough + Project Meet | 1 hour | 7:00 pm | 8:00 pm | July 24th, 2023 | N/A |
+| Demo Test Run | 1.25 hours | 10:00 pm | 11:15 pm | July 25th, 2023 | N/A |
+| Add new endpoint (getCardSetsForFollowing) | 1 hour | 9:30 pm | 12 pm | [Get Card Sets For Following](https://github.com/ad-world/clarity/pull/70)|
 
-### Total Time Spent: 38.5 hours
+
+### Total Time Spent: 41.75 hours
