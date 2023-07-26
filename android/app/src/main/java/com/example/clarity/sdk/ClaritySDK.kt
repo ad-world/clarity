@@ -189,6 +189,6 @@ interface API {
     suspend fun markMessage(@Body notification: MarkMessage) : Response<NotificationResponse>
 
     @DELETE("deleteMessage")
-    suspend fun deleteMessage(@Query("notificationId") notificationId) : Response<NotificationResponse>
+    suspend fun deleteMessage(@Query("notificationId") notificationId: Int) : Response<NotificationResponse>
 
 }
