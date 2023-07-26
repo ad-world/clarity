@@ -127,6 +127,35 @@ class DisplaySetsFragment(page: Int) : Fragment() {
             val response : Response<GetSetsByUsernameResponse> = runBlocking {
                 return@runBlocking api.getSetsByUsername("Clarity")
             }
+            if (response.isSuccessful) {
+                val size = response.body()!!.data.size
+
+                for(i in 0 until size) {
+                    val setData = response.body()?.data?.get(i)
+                    val setId = setData?.set_id
+                    val setTitle = setData?.title
+                    val creator = setData?.creator_id
+                    val progress = 0
+                    val set = Set(
+                        setId!!,
+                        setTitle!!,
+                        creator!!,
+                        mutableListOf<Card>(),
+                        progress,
+                        SetCategory.COMMUNITY_SET
+                    )
+
+                    val cards : Response<GetCardsInSetResponse> = runBlocking {
+                        return@runBlocking api.getCards(GetCardsInSetRequest(setId))
+                    }
+                    if (cards.isSuccessful) {
+                        for (card in cards.body()!!.cards) {
+                            set.cards.add(Card(card.card_id, card.phrase, false))
+                        }
+                    }
+                    sets.add(set)
+                }
+            }
 
         } else if (page == 1) { //dont know where the recommended sets api is
             //page is the those that you are following
@@ -140,13 +169,14 @@ class DisplaySetsFragment(page: Int) : Fragment() {
 
                 for(i in 0 until size) {
                     val setData = response.body()?.data?.get(i)
-                    val setId = setData?.card_sets?.get(0)?.metadata?.creator_id
-                    val setTitle = setData.metadata.title
+                    val setId = setData?.metadata?.set_id
+                    val setTitle = setData?.metadata?.title
+                    val creator = setData?.metadata?.creator_id
                     val progress = 0
                     val set = Set(
-                        setId,
-                        setTitle,
-                        userid,
+                        setId!!,
+                        setTitle!!,
+                        creator!!,
                         mutableListOf<Card>(),
                         progress,
                         SetCategory.COMMUNITY_SET
@@ -175,12 +205,13 @@ class DisplaySetsFragment(page: Int) : Fragment() {
                 for(i in 0 until size) {
                     val setData = response.body()?.sets?.get(i)!!
                     val setId = setData.set_id
+                    val creator = setData?.creator_id
                     val setTitle = setData.title
                     val progress = 0
                     val set = Set(
                         setId,
                         setTitle,
-                        userid,
+                        creator!!,
                         mutableListOf<Card>(),
                         progress,
                         SetCategory.COMMUNITY_SET
