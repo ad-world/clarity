@@ -11,7 +11,6 @@ data class NotificationResponse(val response: StatusResponse, val message: Strin
 
 
 class InboxEntity {
-
     fun getUnread(userId: Int) : GetUnreadResponse {
         try {
             val db = DataManager.conn()
@@ -72,19 +71,19 @@ class InboxEntity {
 
     fun createNotification(notification: CreateNotification) : NotificationResponse {
         val db = DataManager.conn()
-        try {
+        return try {
             val statement = db!!.createStatement()
             val insertStatement = """
-                INSERT INTO Inbox (user_id, message, notification_date, message_read)
-                VALUES(
-                ${notification.userId}, '${notification.message}', '${notification.notificationDate}', ${0}
-                )
-            """.trimIndent()
+                    INSERT INTO Inbox (user_id, message, notification_date, message_read)
+                    VALUES(
+                    ${notification.userId}, '${notification.message}', '${notification.notificationDate}', ${0}
+                    )
+                """.trimIndent()
             val result = statement.executeUpdate(insertStatement)
-            return NotificationResponse(StatusResponse.Success, "Created Notification Successfully")
+            NotificationResponse(StatusResponse.Success, "Created Notification Successfully")
         } catch(e: Exception) {
             e.printStackTrace();
-            return NotificationResponse(StatusResponse.Failure, "Could not create notification")
+            NotificationResponse(StatusResponse.Failure, "Could not create notification")
         }
     }
 }

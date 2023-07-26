@@ -119,6 +119,7 @@ class ClassroomSelectSets(private val classId: String) : Fragment() {
             val response: Response<CreateTaskResponse> = runBlocking {
                 return@runBlocking api.createTask(taskEntity)
             }
+            println(response.body())
             if (response.body()?.response == StatusResponse.Success) {
                 println("added new task")
                 Toast.makeText(requireContext(), "Task Added!", Toast.LENGTH_SHORT).show()
