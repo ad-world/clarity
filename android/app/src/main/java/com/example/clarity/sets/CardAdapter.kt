@@ -184,20 +184,6 @@ class CardAdapter(private val cards: MutableList<Card>, private val dictionary: 
 
             // add textWatcher defined above to etCardTitle
             etCardTitle.addTextChangedListener(textWatcher)
-
-        //TODO: This is acc such a pain, can't get it to close
-            /*
-            etCardTitle.setOnKeyListener (View.OnKeyListener{ view, i, keyEvent ->
-                Log.d("here", "hi")
-                if (i == KeyEvent.KEYCODE_ENTER) {
-                    val imm: InputMethodManager? = getSystemService(context, InputMethodManager::class.java)
-                    imm?.hideSoftInputFromWindow(windowToken, 0)
-                    etCardTitle.isFocusable = false
-                    etCardTitle.isFocusableInTouchMode = false
-                    return@OnKeyListener true
-                }
-                false
-            })*/
         }
     }
 

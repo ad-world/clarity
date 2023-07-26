@@ -64,7 +64,8 @@ class ClassroomTaskTestActivity() : AppCompatActivity() {
     // Index that stores the current card being displayed
     private var index = 0
 
-    var ommisions: List<String>? = listOf()
+    // List that stores missing words
+    var failedWords: List<String>? = listOf()
 
     // User, Set adn taskId
     var userid = 0
@@ -149,27 +150,38 @@ class ClassroomTaskTestActivity() : AppCompatActivity() {
                     // Stop Recording
                     wavRecorder.stopRecording()
 
-                    // Indicate that we have already recorded an attempt for this card
-                    recordingCompleted = true
-                    iBtnMic.isEnabled = false
-
-                    // Make next button visible
-                    iBtnNext.visibility = VISIBLE
-
                     // Return Accuracy Score and Display Popup
                     val isComplete = getAccuracyScore(File(this.filesDir, "audio.wav"))
                     displayMessagePopup(isComplete)
 
-                    // Increment Set Progress
-                    set.progress = index + 1
+                    if (failedWords != null) {
+                        // Indicate that we have already recorded an attempt for this card
+                        recordingCompleted = true
+                        iBtnMic.isEnabled = false
 
-                    // Update Progress Components
-                    val progressBar = findViewById<ProgressBar>(R.id.progressBar)
-                    val tvCompletedCount = findViewById<TextView>(R.id.tvCompletedPhrases)
-                    val tvPercentComplete = findViewById<TextView>(R.id.tvPercentComplete)
-                    progressBar.progress = ((index + 1) * 100) / set.cards.size
-                    tvCompletedCount.text = "${index + 1} Complete"
-                    tvPercentComplete.text = "${((index + 1) * 100) / set.cards.size} %"
+                        // Make next button visible
+                        iBtnNext.visibility = VISIBLE
+
+                        // Indicate that we have already recorded an attempt for this card
+                        recordingCompleted = true
+                        iBtnMic.isEnabled = false
+
+                        // Make next button visible
+                        iBtnNext.visibility = VISIBLE
+
+                        // Increment Set Progress
+                        set.progress = index + 1
+
+                        // Update Progress Components
+                        val progressBar = findViewById<ProgressBar>(R.id.progressBar)
+                        val tvCompletedCount = findViewById<TextView>(R.id.tvCompletedPhrases)
+                        val tvPercentComplete = findViewById<TextView>(R.id.tvPercentComplete)
+                        progressBar.progress = ((index + 1) * 100) / set.cards.size
+                        tvCompletedCount.text = "${index + 1} Complete"
+                        tvPercentComplete.text = "${((index + 1) * 100) / set.cards.size} %"
+                    } else {
+                        iBtnMic.setBackgroundResource(R.drawable.roundcorner)
+                    }
                 }
 
                 // Toggle isRecording Value
@@ -221,17 +233,21 @@ class ClassroomTaskTestActivity() : AppCompatActivity() {
         val requestFile = RequestBody.create(MediaType.parse("audio/*"), wavFile)
         val part = MultipartBody.Part.createFormData("audio", wavFile.name, requestFile)
 
-        // Make classroom attempt call for tasks
-        val response: Response<CreateClassroomAttemptResponse> = runBlocking {
-            return@runBlocking api.attemptClassroomCard(userid, set.cards[index].id, taskId, part)
+        // Make attempt call
+        val response: Response<CreateAttemptResponse> = runBlocking {
+            return@runBlocking api.attemptCard(userid, set.cards[index].id, set.id, part)
         }
         // Handle failed response case
         if (response.body() == null || response.body()!!.metadata == null) {
+            failedWords = null
             return false
         }
-        println("success response")
 
-        ommisions = response.body()!!.metadata?.omissions
+        Log.d("response metadata", response.body()!!.metadata.toString())
+
+        val omissions = response.body()!!.metadata?.omissions!!
+        val mispronunciations = response.body()!!.metadata?.mispronunciations!!
+        failedWords = omissions + mispronunciations
         // Return with isComplete
         return response.body()?.metadata!!.is_complete
     }
@@ -247,20 +263,32 @@ class ClassroomTaskTestActivity() : AppCompatActivity() {
         if (isComplete)  {
             cvPopUp.backgroundTintList = getColorStateList(R.color.passed)
             tvResultMessage.text = resources.getString(R.string.great_job)
-        } else if (ommisions == null) {
-            cvPopUp.backgroundTintList = getColorStateList(R.color.failed)
+        } else if (failedWords == null) {
+            cvPopUp.backgroundTintList = getColorStateList(R.color.error)
             tvResultMessage.text = "Whoops, No audio was detected, ensure that your microphone is enabled and try again"
         } else {
             cvPopUp.backgroundTintList = getColorStateList(R.color.failed)
             tvResultMessage.text =  resources.getString(R.string.just_a_little_off_keep_practicing)
-            /*if (omissions!!.isNotEmpty()) {
-                tvResultMessage.text = tvResultMessage.text as String + "\n The following words weren't picked up: " + getOmittedWords(
-                    omissions!!
+            if (failedWords!!.isNotEmpty()) {
+                tvResultMessage.text = tvResultMessage.text as String + "\n The following words weren't picked up: " + getFailedWords(
+                    failedWords!!
                 )
-            }*/
+            }
         }
 
         // Make Popup visible
         cvPopUp.visibility = View.VISIBLE
+    }
+
+    private fun getFailedWords(failedWords: List<String>): String {
+        var result = ""
+        for (i in failedWords.indices) {
+            result += failedWords[i]
+            if (i != failedWords.size - 1) {
+                result += ", "
+            }
+        }
+
+        return result
     }
 }

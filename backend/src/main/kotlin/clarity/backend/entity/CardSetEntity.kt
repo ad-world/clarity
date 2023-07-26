@@ -37,7 +37,11 @@ data class GetCompletedCardsInSetResponse(val response: StatusResponse, val card
 data class ToggleCardSetResponse(val response: StatusResponse, val is_public: Int)
 data class GetPublicCardSetsResponse(val response: StatusResponse, val sets: List<SetMetadata>)
 data class ClonePublicSetResponse(val response: StatusResponse, val new_set_id: Int, val msg: String)
-data class GetCardSetsForFollowingResponse(val response: StatusResponse, val sets: List<CardSet>, val msg: String)
+data class GetCardSetsForFollowingResponse(
+    val response: StatusResponse, 
+    val data: List<UserCreatedCardSet>, 
+    val msg: String
+)
 
 
 data class GetUserSetProgressResponse(
@@ -54,13 +58,21 @@ data class LikeCardSetResponse(val response: StatusResponse, val message: String
 data class UnlikeCardSetResponse(val response: StatusResponse, val message: String)
 
 // Util Formats
+
+// Represents all the card sets created by user_id.
+data class UserCreatedCardSet(
+    val user_id: Int,
+    val card_sets: List<CardSet>
+)
+
 data class CardSet(
     val metadata: SetMetadata,
     val cards: List<Card>
 )
 
 data class SetMetadata(
-    val set_id: Int, 
+    val set_id: Int,
+    val creator_id: Int, 
     val title: String, 
     val type: String, 
     val is_public: Boolean, 
@@ -88,6 +100,7 @@ class CardSetEntity() {
 
                 newSet = SetMetadata(
                     set_id =  keys.getInt(1),
+                    creator_id = set.creator_id,
                     title = set.title,
                     type = set.type,
                     false,
@@ -159,6 +172,7 @@ class CardSetEntity() {
                     CardSet(
                         metadata=SetMetadata(
                             set_id = row.getInt("set_id"),
+                            creator_id = row.getInt("creator_id"),
                             title = row.getString("title"),
                             type = row.getString("type"),
                             is_public = (row.getInt("is_public_ind") == 1),
@@ -237,7 +251,7 @@ class CardSetEntity() {
         try {
             val statement = db!!.createStatement();
             val query = """
-                SELECT c.[set_id], c.title, c.type, c.is_public_ind, c.likes, c.cloned_from_set
+                SELECT c.[set_id], c.creator_id, c.title, c.type, c.is_public_ind, c.likes, c.cloned_from_set
                 FROM CardSet c, User u
                 WHERE u.username = '$username' AND u.user_id = c.creator_id;
             """.trimIndent()
@@ -247,6 +261,7 @@ class CardSetEntity() {
             while(resultSet.next()) {
                 val set = SetMetadata(
                     set_id = resultSet.getInt("set_id"),
+                    creator_id = resultSet.getInt("creator_id"),
                     title = resultSet.getString("title"),
                     type = resultSet.getString("type"),
                     is_public = resultSet.getInt("is_public_ind") == 1,
@@ -380,6 +395,7 @@ class CardSetEntity() {
             while (resultSet.next()) {
                 val set = SetMetadata(
                     set_id = resultSet.getInt("set_id"),
+                    creator_id = resultSet.getInt("creator_id"),
                     title = resultSet.getString("title"),
                     type = resultSet.getString("type"),
                     is_public = resultSet.getInt("is_public_ind") == 1,
@@ -481,6 +497,7 @@ class CardSetEntity() {
             while (rows.next()) {
                 val currentSet = SetMetadata(
                     set_id = rows.getInt("set_id"),
+                    creator_id = rows.getInt("creator_id"),
                     title = rows.getString("title"),
                     type = rows.getString("type"),
                     is_public = true,
@@ -598,12 +615,16 @@ class CardSetEntity() {
             // Get PUBLIC sets created by users that request.user_id is following.
             val statement = db!!.createStatement()
             val id_list = following.joinToString(", ")
-            val query = "SELECT [set_id] FROM CardSet WHERE creator_id IN (${id_list}) AND is_public_ind = 1;"
+            val query = """
+                SELECT [set_id], creator_id FROM CardSet
+                WHERE creator_id IN (${id_list}) AND is_public_ind = 1;
+            """.trimIndent()
             val resultRows = statement.executeQuery(query)
-            var cardset_list = mutableListOf<CardSet>()
+            var data_map = mutableMapOf<Int, MutableList<CardSet>>();
 
             while (resultRows.next()) {
                 val set_id = resultRows.getInt("set_id")
+                val creator_id = resultRows.getInt("creator_id")
                 val set_data_resp: GetSetDataResponse = this.getSetData(GetSetDataRequest(set_id));
 
                 if (set_data_resp.response == StatusResponse.Failure) {
@@ -613,11 +634,22 @@ class CardSetEntity() {
                         "Could not get set data for Set (${set_id}) in /getCardSetsForFollowing"
                     )
                 }
-                cardset_list.add(set_data_resp.set!!)
+
+                if (data_map.containsKey(creator_id)) {
+                    data_map[creator_id]!!.add(set_data_resp.set!!)
+                } else {
+                    data_map[creator_id] = mutableListOf<CardSet>(set_data_resp.set!!)
+                }
             }
+
+            var data = mutableListOf<UserCreatedCardSet>()
+            for ((user_id, cardset_list) in data_map) {
+                data.add(UserCreatedCardSet(user_id=user_id, card_sets=cardset_list.toList()))
+            }
+
             return GetCardSetsForFollowingResponse(
                 StatusResponse.Success,
-                cardset_list,
+                data.toList(),
                 ""
             )
         } catch (e: Exception) {

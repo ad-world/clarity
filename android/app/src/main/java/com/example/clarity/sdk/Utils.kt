@@ -1,6 +1,6 @@
 package com.example.clarity.sdk
 
-data class SetMetadata(val set_id: Int, val title: String, val type: String, val is_public: Boolean, val likes: Int)
+data class SetMetadata(val set_id: Int, val creator_id: Int, val title: String, val type: String, val is_public: Boolean, val likes: Int)
 data class UserWithId(val user_id: Int, val username: String, val email: String, val firstname: String, val lastname: String, val phone_number: String, val login_streak: Int, val difficulty: Difficulty, val enableNotifications: Int)
 data class ClassroomAttemptMetadata(
     val task_id: Int, val user_id: Int, val card_id: Int, val mispronunciations: List<String>,
@@ -14,6 +14,7 @@ data class CardAttempt(val user_id: Int, val card_id: Int, val set_id: Int, val 
                        val fluencyScore: Double? = null, val completenessScore: Double? = null, val attemptDate: String)
 data class Card(val card_id: Int, val phrase: String, val title: String)
 data class CardSet(val metadata: SetMetadata, val cards: List<Card>)
+data class UserCreatedCardSet(val user_id: Int, val card_sets: List<CardSet>)
 data class CardInSet(val card_id: Int, val set_id: Int, val completion_date: String?)
 
 data class TaskAttemptWithName(val task_id: Int, val user_id: Int, val card_id: Int, val pronunciationScore: Int,
