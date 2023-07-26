@@ -87,7 +87,7 @@ class ClassroomSelectSets(private val classId: String) : Fragment() {
         var selectedSetsId: MutableList<Int> = mutableListOf()
 
         // update list with current tasks
-        val getTaskEntity = GetTasksEntity(classId)
+        val getTaskEntity = GetTasksEntity(classId, userid)
         // call api to get the list of tasks
         val response: Response<GetTasksResponse> = runBlocking {
             return@runBlocking api.getTasks(getTaskEntity)

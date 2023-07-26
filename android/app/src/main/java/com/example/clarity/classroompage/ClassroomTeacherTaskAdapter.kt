@@ -13,11 +13,12 @@ import com.example.clarity.sdk.GetCardsInSetRequest
 import com.example.clarity.sdk.GetCardsInSetResponse
 import com.example.clarity.sdk.StatusResponse
 import com.example.clarity.sdk.Task
+import com.example.clarity.sdk.TaskWithProgress
 import kotlinx.coroutines.runBlocking
 import retrofit2.Response
 
 class ClassroomTeacherTaskAdapter(
-    private val tasks: MutableList<Task>,
+    private val tasks: MutableList<TaskWithProgress>,
     private val onItemClicked: (position: Int) -> Unit
 ) : RecyclerView.Adapter<ClassroomTeacherTaskAdapter.SetViewHolder>() {
 

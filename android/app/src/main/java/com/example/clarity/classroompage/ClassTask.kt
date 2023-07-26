@@ -21,6 +21,7 @@ import com.example.clarity.sdk.GetTasksEntity
 import com.example.clarity.sdk.GetTasksResponse
 import com.example.clarity.sdk.StatusResponse
 import com.example.clarity.sdk.Task
+import com.example.clarity.sdk.TaskWithProgress
 import com.example.clarity.sets.SetAdapter
 import com.example.clarity.sets.activities.PracticeSetActivity
 import com.example.clarity.sets.activities.TestSetActivity
@@ -48,7 +49,7 @@ class ClassTask(private val classId: String, private val classTeacherId: String)
     // Set Adapter for list of sets
     private lateinit var classTaskAdapter: ClassroomTaskAdapter
     private lateinit var sets: MutableList<com.example.clarity.sets.data.Set>
-    private lateinit var tasks: MutableList<Task>
+    private lateinit var tasks: MutableList<TaskWithProgress>
 
     // Variables to store username and userid
     private lateinit var username: String
@@ -155,7 +156,7 @@ class ClassTask(private val classId: String, private val classTeacherId: String)
         // get a list of tasks associated with this class
 
         // set up request body
-        val getTaskEntity = GetTasksEntity(classId)
+        val getTaskEntity = GetTasksEntity(classId, userid)
         // make api call to fetch list of tasks
         val taskResponse: Response<GetTasksResponse> = runBlocking {
             return@runBlocking api.getTasks(getTaskEntity)
