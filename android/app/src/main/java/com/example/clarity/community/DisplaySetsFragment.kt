@@ -122,12 +122,13 @@ class DisplaySetsFragment(page: Int) : Fragment() {
         sets = mutableListOf()
 
 
-//        if(page == 0) {
-//            //page is the recommended
-//
-//
-//        } else
-        if (page == 1 || page == 0) { //dont know where the recommended sets api is
+        if(page == 0) {
+            //page is the recommended
+            val response : Response<GetSetsByUsernameResponse> = runBlocking {
+                return@runBlocking api.getSetsByUsername("Clarity")
+            }
+
+        } else if (page == 1) { //dont know where the recommended sets api is
             //page is the those that you are following
 
             val response : Response<GetCardSetsForFollowingResponse> = runBlocking {
@@ -135,11 +136,11 @@ class DisplaySetsFragment(page: Int) : Fragment() {
             }
 
             if (response.isSuccessful) {
-                val size = response.body()!!.sets.size
+                val size = response.body()!!.data.size
 
                 for(i in 0 until size) {
-                    val setData = response.body()?.sets?.get(i)!!
-                    val setId = setData.metadata.set_id
+                    val setData = response.body()?.data?.get(i)
+                    val setId = setData?.card_sets?.get(0)?.metadata?.creator_id
                     val setTitle = setData.metadata.title
                     val progress = 0
                     val set = Set(
