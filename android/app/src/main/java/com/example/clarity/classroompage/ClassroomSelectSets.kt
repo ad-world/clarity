@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -18,7 +19,10 @@ import com.example.clarity.sdk.Difficulty
 import com.example.clarity.sdk.GetCardsInSetRequest
 import com.example.clarity.sdk.GetCardsInSetResponse
 import com.example.clarity.sdk.GetSetsByUsernameResponse
+import com.example.clarity.sdk.GetTasksEntity
+import com.example.clarity.sdk.GetTasksResponse
 import com.example.clarity.sdk.StatusResponse
+import com.example.clarity.sdk.Task
 import com.example.clarity.sets.data.Card
 import com.example.clarity.sets.activities.PracticeSetActivity
 import com.example.clarity.sets.data.Set
@@ -80,22 +84,46 @@ class ClassroomSelectSets(private val classId: String) : Fragment() {
         // get the set clicked
         val selectedSet = sets[position]
 
-        // create fields for making new task
-        val setIdForTask = selectedSet.id.toString()
-        val setNameForTask = selectedSet.title
-        val taskDescription = "English Practice"
-        val taskDueDate = getCurrentDatePlusTwoDays() // make due date 2 days after current date
-        val taskDifficulty = Difficulty.Medium
+        var selectedSetsId: MutableList<Int> = mutableListOf()
 
-        // creating new task entity for request body
-        val taskEntity = CreateTaskEntity(classId, setIdForTask, setNameForTask, taskDescription, taskDueDate, taskDifficulty)
-        // make the api call to create new task
-        val response: Response<CreateTaskResponse> = runBlocking {
-            return@runBlocking api.createTask(taskEntity)
+        // update list with current tasks
+        val getTaskEntity = GetTasksEntity(classId)
+        // call api to get the list of tasks
+        val response: Response<GetTasksResponse> = runBlocking {
+            return@runBlocking api.getTasks(getTaskEntity)
         }
-        println("printing response: ${response}")
+        // check for valid response status
         if (response.body()?.response == StatusResponse.Success) {
-            println("added new task")
+            val listOfTasks = response.body()?.id
+            if (listOfTasks != null) {
+                for (task in listOfTasks) {
+                    selectedSetsId.add(task.setId)
+                }
+            }
+        }
+
+        // ensure we only add the same type of set once for a task
+        if (selectedSet.id !in selectedSetsId) {
+            // create fields for making new task
+            val setIdForTask = selectedSet.id.toString()
+            val setNameForTask = selectedSet.title
+            val taskDescription = "English Practice"
+            val taskDueDate = getCurrentDatePlusTwoDays() // make due date 2 days after current date
+            val taskDifficulty = Difficulty.Medium
+
+            // creating new task entity for request body
+            val taskEntity = CreateTaskEntity(classId, setIdForTask, setNameForTask, taskDescription, taskDueDate, taskDifficulty)
+            // make the api call to create new task
+            val response: Response<CreateTaskResponse> = runBlocking {
+                return@runBlocking api.createTask(taskEntity)
+            }
+            if (response.body()?.response == StatusResponse.Success) {
+                println("added new task")
+                Toast.makeText(requireContext(), "Task Added!", Toast.LENGTH_SHORT).show()
+            }
+        }
+        else {
+            Toast.makeText(requireContext(), "Task was already added.", Toast.LENGTH_SHORT).show();
         }
     }
 

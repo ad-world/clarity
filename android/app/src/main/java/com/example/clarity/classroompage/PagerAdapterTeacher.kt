@@ -10,7 +10,7 @@ class PagerAdapterTeacher(fragmentManager: FragmentManager,
                           private val tasksFrag: Boolean) :
     FragmentPagerAdapter(fragmentManager, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
 
-    override fun getCount(): Int = 2 // Number of tabs
+    override fun getCount(): Int = 3 // Number of tabs
 
     override fun getItem(position: Int): Fragment {
         return when (position) {
@@ -22,6 +22,7 @@ class PagerAdapterTeacher(fragmentManager: FragmentManager,
                     ClassroomSelectSets(classId)
                 }
                 }
+            2 -> ClassTeacherTaskProgress(classId)
             else -> throw IllegalArgumentException("Invalid position: $position")
         }
     }

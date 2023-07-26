@@ -36,6 +36,15 @@
             android:name=".classroompage.ClassroomTeacher"
             android:exported="false" />
         <activity
+            android:name=".classroompage.ClassroomTaskTestActivity"
+            android:exported="false" />
+        <activity
+            android:name=".classroompage.ClassroomTaskPracticeActivity"
+            android:exported="false" />
+        <activity
+            android:name=".classroompage.ClassroomTeacherTaskProgressActivity"
+            android:exported="false" />
+        <activity
             android:name=".MainActivity"
             android:exported="true"
             android:label="@string/app_name"

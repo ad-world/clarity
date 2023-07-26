@@ -1,4 +1,4 @@
-package com.example.clarity.sets.activities
+package com.example.clarity.classroompage
 
 import android.Manifest
 import android.annotation.SuppressLint
@@ -8,7 +8,6 @@ import android.speech.tts.TextToSpeech
 import android.util.Log
 import android.view.View
 import android.view.View.GONE
-import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
 import android.widget.ImageButton
 import android.widget.ProgressBar
@@ -21,7 +20,7 @@ import com.example.clarity.sdk.ClaritySDK
 import com.example.clarity.R
 import com.example.clarity.SessionManager
 import com.example.clarity.sdk.CreateAttemptResponse
-import com.example.clarity.sdk.PracticeAttemptResponse
+import com.example.clarity.sdk.CreateClassroomAttemptResponse
 import com.example.clarity.sets.data.Card
 import com.example.clarity.sets.data.Set
 import com.example.clarity.sets.audio.WavRecorder
@@ -41,7 +40,7 @@ import java.nio.ByteOrder
 import java.nio.charset.Charset
 import java.util.Locale
 
-class PracticeSetActivity() : AppCompatActivity() {
+class ClassroomTaskPracticeActivity() : AppCompatActivity() {
 
     // Recorder and Player
     private var player: TextToSpeech? = null
@@ -58,9 +57,6 @@ class PracticeSetActivity() : AppCompatActivity() {
 
     // Index that stores the current card being displayed
     private var index = 0
-
-    // List that stores missing words
-    var ommisions: List<String>? = listOf()
 
     // User and Set
     var userid = 0
@@ -150,8 +146,8 @@ class PracticeSetActivity() : AppCompatActivity() {
                 wavRecorder.stopRecording()
 
                 // Return Accuracy Score and Display Popup
-                val isComplete = getAccuracyScore(File(this.filesDir, "audio.wav"))
-                displayMessagePopup(isComplete)
+                val score = getAccuracyScore(File(this.filesDir, "audio.wav"))
+                displayMessagePopup(score)
 
                 // Enable Navigation Buttons
                 iBtnNext.isEnabled = true
@@ -160,11 +156,6 @@ class PracticeSetActivity() : AppCompatActivity() {
 
             // Toggle isRecording Value
             isRecording = !isRecording
-        }
-
-        // Set invisible if no next card
-        if (set.cards.size == 1) {
-            iBtnNext.visibility = INVISIBLE
         }
 
         // Handle Forward Navigation
@@ -177,7 +168,7 @@ class PracticeSetActivity() : AppCompatActivity() {
                 cvPopUp.visibility = View.GONE
                 loadCard(set.cards[index])
                 if(index == set.cards.size - 1) {
-                    iBtnNext.visibility = INVISIBLE
+                    iBtnNext.visibility = GONE
                 }
                 iBtnPrev.visibility = VISIBLE
             }
@@ -193,7 +184,7 @@ class PracticeSetActivity() : AppCompatActivity() {
                 cvPopUp.visibility = View.GONE
                 loadCard(set.cards[index])
                 if(index == 0) {
-                    iBtnPrev.visibility = INVISIBLE
+                    iBtnPrev.visibility = GONE
                 }
                 iBtnNext.visibility = VISIBLE
             }
@@ -210,67 +201,46 @@ class PracticeSetActivity() : AppCompatActivity() {
     }
 
     // Returns accuracy score
-    private fun getAccuracyScore(wavFile: File): Boolean {
+    private fun getAccuracyScore(wavFile: File): Int {
         // Convert file to MultipartBody.Part
         val requestFile = RequestBody.create(MediaType.parse("audio/*"), wavFile)
         val part = MultipartBody.Part.createFormData("audio", wavFile.name, requestFile)
 
-        // Make attempt call
-        val response: Response<PracticeAttemptResponse> = runBlocking {
-            return@runBlocking api.practiceAttemptCard(userid, set.cards[index].id, set.id, part)
+        // Make classroom attempt call for tasks
+        val response: Response<CreateClassroomAttemptResponse> = runBlocking {
+            return@runBlocking api.attemptClassroomCard(userid, set.cards[index].id, taskId, part)
         }
 
-        Log.d("response", response.toString())
         // Handle failed response case
         if (response.body() == null || response.body()!!.metadata == null) {
-            // ommisions = null
-            return false
+            return 0
         }
 
-        Log.d("response metadata", response.body()!!.metadata.toString())
-
-        ommisions = response.body()!!.metadata?.omissions
-        // Return with isComplete
-        return response.body()?.metadata!!.is_complete
+        // Return with Accuracy Score
+        return response.body()?.metadata!!.accuracyScore.toInt()
     }
 
     // Display popup
     @SuppressLint("SetTextI18n")
-    private fun displayMessagePopup(isComplete: Boolean)  {
+    private fun displayMessagePopup(score: Int)  {
         // Get Components
         val cvPopUp = findViewById<CardView>(R.id.cvPopUp)
         val tvResultMessage = findViewById<TextView>(R.id.tvResultMessage)
 
+        // TODO: Make this actually return the threshold later
+        // Get Difficulty Threshold
+        val difficultyThreshold = 50
+
         // Set Message Properties based on Difficulty Threshold
-        if (isComplete)  {
-            cvPopUp.backgroundTintList = getColorStateList(R.color.passed)
+        if (score in 0 until difficultyThreshold)  {
+            cvPopUp.setCardBackgroundColor(Color.YELLOW)
+            tvResultMessage.text = resources.getString(R.string.try_again)
+        } else if (score in difficultyThreshold..100) {
+            cvPopUp.setCardBackgroundColor(Color.GREEN)
             tvResultMessage.text = resources.getString(R.string.great_job)
-        } else if (ommisions == null) {
-            cvPopUp.backgroundTintList = getColorStateList(R.color.failed)
-            tvResultMessage.text = "Whoops, No audio was detected, ensure that your microphone is enabled and try again"
-        } else {
-            cvPopUp.backgroundTintList = getColorStateList(R.color.failed)
-            tvResultMessage.text =  resources.getString(R.string.just_a_little_off_keep_practicing)
-            /*if (omissions!!.isNotEmpty()) {
-                tvResultMessage.text = tvResultMessage.text as String + "\n The following words weren't picked up: " + getOmittedWords(
-                    omissions!!
-                )
-            }*/
         }
 
         // Make Popup visible
         cvPopUp.visibility = View.VISIBLE
-    }
-
-    private fun getOmmittedWords(ommitions: List<String>): String {
-        var result = ""
-        for (i in ommitions.indices) {
-            result += ommitions[i]
-            if (i != ommitions.size - 1) {
-                result += ", "
-            }
-        }
-
-        return result
     }
 }
