@@ -15,27 +15,27 @@
             android:id="@+id/rvSets"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_marginTop="20dp"
             app:layout_constraintBottom_toTopOf="@+id/cardView"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"/>
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0" />
 
         <androidx.cardview.widget.CardView
             android:id="@+id/cvStartActivity"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginStart="25dp"
-            android:layout_marginTop="200dp"
+            android:layout_marginTop="150dp"
             android:layout_marginEnd="25dp"
-            android:layout_marginBottom="200dp"
+            android:layout_marginBottom="150dp"
             android:backgroundTint="#19376D"
             android:visibility="gone"
             app:cardCornerRadius="10dp"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
 
-            app:layout_constraintStart_toStartOf="parent" >
+            app:layout_constraintTop_toTopOf="parent">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -75,7 +75,7 @@
                     android:id="@+id/btnPractice"
                     android:layout_width="160dp"
                     android:layout_height="66dp"
-                    android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="30dp"
                     android:backgroundTint="#576CBC"
                     android:fontFamily="@font/manrope_semibold"
                     android:insetTop="0dp"
@@ -85,7 +85,9 @@
                     android:textIsSelectable="false"
                     android:textSize="16sp"
                     app:cornerRadius="15dp"
-                    app:layout_constraintEnd_toEndOf="parent"/>
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
 
                 <TextView
                     android:id="@+id/tvNumCards"
