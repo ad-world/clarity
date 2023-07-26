@@ -49,6 +49,7 @@ class SetsFragment : Fragment() {
     // Set Adapter for list of sets
     private lateinit var setAdapter: SetAdapter
     private lateinit var sets: MutableList<Set>
+    private lateinit var localFilteredSets: MutableList<Set>
 
     // Variables to store username and userid
     private lateinit var username: String
@@ -78,6 +79,8 @@ class SetsFragment : Fragment() {
             }
         }
 
+        localFilteredSets = filteredSets
+
         setAdapter.filterList(filteredSets)
     }
 
@@ -93,17 +96,17 @@ class SetsFragment : Fragment() {
         // Make sure that cvStartActivity is not already up, otherwise the button won't work
         if (cvStartActivity.visibility != VISIBLE) {
             //
-            tvPopupSetTitle.text = sets[position].title
-            if (sets[position].cards.size == 1) {
-                tvNumCards.text = "${sets[position].cards.size} card"
+            tvPopupSetTitle.text = localFilteredSets[position].title
+            if (localFilteredSets[position].cards.size == 1) {
+                tvNumCards.text = "${localFilteredSets[position].cards.size} card"
             } else {
-                tvNumCards.text = "${sets[position].cards.size} cards"
+                tvNumCards.text = "${localFilteredSets[position].cards.size} cards"
             }
             cvStartActivity.visibility = VISIBLE
 
             btnTest.setOnClickListener {
                 cvStartActivity.visibility = INVISIBLE
-                val set = sets[position]
+                val set = localFilteredSets[position]
                 val gson = Gson()
                 val setJson = gson.toJson(set)
                 val intent = Intent(activity, TestSetActivity::class.java).apply {
@@ -114,7 +117,7 @@ class SetsFragment : Fragment() {
 
             btnPractice.setOnClickListener {
                 cvStartActivity.visibility = INVISIBLE
-                val set = sets[position]
+                val set = localFilteredSets[position]
                 val gson = Gson()
                 val setJson = gson.toJson(set)
                 val intent = Intent(activity, PracticeSetActivity::class.java).apply {
@@ -198,6 +201,8 @@ class SetsFragment : Fragment() {
             }
         }
 
+        localFilteredSets = sets
+
         setAdapter = SetAdapter(sets) { position -> onSetClick(position) }
         binding.rvSets.adapter = setAdapter
         binding.rvSets.layoutManager = LinearLayoutManager(context)
@@ -206,19 +211,23 @@ class SetsFragment : Fragment() {
             startActivity(intent)
         }
 
+        showCompleted = true
+        binding.btnToggleCompleted.text = "Hide Completed"
+        binding.btnToggleCompleted.backgroundTintList = getColorStateList(requireContext(), R.color.hideCompleted)
         binding.btnToggleCompleted.setOnClickListener {
             showCompleted = !showCompleted
             if (showCompleted) {
                 binding.btnToggleCompleted.text = "Hide Completed"
-                binding.btnToggleCompleted.backgroundTintList = getColorStateList(requireContext(), R.color.passed)
+                binding.btnToggleCompleted.backgroundTintList = getColorStateList(requireContext(), R.color.hideCompleted)
 
             } else {
                 binding.btnToggleCompleted.text = "Show Completed"
-                binding.btnToggleCompleted.backgroundTintList = getColorStateList(requireContext(), R.color.failed)
+                binding.btnToggleCompleted.backgroundTintList = getColorStateList(requireContext(), R.color.showCompleted)
             }
             filter()
         }
 
+        binding.etSearchSets.text.clear()
         binding.etSearchSets.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}

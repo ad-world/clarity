@@ -8,6 +8,7 @@ import android.speech.tts.TextToSpeech
 import android.util.Log
 import android.view.View
 import android.view.View.GONE
+import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
 import android.widget.ImageButton
 import android.widget.ProgressBar
@@ -161,6 +162,11 @@ class PracticeSetActivity() : AppCompatActivity() {
             isRecording = !isRecording
         }
 
+        // Set invisible if no next card
+        if (set.cards.size == 1) {
+            iBtnNext.visibility = INVISIBLE
+        }
+
         // Handle Forward Navigation
         iBtnNext.setOnClickListener {
             if (index < set.cards.size - 1) {
@@ -171,7 +177,7 @@ class PracticeSetActivity() : AppCompatActivity() {
                 cvPopUp.visibility = View.GONE
                 loadCard(set.cards[index])
                 if(index == set.cards.size - 1) {
-                    iBtnNext.visibility = GONE
+                    iBtnNext.visibility = INVISIBLE
                 }
                 iBtnPrev.visibility = VISIBLE
             }
@@ -187,7 +193,7 @@ class PracticeSetActivity() : AppCompatActivity() {
                 cvPopUp.visibility = View.GONE
                 loadCard(set.cards[index])
                 if(index == 0) {
-                    iBtnPrev.visibility = GONE
+                    iBtnPrev.visibility = INVISIBLE
                 }
                 iBtnNext.visibility = VISIBLE
             }

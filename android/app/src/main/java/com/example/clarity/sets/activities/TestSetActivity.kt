@@ -10,6 +10,7 @@ import android.speech.tts.TextToSpeech
 import android.util.Log
 import android.view.View
 import android.view.View.GONE
+import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
 import android.widget.Button
 import android.widget.ImageButton
@@ -118,7 +119,9 @@ class TestSetActivity() : AppCompatActivity() {
 
         // Handle Speaker button click
         iBtnSpeaker.setOnClickListener {
-            player!!.speak(set.cards[index].phrase, TextToSpeech.QUEUE_ADD, null, null)
+            if (index < set.cards.size) {
+                player!!.speak(set.cards[index].phrase, TextToSpeech.QUEUE_ADD, null, null)
+            }
         }
 
         // Handle Mic button click
@@ -137,7 +140,7 @@ class TestSetActivity() : AppCompatActivity() {
                 // CASE 2: Recording -> Not Recording
                 } else {
                     // Change UI of button
-                    iBtnMic.setBackgroundResource(R.drawable.roundcorner)
+                    iBtnMic.setBackgroundResource(R.drawable.fadedroundcorner)
                     iBtnMic.setImageResource(R.drawable.baseline_mic_24)
 
                     // Stop Recording
@@ -154,7 +157,7 @@ class TestSetActivity() : AppCompatActivity() {
                     val isComplete = getAccuracyScore(File(this.filesDir, "audio.wav"))
                     displayMessagePopup(isComplete)
 
-                    // Increment Index and set Progress
+                    // Increment Set Progress
                     set.progress = index + 1
 
                     // Update Progress Components
@@ -174,18 +177,20 @@ class TestSetActivity() : AppCompatActivity() {
         // Handle Forward Navigation
         iBtnNext.setOnClickListener {
             iBtnMic.isEnabled = true
-            // Increment Index and set Progress
+            // Increment Index
             index++
-            set.progress = index
+
             if (index < set.cards.size) {
-                iBtnNext.visibility = GONE
+                iBtnMic.setBackgroundResource(R.drawable.roundcorner)
+                iBtnMic.setImageResource(R.drawable.baseline_mic_24)
+                iBtnNext.visibility = INVISIBLE
                 cvPopUp.visibility = GONE
                 loadCard(set.cards[index])
                 recordingCompleted = false
             } else {
                 cvCompletedScreen.visibility = VISIBLE
                 iBtnClose.isEnabled = false
-                iBtnNext.visibility = GONE
+                iBtnNext.visibility = INVISIBLE
                 iBtnMic.isEnabled = false
             }
         }

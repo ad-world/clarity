@@ -16,7 +16,7 @@
             android:layout_width="160dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="5dp"
-            android:backgroundTint="#348526"
+            android:backgroundTint="@color/hideCompleted"
             android:text="Hide Completed"
             app:cornerRadius="5dp"
             app:layout_constraintBottom_toBottomOf="@+id/etSearchSets"
@@ -167,14 +167,13 @@
             android:layout_width="0dp"
             android:layout_height="50dp"
             android:layout_marginStart="15dp"
+            android:layout_marginTop="5dp"
             android:layout_marginEnd="15dp"
             android:hint="Search for a set"
             android:padding="10dp"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/btnToggleCompleted"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.15" />
+            app:layout_constraintTop_toBottomOf="@+id/tvYourSets" />
 
         <androidx.cardview.widget.CardView
             android:id="@+id/cardView"
