@@ -45,6 +45,14 @@ class EmailService(
             userIds.add(resultUsers.getString("user_id"))
         }
         val emails = mutableListOf<String>()
+
+        val classname = "SELECT * FROM Classroom WHERE private_code = '${post.classId}'"
+        val results = getUsersStatement.executeQuery(classname)
+        var className = ""
+        if(results.next()) {
+            className = results.getString("name")
+        }
+
         for (user in userIds) {
             val getEmailStatement = db.createStatement()
             val selectEmailStatement = """
@@ -60,24 +68,18 @@ class EmailService(
             createNotification(
                 CreateNotification(
                     user.toInt(),
-                    "New Announcement for Class ${post.classId}",
+                    "New Announcement for $className",
                     formattedDate
                 )
             )
         }
 
-        val classname = "SELECT * FROM Classroom WHERE private_code = '${post.classId}'"
-        val results = getUsersStatement.executeQuery(classname)
-        var className = ""
-        if(results.next()) {
-            className = results.getString("name")
-        }
 
         val emailBody = "New Notification from $className\n\n\n${post.text}\n\nDescription: ${post.description}"
 
         sendEmailList(
             emails,
-            "New Announcement for Class ${post.classId}",
+            "New Announcement for $className",
             emailBody
         )
     }
@@ -94,6 +96,14 @@ class EmailService(
             userIds.add(resultUsers.getString("user_id"))
         }
         val emails = mutableListOf<String>()
+
+        val classname = "SELECT * FROM Classroom WHERE private_code = '${task.classId}'"
+        val results = getUsersStatement.executeQuery(classname)
+        var className = ""
+        if(results.next()) {
+            className = results.getString("name")
+        }
+
         for (user in userIds) {
             val getEmailStatement = db!!.createStatement()
             val selectEmailStatement = """
@@ -106,11 +116,11 @@ class EmailService(
             val currDate = LocalDateTime.now()
             val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
             val formattedDate = currDate.format(formatter)
-            createNotification(CreateNotification(user.toInt(), "New Task for Class ${task.classId}", formattedDate))
+            createNotification(CreateNotification(user.toInt(), "New Task for $className", formattedDate))
         }
         sendEmailList(
             emails,
-            "New Task for Class ${task.classId}",
+            "New Task for $className",
             task.name + "\nDescription: " + task.description + "\nDueDate: " + task.dueDate
         )
     }
@@ -128,14 +138,16 @@ class EmailService(
         val currDate = LocalDateTime.now()
         val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
         val formattedDate = currDate.format(formatter)
+
+        val user = UserEntity().getUserById(userId = request.userId.toString())
         createNotification(
             CreateNotification(
-                request.followingId.toInt(),
-                "${request.userId} started to follow you",
+                request.followingId,
+                user.user?.username ?: "Unknown user",
                 formattedDate
             )
         )
-        sendEmailList(emails, "New Follower", "${request.userId} started to follow you")
+        sendEmailList(emails, "New Follower", "${user.user?.username ?: "Unknown user"} started to follow you")
     }
 
     fun createNotification(notification: CreateNotification) {
