@@ -72,9 +72,19 @@ class SettingsFragment : Fragment() {
         val emailBefore = user?.email
         var difficulty = user?.difficulty
 
+        var enabledNotifs = user?.enableNotifications
+        var enabledBool = true
+        if(enabledNotifs == 0) {
+            enabledBool = false
+        }
+
         binding.editTextFirst.setText(user?.firstname)
         binding.editTextLast.setText(user?.lastname)
         binding.editTextEmail.setText(user?.email)
+
+        binding.notifs.isChecked = enabledNotifs != 0
+        println(enabledNotifs)
+
 
         var level = 0
         when (difficulty) {
@@ -123,13 +133,17 @@ class SettingsFragment : Fragment() {
                 unsuccessfulPassChange()
             }
         }
+        binding.notifs.setOnCheckedChangeListener {_, isChecked ->
+            binding.notifs.isChecked = isChecked
+        }
 
         binding.buttonSave.setOnClickListener {
 
             var first = binding.editTextFirst.text
             var last = binding.editTextLast.text
             var email = binding.editTextEmail.text
-
+            var newnotifs = binding.notifs.isChecked
+            println(newnotifs)
             var notNull = false
 
             //need to check if all of these are not null
@@ -149,20 +163,29 @@ class SettingsFragment : Fragment() {
                 notNull = true
             }
 
+            val notifsChanged = if(newnotifs != enabledBool) {
+                true
+            } else {
+                null
+            }
 
-            if(notNull || newLevel != level) {
+
+            if(notNull || newLevel != level || notifsChanged == true) {
                 var response: Response<EditUserResponse>? = null
                 var responseDiff: Response<UpdateDifficultyResponse>? = null
-                if(notNull) {
+                var newNotifsChange = 0
+                if(newnotifs) {
+                    newNotifsChange = 1
+                }
+                if(notNull || notifsChanged == true) {
                     val user =
-                        EditUserEntity(userId, first?.toString(), last?.toString(), email?.toString())
+                        EditUserEntity(userId, first?.toString(), last?.toString(), email?.toString(), newNotifsChange)
                     response = runBlocking {
                         return@runBlocking api.updateUser(user)
                     }
                 }
 
                 if(newLevel != level) {
-                    println("it is different")
                     var diff = UpdateDifficultyEntity(userId, difficulty)
                     responseDiff = runBlocking {
                         return@runBlocking api.updateDifficulty(diff)
