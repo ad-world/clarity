@@ -4,14 +4,12 @@ import clarity.backend.DataManager
 import clarity.backend.util.Difficulty
 
 data class Task(val taskId: Int, val classId: String, val setId: Int, val name: String, val description: String, val dueDate: String?, val difficulty: Difficulty)
+data class TaskWithProgress(val taskId: Int, val classId: String, val setId: Int, val name: String, val description: String, val dueDate: String?, val difficulty: Difficulty, val card_count: Int, val completed_card_count: Int)
 data class CreateTaskEntity(val classId: String, val sets: String, val name: String, val description: String, val dueDate: String, val difficulty: Difficulty)
-
-data class GetTasksEntity(val classId: String)
-
+data class GetTasksEntity(val classId: String, val user_id: Int)
 data class UpdateTaskDifficultyEntity(val task_id: Int, val newDifficulty: Difficulty)
-
 data class CreateTaskResponse(val response: StatusResponse, val id: String)
-data class GetTasksResponse(val response: StatusResponse, val id: List<Task>)
+data class GetTasksResponse(val response: StatusResponse, val id: List<TaskWithProgress>)
 data class GetTaskResponse(val response: StatusResponse, val task: Task?)
 data class UpdateTaskDifficultyResponse(val response: StatusResponse, val newDifficulty: Difficulty? = null, val message: String)
 
@@ -42,24 +40,36 @@ class TaskEntity() {
             val selectStatement = """
                 SELECT * FROM Tasks WHERE class_id = '${classroom.classId}'
             """.trimIndent()
-            val taskIds = mutableListOf<Task>()
+            val taskIds = mutableListOf<TaskWithProgress>()
             val result = statement.executeQuery(selectStatement)
+
             while (result.next()) {
-                val newTask = Task(
-                    result.getString("task_id").toInt(),
+                val taskId = result.getInt("task_id")
+
+                val classroomProgress = ClassroomAttemptsEntity().getClassroomTaskProgress(GetClassroomTaskProgressRequest(taskId))
+                var userProgress: StudentProgress? = null
+
+                if(classroomProgress.response == StatusResponse.Success) {
+                    userProgress = classroomProgress.studentProgress?.find { it.user_id == classroom.user_id }
+                }
+
+                val newTask = TaskWithProgress(
+                    taskId,
                     result.getString("class_id"),
-                    result.getString("set_id").toInt(),
+                    result.getInt("set_id"),
                     result.getString("name"),
                     result.getString("description"),
                     result.getString("due_date"),
-                    Difficulty.values()[result.getInt("difficulty")]
+                    Difficulty.values()[result.getInt("difficulty")],
+                    card_count = classroomProgress.card_count ?: 0,
+                    completed_card_count = userProgress?.completed_count ?: 0
                     )
                 taskIds.add(newTask)
             }
             return GetTasksResponse(StatusResponse.Success, taskIds)
         } catch(e: Exception) {
             e.printStackTrace();
-            val resultPlaceholder = mutableListOf<Task>()
+            val resultPlaceholder = mutableListOf<TaskWithProgress>()
             return GetTasksResponse(StatusResponse.Failure, resultPlaceholder)
         }
     }
