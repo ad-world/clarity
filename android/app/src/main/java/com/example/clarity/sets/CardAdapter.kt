@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.clarity.R
 import com.example.clarity.sets.data.Card
 import com.example.clarity.sets.data.PhraseDictionary
+import androidx.core.content.ContextCompat
 import com.google.android.material.textfield.TextInputEditText
 import org.w3c.dom.Text
 import java.lang.Integer.min
