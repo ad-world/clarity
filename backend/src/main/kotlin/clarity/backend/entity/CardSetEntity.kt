@@ -90,7 +90,7 @@ class CardSetEntity() {
             val statement = db!!.createStatement()
             val query = """
                 INSERT INTO CardSet(creator_id, title, type, is_public_ind, likes, cloned_from_set)
-                VALUES (${set.creator_id}, '${set.title}', '${set.type}', 0, 0, NULL);
+                VALUES (${set.creator_id}, '${set.title}', '${set.type}', 1, 0, NULL);
             """.trimIndent()
             val insertedRows = statement.executeUpdate(query, Statement.RETURN_GENERATED_KEYS)
 

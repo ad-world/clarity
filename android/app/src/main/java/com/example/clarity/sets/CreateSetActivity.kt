@@ -124,8 +124,9 @@ class CreateSetActivity : AppCompatActivity() {
         }
 
         // Handle Visibility Stuff
-        btnPublic.backgroundTintList = getColorStateList(R.color.not_selected)
-        btnPrivate.backgroundTintList = getColorStateList(R.color.selected)
+        btnPublic.backgroundTintList = getColorStateList(R.color.selected)
+        btnPrivate.backgroundTintList = getColorStateList(R.color.not_selected)
+        visibility = Visibility.PUBLIC
 
         btnPublic.setOnClickListener {
             if (visibility == Visibility.PRIVATE) {
@@ -225,7 +226,7 @@ class CreateSetActivity : AppCompatActivity() {
                         }
                     }
 
-                    if (visibility == Visibility.PUBLIC) {
+                    if (visibility == Visibility.PRIVATE) {
                         runBlocking {
                             return@runBlocking api.toggleCardSetVisibility(ToggleCardSetRequest(newSet.body()!!.set!!.set_id))
                         }
