@@ -9,8 +9,9 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 data class CreateAttemptEntity(val set_id: Int, val user_id: Int, val card_id: Int, val audio: MultipartFile)
-// audio is Int for now, will change once we figure out what it needs to be
+data class PracticeAttemptEntity(val set_id: Int, val user_id: Int, val card_id: Int, val audio: MultipartFile)
 data class CreateAttemptResponse(val response: StatusResponse, val metadata: AttemptMetadata?, val message: String)
+data class PracticeAttemptResponse(val response: StatusResponse, val metadata: AttemptMetadata?, val message: String)
 data class AttemptMetadata(
     val set_id: Int, val user_id: Int, val card_id: Int, val mispronunciations: List<String>,
     val omissions: List<String>, val insertions: List<String>, val pronunciationScore: Double, val accuracyScore: Double,
@@ -219,6 +220,57 @@ class AttemptsEntity {
                 set_id = set,
                 attempts = listOf(),
                 response = StatusResponse.Failure
+            )
+        }
+    }
+
+    fun practiceAttemptCard(request: PracticeAttemptEntity): PracticeAttemptResponse {
+        try {
+            val (set_id, user_id, card_id, audio) = request;
+
+            val card = CardEntity().getCard(card_id)
+
+            val user = UserEntity().getUserById(userId = user_id.toString())
+            val difficulty = user.user?.difficulty
+
+            val analysis = card?.let { speechAnalyzer.analyzeAudio(audio, it.phrase) }
+                ?: throw Exception("Speech analysis returned null - unknown error")
+
+            val json = analysis.json
+            val result = analysis.assessmentResult
+                ?: throw Exception("Speech analysis result was null - don't record this attempt")
+
+            val omissions = speechAnalyzer.findErrorType(json, ErrorType.Omission)
+            val mispronunciations = speechAnalyzer.findErrorType(json, ErrorType.Mispronunciation)
+            val insertions = speechAnalyzer.findErrorType(json, ErrorType.Insertion)
+
+            val analyzer: ErrorAnalysis = when(difficulty) {
+                Difficulty.Easy -> EasyErrorAnalysis()
+                Difficulty.Medium -> MediumErrorAnalysis()
+                Difficulty.Hard -> HardErrorAnalysis()
+                else -> EasyErrorAnalysis()
+            }
+
+            val pronunciationScore = result.pronunciationScore
+            val fluencyScore = result.fluencyScore
+            val accuracyScore = result.accuracyScore
+            val completenessScore = result.completenessScore
+
+            val shouldComplete = analyzer.shouldCompleteCard(result, omissions, mispronunciations, insertions)
+
+            val attemptMetadata = AttemptMetadata(set_id, user_id, card_id, mispronunciations, omissions, insertions,
+                pronunciationScore, accuracyScore, fluencyScore, completenessScore, json, shouldComplete)
+
+            return PracticeAttemptResponse(
+                StatusResponse.Success,
+                attemptMetadata,
+                "Practice attempt analyzed successfully."
+            )
+        } catch (e: Exception) {
+            return PracticeAttemptResponse(
+                StatusResponse.Failure,
+                null,
+                e.message ?: "Unknown error"
             )
         }
     }

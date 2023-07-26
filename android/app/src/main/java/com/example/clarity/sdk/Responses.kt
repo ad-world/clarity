@@ -46,3 +46,5 @@ data class GetSetDataResponse(val response: StatusResponse, val set: CardSet? = 
 data class ClonePublicSetResponse(val response: StatusResponse, val new_set_id: Int, val msg: String)
 data class GetUnreadResponse(val response: StatusResponse, val messages: List<Notification>)
 data class NotificationResponse(val response: StatusResponse, val message: String)
+data class PracticeAttemptResponse(val response: StatusResponse, val metadata: AttemptMetadata?, val message: String)
+data class PracticeClassroomAttemptResponse(val response: StatusResponse, val metadata: ClassroomAttemptMetadata?, val message: String)

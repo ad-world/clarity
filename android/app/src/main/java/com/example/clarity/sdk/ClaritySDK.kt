@@ -80,6 +80,9 @@ interface API {
     @Multipart
     @POST("attemptCard")
     suspend fun attemptCard(@Part("user_id") userId: Int, @Part("card_id") cardId: Int, @Part("set_id") setId: Int, @Part audio: MultipartBody.Part): Response<CreateAttemptResponse>
+    @Multipart
+    @POST("practiceAttemptCard")
+    suspend fun practiceAttemptCard(@Part("user_id") userId: Int, @Part("card_id") cardId: Int, @Part("set_id") setId: Int, @Part audio: MultipartBody.Part): Response<PracticeAttemptResponse>
 
     @POST("getAttemptAverage")
     suspend fun getUserAverageAttempts(@Body request: GetUserAverageAttemptsRequest): Response<GetUserAverageAttemptsResponse>
@@ -102,6 +105,10 @@ interface API {
     @Multipart
     @POST("classroom/attemptCard")
     suspend fun attemptClassroomCard(@Part("user_id") userId: Int, @Part("card_id") cardId: Int, @Part("task_id") task_id: Int, @Part audio: MultipartBody.Part): Response<CreateClassroomAttemptResponse>
+
+    @Multipart
+    @POST("classroom/practiceAttemptCard")
+    suspend fun practiceAttemptClassroomCard(@Part("user_id") userId: Int, @Part("card_id") cardId: Int, @Part("task_id") task_id: Int, @Part audio: MultipartBody.Part): Response<PracticeClassroomAttemptResponse>
 
     @GET("classroom/getTaskAttempts")
     suspend fun getTaskAttempts(@Query("task") task: Int): Response<GetTaskAttemptsResponse>

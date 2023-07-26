@@ -1,17 +1,14 @@
-package com.example.clarity.sets.activities
+package com.example.clarity.classroompage
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.content.pm.PackageManager
 import android.graphics.Color
-import android.media.*
 import android.os.Bundle
 import android.speech.tts.TextToSpeech
 import android.util.Log
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
-import android.widget.Button
 import android.widget.ImageButton
 import android.widget.ProgressBar
 import android.widget.TextView
@@ -23,10 +20,11 @@ import com.example.clarity.sdk.ClaritySDK
 import com.example.clarity.R
 import com.example.clarity.SessionManager
 import com.example.clarity.sdk.CreateAttemptResponse
+import com.example.clarity.sdk.CreateClassroomAttemptResponse
 import com.example.clarity.sets.data.Card
 import com.example.clarity.sets.data.Set
-import com.example.clarity.sets.data.SetCategory
 import com.example.clarity.sets.audio.WavRecorder
+import com.example.clarity.sets.data.SetCategory
 import com.google.gson.Gson
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -34,14 +32,15 @@ import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Response
-import java.io.*
 import java.io.File
+import java.io.FileInputStream
+import java.io.IOException
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.charset.Charset
 import java.util.Locale
 
-class TestSetActivity() : AppCompatActivity() {
+class ClassroomTaskPracticeActivity() : AppCompatActivity() {
 
     // Recorder and Player
     private var player: TextToSpeech? = null
@@ -52,9 +51,6 @@ class TestSetActivity() : AppCompatActivity() {
 
     // Toggle to check if we are currently recording
     private var isRecording = false
-
-    // Variable to restrict users to one attempt per card
-    private var recordingCompleted = false
 
     // ClaritySDK api for endpoint calls
     private val api = ClaritySDK().apiService
@@ -70,12 +66,6 @@ class TestSetActivity() : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Request permission to record
-        ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.RECORD_AUDIO), 0)
-
-        // Set View
-        setContentView(R.layout.activity_test_set)
-
         // Create TTS Object
         player = TextToSpeech(this, TextToSpeech.OnInitListener {
             if (it == TextToSpeech.SUCCESS) {
@@ -84,6 +74,12 @@ class TestSetActivity() : AppCompatActivity() {
                 Log.d("TTS ERROR", it.toString())
             }
         })
+
+        // Request permission to record
+        ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.RECORD_AUDIO), 0)
+
+        // Set View
+        setContentView(R.layout.activity_practice_set)
 
         // Get Set that was started
         val intent = intent
@@ -97,19 +93,22 @@ class TestSetActivity() : AppCompatActivity() {
         val iBtnMic = findViewById<ImageButton>(R.id.iBtnMic)
         val iBtnSpeaker = findViewById<ImageButton>(R.id.iBtnSpeaker)
         val iBtnNext = findViewById<ImageButton>(R.id.iBtnNext)
+        val iBtnPrev = findViewById<ImageButton>(R.id.iBtnPrev)
         val cvPopUp = findViewById<CardView>(R.id.cvPopUp)
-        val cvCompletedScreen = findViewById<CardView>(R.id.cvCompletedScreen)
-        val btnReturn = findViewById<Button>(R.id.btnReturn)
+        val progressBar = findViewById<ProgressBar>(R.id.progressBar)
+        val tvCompletedCount = findViewById<TextView>(R.id.tvCompletedPhrases)
 
         // Get Session Context Variables
         lifecycleScope.launch {
             userid = sessionManager.getUserId()
         }
 
-        // Initialize Title
+        // Initialize Progress Bar, Completed Count, and Title
+        progressBar.progress = ((index + 1) * 100) / set.cards.size
+        tvCompletedCount.text = "Phrase ${index + 1} / ${set.cards.size}"
         tvTitle.text = set.title
 
-        // Handle Close button, which automatically closes test session
+        // Handle Close button, which automatically closes practice session
         iBtnClose.setOnClickListener {
             finish()
         }
@@ -121,76 +120,74 @@ class TestSetActivity() : AppCompatActivity() {
 
         // Handle Mic button click
         iBtnMic.setOnClickListener {
-            // Ensure we haven't already recorded an attempt for this card
-            if (!recordingCompleted) {
-                // CASE 1: Not Recording -> Recording
-                if (!isRecording) {
-                    // Change UI of button
-                    iBtnMic.setBackgroundResource(R.drawable.setclosebutton)
-                    iBtnMic.setImageResource(R.drawable.baseline_mic_24_white)
+            // CASE 1: Not Recording -> Recording
+            if (!isRecording) {
+                // Disable Navigation Buttons
+                iBtnNext.isEnabled = false
+                iBtnPrev.isEnabled = false
 
-                    // Start recording, while storing recording in file
-                    wavRecorder.startRecording("audio.wav", true)
+                // Ensure Result Pop up is Gone
+                cvPopUp.visibility = View.GONE
 
-                // CASE 2: Recording -> Not Recording
-                } else {
-                    // Change UI of button
-                    iBtnMic.setBackgroundResource(R.drawable.roundcorner)
-                    iBtnMic.setImageResource(R.drawable.baseline_mic_24)
+                // Change UI of button
+                iBtnMic.setBackgroundResource(R.drawable.setclosebutton)
+                iBtnMic.setImageResource(R.drawable.baseline_mic_24_white)
 
-                    // Stop Recording
-                    wavRecorder.stopRecording()
+                // Start recording, while storing recording in file
+                wavRecorder.startRecording("audio.wav", true)
 
-                    // Indicate that we have already recorded an attempt for this card
-                    recordingCompleted = true
-                    iBtnMic.isEnabled = false
+            // CASE 2: Recording -> Not Recording
+            } else {
+                // Change UI of button
+                iBtnMic.setBackgroundResource(R.drawable.roundcorner)
+                iBtnMic.setImageResource(R.drawable.baseline_mic_24)
 
-                    // Make next button visible
-                    iBtnNext.visibility = VISIBLE
+                // Stop Recording
+                wavRecorder.stopRecording()
 
-                    // Return Accuracy Score and Display Popup
-                    val score = getAccuracyScore(File(this.filesDir, "audio.wav"))
-                    displayMessagePopup(score)
+                // Return Accuracy Score and Display Popup
+                val score = getAccuracyScore(File(this.filesDir, "audio.wav"))
+                displayMessagePopup(score)
 
-                    // Update Progress Components
-                    val progressBar = findViewById<ProgressBar>(R.id.progressBar)
-                    val tvCompletedCount = findViewById<TextView>(R.id.tvCompletedPhrases)
-                    val tvPercentComplete = findViewById<TextView>(R.id.tvPercentComplete)
-                    progressBar.progress = (index * 100) / set.cards.size
-                    tvCompletedCount.text = "$index Complete"
-                    tvPercentComplete.text = "${(index * 100) / set.cards.size} %"
-                }
-
-                // Toggle isRecording Value
-                isRecording = !isRecording
+                // Enable Navigation Buttons
+                iBtnNext.isEnabled = true
+                iBtnPrev.isEnabled = true
             }
+
+            // Toggle isRecording Value
+            isRecording = !isRecording
         }
 
         // Handle Forward Navigation
         iBtnNext.setOnClickListener {
-            iBtnMic.isEnabled = true
-            // Increment Index and set Progress
-            index++
-            set.progress = index
-            if (index < set.cards.size) {
-                iBtnNext.visibility = GONE
-                cvPopUp.visibility = GONE
+            if (index < set.cards.size - 1) {
+                index++
+                iBtnMic.isEnabled = true
+                progressBar.progress = ((index + 1) * 100) / set.cards.size
+                tvCompletedCount.text = "Phrase ${index + 1} / ${set.cards.size}"
+                cvPopUp.visibility = View.GONE
                 loadCard(set.cards[index])
-                recordingCompleted = false
-            } else {
-                cvCompletedScreen.visibility = VISIBLE
-                iBtnClose.isEnabled = false
-                iBtnNext.visibility = GONE
-                iBtnMic.isEnabled = false
+                if(index == set.cards.size - 1) {
+                    iBtnNext.visibility = GONE
+                }
+                iBtnPrev.visibility = VISIBLE
             }
         }
 
-        // Handle Return after completion
-        btnReturn.setOnClickListener {
-            cvCompletedScreen.visibility = GONE
-            iBtnClose.isEnabled = true
-            iBtnMic.isEnabled = true
-            finish()
+        // Handle Backward Navigation
+        iBtnPrev.setOnClickListener {
+            if (index > 0) {
+                index--
+                iBtnMic.isEnabled = true
+                progressBar.progress = ((index + 1) * 100) / set.cards.size
+                tvCompletedCount.text = "Phrase ${index + 1} / ${set.cards.size} "
+                cvPopUp.visibility = View.GONE
+                loadCard(set.cards[index])
+                if(index == 0) {
+                    iBtnPrev.visibility = GONE
+                }
+                iBtnNext.visibility = VISIBLE
+            }
         }
 
         // Load Initial Card
@@ -209,10 +206,11 @@ class TestSetActivity() : AppCompatActivity() {
         val requestFile = RequestBody.create(MediaType.parse("audio/*"), wavFile)
         val part = MultipartBody.Part.createFormData("audio", wavFile.name, requestFile)
 
-        // Make attempt call
-        val response: Response<CreateAttemptResponse> = runBlocking {
-            return@runBlocking api.attemptCard(userid, set.cards[index].id, set.id, part)
+        // Make classroom attempt call for tasks
+        val response: Response<CreateClassroomAttemptResponse> = runBlocking {
+            return@runBlocking api.attemptClassroomCard(userid, set.cards[index].id, taskId, part)
         }
+
         // Handle failed response case
         if (response.body() == null || response.body()!!.metadata == null) {
             return 0
