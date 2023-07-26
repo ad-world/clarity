@@ -4,6 +4,17 @@ import java.io.File
 import java.nio.charset.Charset
 import java.sql.Connection
 import java.sql.DriverManager
+import java.sql.Statement
+import clarity.backend.entity.UserEntity
+import clarity.backend.entity.CreateUserEntity
+import clarity.backend.entity.CardSetEntity
+import clarity.backend.entity.CreateCardSetEntity
+import clarity.backend.entity.CardEntity
+import clarity.backend.entity.CreateCardEntity
+import clarity.backend.util.Difficulty
+import clarity.backend.util.RecommendedSets
+
+
 class DataManager {
 
     companion object {
@@ -34,6 +45,7 @@ class DataManager {
         executeSqlFile("ddl/CREATE_FOLLOWING.sql")
         executeSqlFile("ddl/CREATE_INBOX.sql")
         executeSqlFile("ddl/CREATE_SETLIKES.sql")
+        RecommendedSets.buildRecommendedSets()
     }
 
     private fun createDbFile() {
@@ -62,12 +74,5 @@ class DataManager {
         } else {
             println("${sqlFile.absolutePath} does not exist. Please fix your file path");
         }
-    }
-
-    fun buildRecommendedSets() {
-        val db = conn()
-        val statementCreateSet = db!!.createStatement()
-
-
     }
 }

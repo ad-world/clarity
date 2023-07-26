@@ -65,12 +65,13 @@
     <androidx.cardview.widget.CardView
         android:id="@+id/cvPopUp"
         android:layout_width="0dp"
-        android:layout_height="45dp"
+        android:layout_height="80dp"
         android:layout_marginStart="30dp"
-        android:layout_marginTop="52dp"
+        android:layout_marginTop="45dp"
         android:layout_marginEnd="30dp"
         android:layout_marginBottom="20dp"
         android:backgroundTint="#FDFCBB"
+        android:textAlignment="center"
         android:visibility="gone"
         app:cardCornerRadius="10dp"
         app:flow_verticalAlign="center"
@@ -86,7 +87,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="@string/great_job"
+            android:textAlignment="center"
             android:textSize="18sp" />
 
     </androidx.cardview.widget.CardView>
@@ -98,6 +99,7 @@
         android:layout_marginEnd="20dp"
         android:background="@color/white"
         android:backgroundTint="#116DF5"
+        android:textAlignment="center"
         android:translationZ="100dp"
         app:cardCornerRadius="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -169,7 +171,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="40dp"
         android:layout_marginEnd="40dp"
-        android:layout_marginBottom="48dp"
+        android:layout_marginBottom="25dp"
         android:progress="5"
         android:progressTint="#F1416C"
         android:scaleY="2"

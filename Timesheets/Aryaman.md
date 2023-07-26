@@ -50,5 +50,8 @@ Entries with start time and end times that span multiple days with have exactly 
 | Add edit user / change password | 1.5 hours | 6:00 PM | 7:30 PM | July 21st, 2023 | [Add edit user / change password](https://github.com/ad-world/clarity/commit/bdef8618effaab8e6e1e9a4f9fc849872bb61907) |
 | D6 Meeting | 1 hour | 7:00 PM | 8:00 PM | July 24th, 2023 | N/A |
 | Add practice user and task attempts | 2 hours | 9:00 AM | 11:00 AM | July 25th, 2023 | [Add practice user and task attempts](https://github.com/ad-world/clarity/commit/581de83d8b115737a2a08bab95a55b82b0cb7ffc) |
+| Fix task id bug | 0.5 hours | 5:00 PM | 5:30 PM | July 25th, 2023 | [Fix task ID bug](https://github.com/ad-world/clarity/commit/f00ba6bd7e7ed8c5f79e9eb43ab0c442c12b7535) |
+| Project run-through | 1.5 hours | 10:00 PM | 11:30 PM | July 25th, 2023 | N/A |
+| Student task progress | 1.5 hours | 11:00 PM July 25th | 12:30 AM July 26th | July 25th-26th, 2023 | [Student task progress](https://github.com/ad-world/clarity/commit/f3f8b13d1762b9c43eff114fad839594e595c0ba) |
 
-Total time spent as of July 25th, 2023: 63 hours
+Total time spent as of July 25th, 2023: 66.5 hours
