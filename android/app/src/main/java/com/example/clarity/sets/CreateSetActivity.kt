@@ -60,8 +60,8 @@ class CreateSetActivity : AppCompatActivity() {
     private fun allWordsInDictionary(phrase: String): Boolean {
         val phraseWords = phrase.split(" ")
         for (word in phraseWords) {
-            if (!dictionary.phrases.contains(word)) {
-                Log.d("faled here", word)
+            if (!dictionary.phrases.contains(word.lowercase())) {
+                Log.d("Invalid Word", word)
                 return false
             }
         }

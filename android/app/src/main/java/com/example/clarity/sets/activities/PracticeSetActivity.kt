@@ -60,7 +60,7 @@ class PracticeSetActivity() : AppCompatActivity() {
     private var index = 0
 
     // List that stores missing words
-    var ommisions: List<String>? = listOf()
+    var failedWords: List<String>? = listOf()
 
     // User and Set
     var userid = 0
@@ -138,7 +138,7 @@ class PracticeSetActivity() : AppCompatActivity() {
                 iBtnMic.setImageResource(R.drawable.baseline_mic_24_white)
 
                 // Start recording, while storing recording in file
-                wavRecorder.startRecording("audio.wav", true)
+                wavRecorder.startRecording("audio_practice.wav", true)
 
             // CASE 2: Recording -> Not Recording
             } else {
@@ -150,7 +150,7 @@ class PracticeSetActivity() : AppCompatActivity() {
                 wavRecorder.stopRecording()
 
                 // Return Accuracy Score and Display Popup
-                val isComplete = getAccuracyScore(File(this.filesDir, "audio.wav"))
+                val isComplete = getAccuracyScore(File(this.filesDir, "audio_practice.wav"))
                 displayMessagePopup(isComplete)
 
                 // Enable Navigation Buttons
@@ -223,13 +223,15 @@ class PracticeSetActivity() : AppCompatActivity() {
         Log.d("response", response.toString())
         // Handle failed response case
         if (response.body() == null || response.body()!!.metadata == null) {
-            // ommisions = null
+            failedWords = null
             return false
         }
 
         Log.d("response metadata", response.body()!!.metadata.toString())
 
-        ommisions = response.body()!!.metadata?.omissions
+        val omissions = response.body()!!.metadata?.omissions!!
+        val mispronunciations = response.body()!!.metadata?.mispronunciations!!
+        failedWords = omissions + mispronunciations
         // Return with isComplete
         return response.body()?.metadata!!.is_complete
     }
@@ -245,28 +247,28 @@ class PracticeSetActivity() : AppCompatActivity() {
         if (isComplete)  {
             cvPopUp.backgroundTintList = getColorStateList(R.color.passed)
             tvResultMessage.text = resources.getString(R.string.great_job)
-        } else if (ommisions == null) {
+        } else if (failedWords == null) {
             cvPopUp.backgroundTintList = getColorStateList(R.color.failed)
             tvResultMessage.text = "Whoops, No audio was detected, ensure that your microphone is enabled and try again"
         } else {
             cvPopUp.backgroundTintList = getColorStateList(R.color.failed)
             tvResultMessage.text =  resources.getString(R.string.just_a_little_off_keep_practicing)
-            /*if (omissions!!.isNotEmpty()) {
-                tvResultMessage.text = tvResultMessage.text as String + "\n The following words weren't picked up: " + getOmittedWords(
-                    omissions!!
+            if (failedWords!!.isNotEmpty()) {
+                tvResultMessage.text = tvResultMessage.text as String + "\n The following words weren't picked up: " + getFailedWords(
+                    failedWords!!
                 )
-            }*/
+            }
         }
 
         // Make Popup visible
         cvPopUp.visibility = View.VISIBLE
     }
 
-    private fun getOmmittedWords(ommitions: List<String>): String {
+    private fun getFailedWords(failedWords: List<String>): String {
         var result = ""
-        for (i in ommitions.indices) {
-            result += ommitions[i]
-            if (i != ommitions.size - 1) {
+        for (i in failedWords.indices) {
+            result += failedWords[i]
+            if (i != failedWords.size - 1) {
                 result += ", "
             }
         }
