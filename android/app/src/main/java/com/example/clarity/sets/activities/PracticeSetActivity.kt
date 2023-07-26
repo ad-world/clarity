@@ -20,6 +20,7 @@ import com.example.clarity.sdk.ClaritySDK
 import com.example.clarity.R
 import com.example.clarity.SessionManager
 import com.example.clarity.sdk.CreateAttemptResponse
+import com.example.clarity.sdk.PracticeAttemptResponse
 import com.example.clarity.sets.data.Card
 import com.example.clarity.sets.data.Set
 import com.example.clarity.sets.audio.WavRecorder
@@ -209,8 +210,8 @@ class PracticeSetActivity() : AppCompatActivity() {
         val part = MultipartBody.Part.createFormData("audio", wavFile.name, requestFile)
 
         // Make attempt call
-        val response: Response<CreateAttemptResponse> = runBlocking {
-            return@runBlocking api.attemptCard(userid, set.cards[index].id, set.id, part)
+        val response: Response<PracticeAttemptResponse> = runBlocking {
+            return@runBlocking api.practiceAttemptCard(userid, set.cards[index].id, set.id, part)
         }
 
         Log.d("response", response.toString())
