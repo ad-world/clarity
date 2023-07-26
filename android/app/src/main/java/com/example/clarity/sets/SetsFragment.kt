@@ -1,19 +1,24 @@
 package com.example.clarity.sets
 
-import com.example.clarity.SessionManager
 import android.content.Intent
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat.getColorStateList
+import androidx.core.widget.addTextChangedListener
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.clarity.sdk.ClaritySDK
+import com.example.clarity.R
+import com.example.clarity.SessionManager
 import com.example.clarity.databinding.FragmentSetsBinding
+import com.example.clarity.sdk.ClaritySDK
 import com.example.clarity.sdk.GetCardsInSetRequest
 import com.example.clarity.sdk.GetCardsInSetResponse
 import com.example.clarity.sdk.GetSetsByUsernameResponse
@@ -25,10 +30,9 @@ import com.example.clarity.sets.data.Card
 import com.example.clarity.sets.data.Set
 import com.example.clarity.sets.data.SetCategory
 import com.google.gson.Gson
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-import retrofit2.Response
 import kotlinx.coroutines.*
+import retrofit2.Response
+
 
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 private const val USER_ID = "userId"
@@ -56,9 +60,26 @@ class SetsFragment : Fragment() {
     // sessionManager to interact with global datastore
     private val sessionManager: SessionManager by lazy { SessionManager(requireContext()) }
 
+    private var filterText = ""
+    private var showCompleted = true
+
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
+
+    private fun filter() {
+        val filteredSets: MutableList<Set> = mutableListOf()
+
+        for (set in sets) {
+            if (set.title.lowercase()
+                    .contains(filterText.lowercase()) && (showCompleted || set.progress != set.cards.size)
+            ) {
+                filteredSets.add(set)
+            }
+        }
+
+        setAdapter.filterList(filteredSets)
+    }
 
     private fun onSetClick(position: Int) {
         // Get all Variables
@@ -184,6 +205,28 @@ class SetsFragment : Fragment() {
             val intent = Intent(activity, CreateSetActivity::class.java)
             startActivity(intent)
         }
+
+        binding.btnToggleCompleted.setOnClickListener {
+            showCompleted = !showCompleted
+            if (showCompleted) {
+                binding.btnToggleCompleted.text = "Hide Completed"
+                binding.btnToggleCompleted.backgroundTintList = getColorStateList(requireContext(), R.color.passed)
+
+            } else {
+                binding.btnToggleCompleted.text = "Show Completed"
+                binding.btnToggleCompleted.backgroundTintList = getColorStateList(requireContext(), R.color.failed)
+            }
+            filter()
+        }
+
+        binding.etSearchSets.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: Editable) {
+                filterText = s.toString()
+                filter()
+            }
+        })
     }
 
     companion object {

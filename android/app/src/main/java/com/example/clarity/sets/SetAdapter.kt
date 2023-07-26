@@ -1,6 +1,5 @@
 package com.example.clarity.sets
 
-import android.opengl.Visibility
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
@@ -13,8 +12,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.clarity.R
 import com.example.clarity.sets.data.Set
 
+
 class SetAdapter(
-    private val sets: MutableList<Set>,
+    private var sets: MutableList<Set>,
     private val onItemClicked: (position: Int) -> Unit
 ) : RecyclerView.Adapter<SetAdapter.SetViewHolder>() {
 
@@ -71,5 +71,10 @@ class SetAdapter(
                 completedCheck.visibility = GONE
             }
         }
+    }
+
+    fun filterList(filteredList: MutableList<Set>) {
+        sets = filteredList
+        notifyDataSetChanged()
     }
 }
