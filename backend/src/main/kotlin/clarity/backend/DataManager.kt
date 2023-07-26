@@ -5,6 +5,14 @@ import java.nio.charset.Charset
 import java.sql.Connection
 import java.sql.DriverManager
 import java.sql.Statement
+import clarity.backend.entity.UserEntity
+import clarity.backend.entity.CreateUserEntity
+import clarity.backend.entity.CardSetEntity
+import clarity.backend.entity.CreateCardSetEntity
+import clarity.backend.entity.CardEntity
+import clarity.backend.entity.CreateCardEntity
+import clarity.backend.util.Difficulty
+
 
 class DataManager {
 
@@ -36,6 +44,7 @@ class DataManager {
         executeSqlFile("ddl/CREATE_FOLLOWING.sql")
         executeSqlFile("ddl/CREATE_INBOX.sql")
         executeSqlFile("ddl/CREATE_SETLIKES.sql")
+        buildRecommendedSets()
     }
 
     private fun createDbFile() {
@@ -67,6 +76,18 @@ class DataManager {
     }
 
     fun buildRecommendedSets() {
+        // Create Clarity user.
+        val createClarityUserResp = UserEntity().createUser(
+            CreateUserEntity(
+                username="Clarity",
+                email="clarity@gmail.com",
+                password="clarity",
+                firstname="Clarity",
+                lastname="Org",
+                phone_number="000000000",
+                difficulty=Difficulty.Easy
+            )
+        )
 
         val phrasesSetOneTitle = "/th Sentences"
         val cardPhrasesOne = mutableListOf<String>("Weather", "Zenith", "The thief thwarted the sleuth.",
@@ -77,5 +98,25 @@ class DataManager {
         val phrasesSetTwoTitle = "4 Syllable"
         val cardPhrasesTwo = mutableListOf<String>("discovery", "appreciate", "questionable", "librarian", "apologize")
 
+        val createSetOneResp = CardSetEntity().createCardSet(
+            CreateCardSetEntity(creator_id=1, phrasesSetOneTitle, type="practise", 0)
+        )
+        val setOneMetadata = createSetOneResp.set!!
+
+        for (phrase in cardPhrasesOne) {
+            val createCardResp = CardEntity().createCard(
+                CreateCardEntity(phrase=phrase, title="title", setId=setOneMetadata.set_id)
+            )
+        }
+
+        val createSetTwoResp = CardSetEntity().createCardSet(
+            CreateCardSetEntity(creator_id=1, phrasesSetTwoTitle, type="practise", 0)
+        )
+        val setTwoMetatdata = createSetTwoResp.set!!
+        for (phrase in cardPhrasesTwo) {
+            val createCardResp = CardEntity().createCard(
+                CreateCardEntity(phrase=phrase, title="title", setId=setTwoMetatdata.set_id)
+            )
+        }
     }
 }
