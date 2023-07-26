@@ -9,5 +9,7 @@ CREATE TABLE IF NOT EXISTS User (
     last_logged_in TEXT NOT NULL,
     login_streak INTEGER NOT NULL,
     difficulty INTEGER NOT NULL,
-    CHECK ( difficulty = 0 OR difficulty = 1 OR difficulty = 2 )
+    enable_notifications INTEGER NOT NULL,
+    CHECK ( difficulty = 0 OR difficulty = 1 OR difficulty = 2 ),
+    CHECK( enable_notifications = 0 OR enable_notifications = 1)
 )
