@@ -12,6 +12,7 @@ import clarity.backend.entity.CreateCardSetEntity
 import clarity.backend.entity.CardEntity
 import clarity.backend.entity.CreateCardEntity
 import clarity.backend.util.Difficulty
+import clarity.backend.util.RecommendedSets
 
 
 class DataManager {
@@ -44,7 +45,7 @@ class DataManager {
         executeSqlFile("ddl/CREATE_FOLLOWING.sql")
         executeSqlFile("ddl/CREATE_INBOX.sql")
         executeSqlFile("ddl/CREATE_SETLIKES.sql")
-        buildRecommendedSets()
+        RecommendedSets.buildRecommendedSets()
     }
 
     private fun createDbFile() {
@@ -72,51 +73,6 @@ class DataManager {
 
         } else {
             println("${sqlFile.absolutePath} does not exist. Please fix your file path");
-        }
-    }
-
-    fun buildRecommendedSets() {
-        // Create Clarity user.
-        val createClarityUserResp = UserEntity().createUser(
-            CreateUserEntity(
-                username="Clarity",
-                email="clarity@gmail.com",
-                password="clarity",
-                firstname="Clarity",
-                lastname="Org",
-                phone_number="000000000",
-                difficulty=Difficulty.Easy
-            )
-        )
-
-        val phrasesSetOneTitle = "/th Sentences"
-        val cardPhrasesOne = mutableListOf<String>("Weather", "Zenith", "The thief thwarted the sleuth.",
-            "The smoothie in the thermos was thirst-quenching", "They gathered thirty threadbare thespians in the theatre",
-            "Thanksgiving is now the third Thursday of the month",
-            )
-
-        val phrasesSetTwoTitle = "4 Syllable"
-        val cardPhrasesTwo = mutableListOf<String>("discovery", "appreciate", "questionable", "librarian", "apologize")
-
-        val createSetOneResp = CardSetEntity().createCardSet(
-            CreateCardSetEntity(creator_id=1, phrasesSetOneTitle, type="practise", 0)
-        )
-        val setOneMetadata = createSetOneResp.set!!
-
-        for (phrase in cardPhrasesOne) {
-            val createCardResp = CardEntity().createCard(
-                CreateCardEntity(phrase=phrase, title="title", setId=setOneMetadata.set_id)
-            )
-        }
-
-        val createSetTwoResp = CardSetEntity().createCardSet(
-            CreateCardSetEntity(creator_id=1, phrasesSetTwoTitle, type="practise", 0)
-        )
-        val setTwoMetatdata = createSetTwoResp.set!!
-        for (phrase in cardPhrasesTwo) {
-            val createCardResp = CardEntity().createCard(
-                CreateCardEntity(phrase=phrase, title="title", setId=setTwoMetatdata.set_id)
-            )
         }
     }
 }
