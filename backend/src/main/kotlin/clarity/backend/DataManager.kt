@@ -4,6 +4,8 @@ import java.io.File
 import java.nio.charset.Charset
 import java.sql.Connection
 import java.sql.DriverManager
+import java.sql.Statement
+
 class DataManager {
 
     companion object {
@@ -65,9 +67,15 @@ class DataManager {
     }
 
     fun buildRecommendedSets() {
-        val db = conn()
-        val statementCreateSet = db!!.createStatement()
 
+        val phrasesSetOneTitle = "/th Sentences"
+        val cardPhrasesOne = mutableListOf<String>("Weather", "Zenith", "The thief thwarted the sleuth.",
+            "The smoothie in the thermos was thirst-quenching", "They gathered thirty threadbare thespians in the theatre",
+            "Thanksgiving is now the third Thursday of the month",
+            )
+
+        val phrasesSetTwoTitle = "4 Syllable"
+        val cardPhrasesTwo = mutableListOf<String>("discovery", "appreciate", "questionable", "librarian", "apologize")
 
     }
 }
