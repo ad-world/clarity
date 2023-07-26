@@ -66,11 +66,5 @@
             android:id="@+id/action_profile_to_followers"
             app:destination="@id/Followers" />
     </fragment>
-    <fragment
-        android:id="@+id/Community"
-        android:name="com.example.clarity.CommunityFragment"
-        android:label="Community Fragment"
-        tools:layout="@layout/fragment_community">
-    </fragment>
 
 </navigation>

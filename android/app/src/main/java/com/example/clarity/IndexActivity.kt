@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import com.example.clarity.classroompage.ClassroomFragment
 import com.example.clarity.databinding.IndexActivityBinding
+import com.example.clarity.community.DisplaySetsFragment
 import com.example.clarity.profile.ProfileFragment
 import com.example.clarity.sets.SetsFragment
 
@@ -39,7 +40,7 @@ class IndexActivity : AppCompatActivity() {
             when(it.itemId){
                 R.id.profile -> navController.navigate(R.id.ProfileFragment)
                 R.id.sets -> navController.navigate(R.id.SetsFragment)
-                R.id.community -> navController.navigate(R.id.Community)
+                R.id.community -> navController.navigate(R.id.CommunityFragment)
                 R.id.classroom -> navController.navigate(R.id.ClassroomFragment)
                 else -> {}
             }

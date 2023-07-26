@@ -40,12 +40,6 @@
             app:destination="@id/Followers" />
     </fragment>
     <fragment
-        android:id="@+id/Community"
-        android:name="com.example.clarity.CommunityFragment"
-        android:label="Community Fragment"
-        tools:layout="@layout/fragment_community">
-    </fragment>
-    <fragment
         android:id="@+id/SetsFragment"
         android:name="com.example.clarity.sets.SetsFragment"
         android:label="Sets Fragment"
@@ -70,11 +64,16 @@
         tools:layout="@layout/fragment_settings">
     </fragment>
     <fragment
+        android:id="@+id/CommunityFragment"
+        android:name="com.example.clarity.community.CommunityFragment"
+        android:label="Community Fragment"
+        tools:layout="@layout/fragment_community">
+    </fragment>
+    <fragment
         android:id="@+id/NotificationsFragment"
         android:name="com.example.clarity.profile.NotificationsFragment"
         android:label="Notifications Fragment"
         tools:layout="@layout/fragment_notifications">
     </fragment>
-
 
 </navigation>
