@@ -181,5 +181,16 @@ interface API {
 
     @POST("clonePublicSet")
     suspend fun clonePublicSet(@Body request: ClonePublicSetRequest): Response<ClonePublicSetResponse>
-}
 
+    @POST("getCardSetsForFollowing")
+    suspend fun getCardSetsForFollowing(@Body request: GetCardSetsForFollowingRequest): Response<GetCardSetsForFollowingResponse>
+
+    @GET("getUnread")
+    suspend fun getUnread(@Query("userId") userId: Int): Response<GetUnreadResponse>
+
+    @POST("markMessage")
+    suspend fun markMessage(@Body notification: MarkMessage) : Response<NotificationResponse>
+
+    @DELETE("deleteMessage")
+    suspend fun deleteMessage(@Query("notificationId") notificationId: Int) : Response<NotificationResponse>
+}

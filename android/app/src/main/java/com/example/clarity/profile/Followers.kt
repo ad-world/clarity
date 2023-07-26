@@ -46,11 +46,12 @@ class Followers : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         println("HERE")
-        followersList = getFollowers()
         super.onViewCreated(view, savedInstanceState)
         lifecycleScope.launch {
             userId = sessionManager.getUserId()
         }
+        followersList = getFollowers()
+        println(followersList)
         recyclerView.layoutManager = LinearLayoutManager(context)
         recyclerView.adapter = followersList?.let { FollowAdapter(it, true, userid = userId) }
 

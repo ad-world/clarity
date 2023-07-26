@@ -10,11 +10,18 @@
     <TextView
         android:id="@+id/title"
         android:layout_width="match_parent"
+        android:textSize="35sp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="20dp"
         android:layout_height="match_parent"
-        android:text="Followers" />
+        android:text="Followers"
+        android:textStyle="bold"
+        android:layout_marginBottom="20dp"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
+        android:layout_marginTop="60dp"
+        android:layout_marginLeft="10dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:padding="8dp"

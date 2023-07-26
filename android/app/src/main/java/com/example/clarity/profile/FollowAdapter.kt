@@ -24,7 +24,7 @@ import retrofit2.Response
 
 private val api = ClaritySDK().apiService
 
-class FollowAdapter(private val items: List<Int>, val followers: Boolean, val userid: Int) :
+class FollowAdapter(private var items: List<Int>, val followers: Boolean, val userid: Int) :
 
     RecyclerView.Adapter<FollowAdapter.MyViewHolder>() {
 
@@ -38,6 +38,8 @@ class FollowAdapter(private val items: List<Int>, val followers: Boolean, val us
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         val item = items[position]
         val user = getUser(item)?.user
+        println("B")
+        println(user)
         holder.binding.name.text = user?.firstname + " " + user?.lastname
         if(!followers) {
             holder.binding.remove.text = "Unfollow"
@@ -49,22 +51,28 @@ class FollowAdapter(private val items: List<Int>, val followers: Boolean, val us
                 runBlocking {
                     return@runBlocking request?.let { it1 -> api.unfollow(it1) }!!
                 }
+                val updatedList = items.toMutableList()
+                updatedList.removeAt(position)
+                items = updatedList.toList()
+                notifyItemRemoved(position)
             } else {
                 //stop following
                 val request = user?.user_id?.let { it1 -> FollowingRequestEntity(userid, it1) }
                 runBlocking {
                     return@runBlocking request?.let { it1 -> api.unfollow(it1) }!!
                 }
-
+                val updatedList = items.toMutableList()
+                updatedList.removeAt(position)
+                items = updatedList.toList()
+                notifyItemRemoved(position)
             }
-
         }
     }
 
     override fun getItemCount(): Int = items.size
     private fun getUser(userid: Int): GetUserResponse? {
         val response : Response<GetUserResponse> = runBlocking {
-            return@runBlocking api.getUser(userid.toString())
+            return@runBlocking api.getUserById(userid.toString())
         }
         return response.body()
     }

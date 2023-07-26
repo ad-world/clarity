@@ -13,10 +13,10 @@ enum class StatusResponse {
     Failure
 }
 
-data class UserWithId(val user_id: Int, val username: String, val email: String, val firstname: String, val lastname: String, val phone_number: String, val login_streak: Int, val difficulty: Difficulty)
+data class UserWithId(val user_id: Int, val username: String, val email: String, val firstname: String, val lastname: String, val phone_number: String, val login_streak: Int, val difficulty: Difficulty, val enableNotifications: Int)
 data class UserLoginEntity(val username: String, val password: String)
 data class CreateUserEntity(val username: String, val email: String, val password: String, val firstname: String, val lastname: String, val phone_number: String, val difficulty: Difficulty)
-data class EditUserEntity(val user_id: Int, val firstname: String? = null, val lastname: String? = null, val email: String? = null)
+data class EditUserEntity(val user_id: Int, val firstname: String? = null, val lastname: String? = null, val email: String? = null, val enableNotifications: Int? = null)
 data class ChangePasswordEntity(val user_id: Int, val old_password: String, val new_password: String)
 data class UpdateDifficultyEntity(val userId: Int, val newDifficulty: Difficulty? = null)
 data class CreateUserResponse(val response: StatusResponse, val message: String, val userId: Int?, val username: String?)
@@ -55,7 +55,8 @@ class UserEntity() {
                     user_id = result.getInt("user_id"),
                     phone_number = result.getString("phone_number"),
                     login_streak = newLoginStreak,
-                    difficulty = Difficulty.values()[result.getInt("difficulty")]
+                    difficulty = Difficulty.values()[result.getInt("difficulty")],
+                    enableNotifications = result.getInt("enable_notifications")
                 )
 
                 // Updating last logged in + streak
@@ -78,11 +79,11 @@ class UserEntity() {
             val statement = db!!.createStatement()
             val currentDate = LocalDate.now().format(DateTimeFormatter.ISO_DATE)
             val insertStatement = """
-                INSERT INTO User (username, first_name, last_name, email, password, phone_number, last_logged_in, login_streak, difficulty)
+                INSERT INTO User (username, first_name, last_name, email, password, phone_number, last_logged_in, login_streak, difficulty, enable_notifications)
                 VALUES(
                 '${user.username}', '${user.firstname}', '${user.lastname}', 
                 '${user.email}', '${user.password}', '${user.phone_number}',
-                '$currentDate', 1, ${Difficulty.Easy.ordinal}
+                '$currentDate', 1, ${Difficulty.Easy.ordinal}, 1
                 )
             """.trimIndent()
             val result = statement.executeUpdate(insertStatement, Statement.RETURN_GENERATED_KEYS)
@@ -118,7 +119,8 @@ class UserEntity() {
                     email = result.getString("email"),
                     phone_number = result.getString("phone_number"),
                     login_streak = result.getInt("login_streak"),
-                    difficulty = Difficulty.values()[result.getInt("difficulty")]
+                    difficulty = Difficulty.values()[result.getInt("difficulty")],
+                    enableNotifications = result.getInt("enable_notifications")
                 )
                 GetUserResponse(StatusResponse.Success, user, "User found successfully")
             } else {
@@ -145,7 +147,8 @@ class UserEntity() {
                     email = result.getString("email"),
                     phone_number = result.getString("phone_number"),
                     login_streak = result.getInt("login_streak"),
-                    difficulty = Difficulty.values()[result.getInt("difficulty")]
+                    difficulty = Difficulty.values()[result.getInt("difficulty")],
+                    enableNotifications = result.getInt("enable_notifications")
                 )
                 users.add(user)
             }
@@ -175,7 +178,8 @@ class UserEntity() {
                     email = result.getString("email"),
                     phone_number = result.getString("phone_number"),
                     login_streak = result.getInt("login_streak"),
-                    difficulty = Difficulty.values()[result.getInt("difficulty")]
+                    difficulty = Difficulty.values()[result.getInt("difficulty")],
+                    enableNotifications = result.getInt("enable_notifications")
                 )
                 GetUserResponse(StatusResponse.Success, user, "User found successfully")
             } else {
@@ -236,6 +240,10 @@ class UserEntity() {
 
             if(request.lastname != null) {
                 updates.add("last_name = '${request.lastname}'")
+            }
+
+            if(request.enableNotifications != null) {
+                updates.add("enable_notifications = ${request.enableNotifications}")
             }
 
             return if(updates.isNotEmpty()) {

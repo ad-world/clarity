@@ -41,11 +41,13 @@ import com.google.android.material.tabs.TabLayout
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import retrofit2.Response
+import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 import java.util.Date
+import java.util.Locale
 
 
 class ProfileFragment : Fragment() {
@@ -103,6 +105,7 @@ class ProfileFragment : Fragment() {
             menu.setOnMenuItemClickListener { item ->
                 when (item.itemId) {
                     R.id.action_settings -> {
+                        settings()
                         true
                     }
                     R.id.logout -> {
@@ -125,22 +128,13 @@ class ProfileFragment : Fragment() {
         println("here")
         binding.followers.text = numFollowers.toString() + " Followers"
 
-        //if(followersList?.size!! > 0) {
-//        val host = activity?.findNavController(R.id.navHostFragment) as NavHostFragment
-//        val navController = host.navController
-        // Now you can navigate to another destination using the NavController
-        binding.followers.setOnClickListener {
-            Log.d("MyFragment", "Followers button clicked")
-            //Log.d("ProfileFragment", "NavController: ${findNavController()}")
-            try {
+        if(followersList?.size!! > 0) {
+            println(followersList)
+            binding.followers.setOnClickListener {
                 findNavController().navigate(R.id.Followers)
-
-            } catch (e: Exception) {
-                // Handle the exception, or log the error for debugging
-                e.printStackTrace()
             }
         }
-        //}
+
 
 
         //FOLLOWING
@@ -149,11 +143,11 @@ class ProfileFragment : Fragment() {
 
         binding.following.text = numFollowing.toString() + " Following"
 
-//        if(followingList?.size!! > 0) {
-//            binding.following.setOnClickListener {
-//                //findNavController().navigate(R.id.)
-//            }
-//        }
+        if(followingList?.size!! > 0) {
+            binding.following.setOnClickListener {
+                findNavController().navigate(R.id.FollowingFragment)
+            }
+        }
 
 
         //STREAKS
@@ -191,7 +185,7 @@ class ProfileFragment : Fragment() {
 
         println(cardDates)
         println(setDates)
-        sets()
+
         if(setDates.size == 0){
             binding.noProgress.visibility = View.VISIBLE
             binding.chartLabel.visibility = View.GONE
@@ -209,6 +203,7 @@ class ProfileFragment : Fragment() {
             binding.completedNum.visibility = View.VISIBLE
             binding.progress.visibility = View.VISIBLE
             binding.completedText.visibility = View.VISIBLE
+            sets()
         }
 
         binding.tabs.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
@@ -235,8 +230,9 @@ class ProfileFragment : Fragment() {
                         binding.completedNum.visibility = View.VISIBLE
                         binding.progress.visibility = View.VISIBLE
                         binding.completedText.visibility = View.VISIBLE
+                        sets()
                     }
-                    sets()
+
                 } else {
                     binding.lineChart.clear()
                     binding.pieChart.clear()
@@ -258,8 +254,9 @@ class ProfileFragment : Fragment() {
                         binding.completedNum.visibility = View.VISIBLE
                         binding.progress.visibility = View.VISIBLE
                         binding.completedText.visibility = View.VISIBLE
+                        cards()
                     }
-                    cards()
+
                 }
             }
             override fun onTabUnselected(tab: TabLayout.Tab?) {
@@ -275,7 +272,11 @@ class ProfileFragment : Fragment() {
         val intent = Intent(activity, MainActivity::class.java)
         startActivity(intent)
     }
+    private fun settings() {
+        findNavController()?.navigate(R.id.SettingsFragment)
+    }
     private fun cards() {
+        println("hereC")
         binding.progress.text = "Cards Progress"
         binding.completedText.text = "Completed Cards"
         binding.completedNum.text = completedCards.toString()
@@ -284,6 +285,45 @@ class ProfileFragment : Fragment() {
         var attempts = ArrayList<Entry>()
         val sortedDates = cardDates.sorted()
         val labels = ArrayList<String>()
+
+//        val earliestDate = sortedDates.first()
+//        val mostRecentDate = sortedDates.last()
+
+//        val numberOfDates = sortedDates.size
+//        val stepSize: Long = if (numberOfDates > 1) {
+//            (mostRecentDate.toEpochDay() - earliestDate.toEpochDay()) / (numberOfDates - 1)
+//        } else {
+//            // Handle the case where there is only one date
+//            1
+//        }
+//
+//        // Create a sequence of dates within the range to use as labels
+//        val dateLabels = generateSequence(earliestDate) { it.plusDays(stepSize) }
+//            .take(7) // Take at most 7 dates (or fewer if there are less than 7 available)
+//
+//        // Loop through 7 dates (or the number of dates available) and get the frequencies at each date range
+//        for ((i, currentDate) in dateLabels.withIndex()) {
+//            val startDateRange = currentDate
+//            val endDateRange = currentDate.plusDays(stepSize)
+//
+//            // Count the cards that fall within the current date range (exclusive on the end date)
+//            val currentDateCards = cardDates.count { it >= startDateRange && it < endDateRange }
+//            attempts.add(Entry(i.toFloat(), currentDateCards.toFloat()))
+//            labels.add(currentDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.getDefault())))
+//        }
+//        val stepSize = (mostRecentDate.toEpochDay() - earliestDate.toEpochDay()) / 6
+//
+//        var currentDate = earliestDate
+//
+//        for (i in 0..6) {
+//            val startDateRange = currentDate
+//            val endDateRange = currentDate.plusDays(stepSize)
+//            val currentDateCards = cardDates.count { it >= startDateRange && it <= endDateRange }
+//            attempts.add(Entry(i.toFloat(), currentDateCards.toFloat()))
+//            labels.add(currentDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.getDefault())))
+//            currentDate = currentDate.plusDays(stepSize)
+//        }
+
         val dateCardCountMap = sortedDates.groupingBy { it }.eachCount()
         var index = 0f
         for ((date, count) in dateCardCountMap) {
@@ -293,7 +333,7 @@ class ProfileFragment : Fragment() {
         }
         val lineDataSet = LineDataSet(attempts, "Number of cards completed").apply {
             setDrawValues(false)
-            color = Color.BLUE
+            color = Color.RED
             lineWidth = 2f
         }
 
@@ -333,6 +373,7 @@ class ProfileFragment : Fragment() {
         )
         dataSet.colors = colourList
         val data = PieData(dataSet)
+        dataSet.valueTextSize = 12f
         pieChart.setUsePercentValues(true)
         pieChart.setDrawEntryLabels(false)
         pieChart.description.isEnabled = false
@@ -344,6 +385,7 @@ class ProfileFragment : Fragment() {
         binding.completedNum.text = completedCards.toString()
     }
     private fun sets(){
+        println("hereS")
         binding.completedText.text = "Completed Sets"
         binding.progress.text = "Saved Sets Progress"
 
@@ -351,8 +393,27 @@ class ProfileFragment : Fragment() {
 
 
         var attempts = ArrayList<Entry>()
-        val sortedDates = cardDates.sorted()
+        val sortedDates = setDates.sorted()
+        println(cardDates)
         val labels = ArrayList<String>()
+
+//        val earliestDate = sortedDates.first()
+//        val mostRecentDate = sortedDates.last()
+//
+//        val stepSize = (mostRecentDate.toEpochDay() - earliestDate.toEpochDay()) / 6
+//
+//        var currentDate = earliestDate
+
+        // Loop through 7 dates (earliestDate + 6 steps) and get the frequencies at each date
+//        for (i in 0..6) {
+//            val startDateRange = currentDate
+//            val endDateRange = currentDate.plusDays(stepSize)
+//            val currentDateCards = cardDates.count { it >= startDateRange && it < endDateRange }
+//            attempts.add(Entry(i.toFloat(), currentDateCards.toFloat()))
+//            labels.add(currentDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.getDefault())))
+//            currentDate = currentDate.plusDays(stepSize)
+//        }
+
         val dateCardCountMap = sortedDates.groupingBy { it }.eachCount()
         var index = 0f
         for ((date, count) in dateCardCountMap) {
@@ -360,9 +421,15 @@ class ProfileFragment : Fragment() {
             labels.add(date.toString())
             index++
         }
+        if (attempts.size == 1) {
+            val singleDataPoint = attempts[0]
+            val fillerDataPoint = Entry(1f, singleDataPoint.y) // You can set the x-value to any value you like
+            attempts.add(fillerDataPoint)
+            labels.add("") // Add an empty label for the filler data point
+        }
         val lineDataSet = LineDataSet(attempts, "Number of cards completed").apply {
             setDrawValues(false)
-            color = Color.BLUE
+            color = Color.RED
             lineWidth = 2f
         }
         val lineData = LineData(lineDataSet)
@@ -404,6 +471,7 @@ class ProfileFragment : Fragment() {
         pieChart.setDrawEntryLabels(false)
         pieChart.description.isEnabled = false
         pieChart.data = data
+        dataSet.valueTextSize = 12f
         pieChart.invalidate()
 
 

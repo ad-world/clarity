@@ -10,6 +10,7 @@ import android.speech.tts.TextToSpeech
 import android.util.Log
 import android.view.View
 import android.view.View.GONE
+import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
 import android.widget.Button
 import android.widget.ImageButton
@@ -61,6 +62,8 @@ class TestSetActivity() : AppCompatActivity() {
 
     // Index that stores the current card being displayed
     private var index = 0
+
+    var ommisions: List<String>? = listOf()
 
     // User and Set
     var userid = 0
@@ -116,7 +119,9 @@ class TestSetActivity() : AppCompatActivity() {
 
         // Handle Speaker button click
         iBtnSpeaker.setOnClickListener {
-            player!!.speak(set.cards[index].phrase, TextToSpeech.QUEUE_ADD, null, null)
+            if (index < set.cards.size) {
+                player!!.speak(set.cards[index].phrase, TextToSpeech.QUEUE_ADD, null, null)
+            }
         }
 
         // Handle Mic button click
@@ -135,7 +140,7 @@ class TestSetActivity() : AppCompatActivity() {
                 // CASE 2: Recording -> Not Recording
                 } else {
                     // Change UI of button
-                    iBtnMic.setBackgroundResource(R.drawable.roundcorner)
+                    iBtnMic.setBackgroundResource(R.drawable.fadedroundcorner)
                     iBtnMic.setImageResource(R.drawable.baseline_mic_24)
 
                     // Stop Recording
@@ -149,16 +154,19 @@ class TestSetActivity() : AppCompatActivity() {
                     iBtnNext.visibility = VISIBLE
 
                     // Return Accuracy Score and Display Popup
-                    val score = getAccuracyScore(File(this.filesDir, "audio.wav"))
-                    displayMessagePopup(score)
+                    val isComplete = getAccuracyScore(File(this.filesDir, "audio.wav"))
+                    displayMessagePopup(isComplete)
+
+                    // Increment Set Progress
+                    set.progress = index + 1
 
                     // Update Progress Components
                     val progressBar = findViewById<ProgressBar>(R.id.progressBar)
                     val tvCompletedCount = findViewById<TextView>(R.id.tvCompletedPhrases)
                     val tvPercentComplete = findViewById<TextView>(R.id.tvPercentComplete)
-                    progressBar.progress = (index * 100) / set.cards.size
-                    tvCompletedCount.text = "$index Complete"
-                    tvPercentComplete.text = "${(index * 100) / set.cards.size} %"
+                    progressBar.progress = ((index + 1) * 100) / set.cards.size
+                    tvCompletedCount.text = "${index + 1} Complete"
+                    tvPercentComplete.text = "${((index + 1) * 100) / set.cards.size} %"
                 }
 
                 // Toggle isRecording Value
@@ -169,18 +177,20 @@ class TestSetActivity() : AppCompatActivity() {
         // Handle Forward Navigation
         iBtnNext.setOnClickListener {
             iBtnMic.isEnabled = true
-            // Increment Index and set Progress
+            // Increment Index
             index++
-            set.progress = index
+
             if (index < set.cards.size) {
-                iBtnNext.visibility = GONE
+                iBtnMic.setBackgroundResource(R.drawable.roundcorner)
+                iBtnMic.setImageResource(R.drawable.baseline_mic_24)
+                iBtnNext.visibility = INVISIBLE
                 cvPopUp.visibility = GONE
                 loadCard(set.cards[index])
                 recordingCompleted = false
             } else {
                 cvCompletedScreen.visibility = VISIBLE
                 iBtnClose.isEnabled = false
-                iBtnNext.visibility = GONE
+                iBtnNext.visibility = INVISIBLE
                 iBtnMic.isEnabled = false
             }
         }
@@ -204,7 +214,7 @@ class TestSetActivity() : AppCompatActivity() {
     }
 
     // Returns accuracy score
-    private fun getAccuracyScore(wavFile: File): Int {
+    private fun getAccuracyScore(wavFile: File): Boolean {
         // Convert file to MultipartBody.Part
         val requestFile = RequestBody.create(MediaType.parse("audio/*"), wavFile)
         val part = MultipartBody.Part.createFormData("audio", wavFile.name, requestFile)
@@ -215,31 +225,38 @@ class TestSetActivity() : AppCompatActivity() {
         }
         // Handle failed response case
         if (response.body() == null || response.body()!!.metadata == null) {
-            return 0
+            // omissions = null
+            return false
         }
 
-        // Return with Accuracy Score
-        return response.body()?.metadata!!.accuracyScore.toInt()
+        Log.d("response metadata", response.body()!!.metadata.toString())
+
+        ommisions = response.body()!!.metadata?.omissions
+        // Return with isComplete
+        return response.body()?.metadata!!.is_complete
     }
 
     // Display popup
-    @SuppressLint("SetTextI18n")
-    private fun displayMessagePopup(score: Int)  {
+    private fun displayMessagePopup(isComplete: Boolean)  {
         // Get Components
         val cvPopUp = findViewById<CardView>(R.id.cvPopUp)
         val tvResultMessage = findViewById<TextView>(R.id.tvResultMessage)
 
-        // TODO: Make this actually return the threshold later
-        // Get Difficulty Threshold
-        val difficultyThreshold = 50
-
         // Set Message Properties based on Difficulty Threshold
-        if (score in 0 until difficultyThreshold)  {
-            cvPopUp.setCardBackgroundColor(Color.YELLOW)
-            tvResultMessage.text = resources.getString(R.string.try_again)
-        } else if (score in difficultyThreshold..100) {
-            cvPopUp.setCardBackgroundColor(Color.GREEN)
+        if (isComplete)  {
+            cvPopUp.backgroundTintList = getColorStateList(R.color.passed)
             tvResultMessage.text = resources.getString(R.string.great_job)
+        } else if (ommisions == null) {
+            cvPopUp.backgroundTintList = getColorStateList(R.color.failed)
+            tvResultMessage.text = "Whoops, No audio was detected, ensure that your microphone is enabled and try again"
+        } else {
+            cvPopUp.backgroundTintList = getColorStateList(R.color.failed)
+            tvResultMessage.text =  resources.getString(R.string.just_a_little_off_keep_practicing)
+            /*if (omissions!!.isNotEmpty()) {
+                tvResultMessage.text = tvResultMessage.text as String + "\n The following words weren't picked up: " + getOmittedWords(
+                    omissions!!
+                )
+            }*/
         }
 
         // Make Popup visible

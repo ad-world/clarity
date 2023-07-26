@@ -21,6 +21,8 @@ import com.example.clarity.sdk.GetCardsInSetResponse
 import com.example.clarity.sdk.GetSetsByUsernameResponse
 import com.example.clarity.sdk.GetTasksEntity
 import com.example.clarity.sdk.GetTasksResponse
+import com.example.clarity.sdk.GetUserSetProgressRequest
+import com.example.clarity.sdk.GetUserSetProgressResponse
 import com.example.clarity.sdk.StatusResponse
 import com.example.clarity.sdk.Task
 import com.example.clarity.sets.data.Card
@@ -80,14 +82,14 @@ class ClassroomSelectSets(private val classId: String) : Fragment() {
     }
 
     private fun onSetClick(position: Int) {
-        println("selecte set here")
+        println("selected set here")
         // get the set clicked
         val selectedSet = sets[position]
 
         var selectedSetsId: MutableList<Int> = mutableListOf()
 
         // update list with current tasks
-        val getTaskEntity = GetTasksEntity(classId)
+        val getTaskEntity = GetTasksEntity(classId, userid)
         // call api to get the list of tasks
         val response: Response<GetTasksResponse> = runBlocking {
             return@runBlocking api.getTasks(getTaskEntity)
@@ -175,7 +177,13 @@ class ClassroomSelectSets(private val classId: String) : Fragment() {
                 val setData = response.body()?.data?.get(i)!!
                 val setId = setData.set_id
                 val setTitle = setData.title
-                val progress = 0
+                // get set progress
+                val progressResponse : Response<GetUserSetProgressResponse> = runBlocking {
+                    return@runBlocking api.getSetProgress(GetUserSetProgressRequest(setId, userid))
+                }
+                // assign set progress to a variable
+                val progress = progressResponse.body()!!.numCompletedCards
+                // create set object
                 val set = Set(
                     setId,
                     setTitle,
@@ -184,7 +192,7 @@ class ClassroomSelectSets(private val classId: String) : Fragment() {
                     progress,
                     SetCategory.CREATED_SET
                 )
-
+                // get all cards in the set
                 val cards : Response<GetCardsInSetResponse> = runBlocking {
                     return@runBlocking api.getCards(GetCardsInSetRequest(setId))
                 }
@@ -193,10 +201,11 @@ class ClassroomSelectSets(private val classId: String) : Fragment() {
                         set.cards.add(Card(card.card_id, card.phrase, false))
                     }
                 }
+                // add set object to list of sets
                 sets.add(set)
             }
         }
-        // add sets to the list
+        // add sets to the ui list
         setAdapter = SetAdapter(sets) { position -> onSetClick(position) }
         binding.rvSets.adapter = setAdapter
         binding.rvSets.layoutManager = LinearLayoutManager(context)

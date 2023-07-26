@@ -56,6 +56,7 @@ class SecondFragment : Fragment() {
             val response : Response<CreateUserResponse> = runBlocking {
                 return@runBlocking api.createUser(user)
             }
+            println("here")
             println(response.body())
 
             var valid = false

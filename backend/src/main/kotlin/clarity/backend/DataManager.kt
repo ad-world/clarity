@@ -63,4 +63,11 @@ class DataManager {
             println("${sqlFile.absolutePath} does not exist. Please fix your file path");
         }
     }
+
+    fun buildRecommendedSets() {
+        val db = conn()
+        val statementCreateSet = db!!.createStatement()
+
+
+    }
 }
