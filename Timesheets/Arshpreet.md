@@ -37,9 +37,15 @@
 | Worked on Sets UI Page, Fixed bug so that sets list is automatically updated after new set creation | 0.5 hour | 6:00 PM | 6:30 PM | July 17th, 2023 | [Ensure fragment refreshes sets list after creation](https://github.com/ad-world/clarity/commit/3398fe0091f8358a542d68220563b8e688350173)
 | Fixed bug in ClaritySDK | 0.25 hour | 7:00 PM | 7:15 PM | July 17th, 2023 | [Ensure fragment refreshes sets list after creation](https://github.com/ad-world/clarity/commit/8a26cd4186526a5c1b2e7748b5dfde4cbab92802)
 | D5 Meeting | 1 hour | 3:00 PM | 4:00 PM | July 19th, 2023 | N/A
+| D5 Work (Decorator Pattern) | 1 hour | 10:30 AM | 11:30 AM | July 21st, 2023 | N/A
+| D5 Wrap Up + Project Meeting | 1 hour | 12:00 PM | 1:00 PM | July 21st, 2023 | N/A
+| Implemented Navigation graph for easy navigation | 1 hour | 2:00 PM | 3:00 PM | July 22nd, 2023 | [Changed index navigation, so that we can navigate within fragments](https://github.com/ad-world/clarity/commit/d423ceeaff71fcd0be5bf251593cb8f8a7ec4956)
+| Working on getting speech recognition working | 6.5 hours | 11:00 AM | 5:30 PM | July 23rd | [Attempt to record audio in .wav format](https://github.com/ad-world/clarity/commit/da1747a0ea6487200fd11c5e83ba671946b7b9d1)
+| Ensure sets can only be created with words in our dictionary | 5 hours | 6:00PM | 11:00PM | July 23rd | [Handle card creation with dictionary](https://github.com/ad-world/clarity/commit/4f7aeb96e5c4af5850b0cedf679a20fe309b9fc8)
+| Got Speech Recognition and TTS working | 5 hours | 12:00AM | 5:00AM | July 24th | [Get TTS + Speech Recognition Working in Activities](https://github.com/ad-world/clarity/commit/12e427b8641aa46d6a205073bee703eb5ebb47f7)
+| D6 Meeting | 1 hour | 7:00 PM | 8:00 PM | July 24th, 2023 | N/A
+| Made some QOL UX and UI changes + Testing Application | 4 hours | 3:00 PM | 7:00 PM | July 25th, 2023 | [Use Actual Dictionary](https://github.com/ad-world/clarity/commit/d19eeb2033d667222667f14e0d4bcadaaa0b1c1b), [Update Set UI](https://github.com/ad-world/clarity/commit/208bb50d60dfaf9cab77df882d233fdf8a697277), [Update Activity UI](https://github.com/ad-world/clarity/commit/8cc4762b42607a81999ccf0f93ed7ba815d4a704), [Update Create Set UI](https://github.com/ad-world/clarity/commit/7402dff68bf64323ae54bb09c73850a81f54bf35)
+| Implement Set Filtering Options | 1 hour | 8:00 PM | 9:00 PM | July 25th, 2023 | [Add toggle filter button](https://github.com/ad-world/clarity/commit/24a09aedc1206d83b386b3bab0ef498fdcb718b9), [Add set filter options by title and completeness](https://github.com/ad-world/clarity/commit/8a03f645d25d71b91c9a0aaf13184d00804edeab)
+| D6 Meeting + Recording | 4.5 hours | 10:30 PM | 3:00 PM | July 26th, 2023 | N/A
 
-
-
-
-
-Total time spent as of Changed App Icon: 57 hours
+Total time spent as of July 26th, 2023: 87 hours
