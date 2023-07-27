@@ -30,7 +30,6 @@
 | Settings Page UI | 3 hours | 12:00 PM | 3:00 PM | July 23rd, 2023 | [Settings UI](https://github.com/ad-world/clarity/commit/aa567b6028d1c9c4c26b7ae58847614f24eca4a0) |
 | Settings Page Endpoint | 1 hour | 4:00 PM | 6:00 PM | July 23rd, 2023 | [Settings Backend Connection](https://github.com/ad-world/clarity/commit/43971cfaf45ed6c97fb002e711cbee2b80d1c1a6) |
 | Settings Page Difficulty | 30 min | 9:00 PM | 9:30 PM | July 23rd, 2023 | [Difficulty Added](https://github.com/ad-world/clarity/commit/3f8e4c09ed59d3afa769b98a85a29e17847e88f6) |
-
 | D6 Meeting | 2 hours | 4:00 PM | 6:00 PM | July 23rd, 2023 | N/A |
 | Resolving profile issues | 4 hour | 12:00 PM | 4:00 PM | July 25th, 2023 | [Fixes in Profile ](https://github.com/ad-world/clarity/commit/c1f569557d96fd25d1507fbd4346806558bac0ac) and [Metrics Edits](https://github.com/ad-world/clarity/commit/3f89c1a3c8f80c1046ca559a3d939c94644cc4d4)|
 | Integrating enabling notifications into settings | 1.5 hour | 8:00 PM | 9:30 PM | July 25th, 2023 |[Settings edits](https://github.com/ad-world/clarity/commit/ea3bb434f6a547e3d8d82677fc217797f737c32a) |
