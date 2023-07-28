@@ -54,5 +54,6 @@ Entries with start time and end times that span multiple days with have exactly 
 | Project run-through | 1.5 hours | 10:00 PM | 11:30 PM | July 25th, 2023 | N/A |
 | Student task progress | 1.5 hours | 11:00 PM July 25th | 12:30 AM July 26th | July 25th-26th, 2023 | [Student task progress](https://github.com/ad-world/clarity/commit/f3f8b13d1762b9c43eff114fad839594e595c0ba) |
 | D6 Meeting + Recording | 4.5 hours | 10:30 AM | 3:00 PM | July 26th, 2023 | N/A |
+| D6 Document Written + Diagram | 3 hours | 12:00 PM | 3:00 PM | July 27th, 2023 | N/A |
 
-Total time spent as of July 26th, 2023: 71 hours
+Total time spent as of July 27th, 2023: 74 hours
