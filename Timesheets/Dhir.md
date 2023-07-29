@@ -50,5 +50,7 @@
 | Cleaning up and removing unused/redundant code for teacher classroom functionalities | 1.25 hour | 4:15 PM | 5:15 PM | July 25th, 2023 | [Code clean up](https://github.com/ad-world/clarity/commit/9cc1f1dfba5762a713d892cb15b32569fc4d948f, https://github.com/ad-world/clarity/commit/0df3eecdaffada71c42f0ba2b3292c6b9280ad39, https://github.com/ad-world/clarity/commit/403fe41d7a3d2c76b0effd44ff3e811e840ece70)
 | Small detailed last minute ui fixes | 1.25 hours | 10:00 AM | 11:15 AM | July 26th, 2023 | [UI updates and small bug fixes](https://github.com/ad-world/clarity/commit/6d6d70a6f4ca6694c67c0e5ef8c2b655aed70aa6, https://github.com/ad-world/clarity/commit/0a9b517505ee8ea641c3bbbc6572df587b56ca78, https://github.com/ad-world/clarity/commit/76474b292815192188c89c912479d56090ab1be5)
 | D6 Meeting + Recording | 3.75 hours | 11:15 AM | 3:00 PM | July 26th, 2023 | N/A |
+| D6 Written Work | 1.25 hours | 3:00 AM | 4:15 AM | July 28th, 2023 | N/A |
+| D6 Written Work + Meeting + Diagram | 3.5 hours | 1:30 PM | 5:00 PM | July 28th, 2023 | N/A |
 
-Total time spent as of July 26th, 2023: 78.75 hours
+Total time spent as of July 29th, 2023: 83.5 hours
