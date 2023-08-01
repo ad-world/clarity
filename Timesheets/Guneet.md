@@ -38,5 +38,7 @@
 | Notifications page UI + endpoint connection | 4 hour | 6:00 AM | 10:00 AM | July 26th, 2023 | [Adding notifications page.](https://github.com/ad-world/clarity/commit/dc544de4d7f3d3aa628cc58012c9016e5f5aec10) |
 | Meeting for Demo Recording and final debugging / merging of features and testing | 4.5 hours | 10:30 AM | 3:00 PM | July 26th, 2023 | [Adding some endpoints to community page.](https://github.com/ad-world/clarity/commit/623529d200e3354d3cfdb47c89a58fc5142945c9) |
 | D6 Meeting + Work | 3 hours | 2:00 PM | 5:00 PM | July 28th, 2023 | N/A |
+| D7 Meeting | 30 min | 1:00 PM | 1:30 PM | July 31st, 2023 | N/A |
+| D7 Work - Features and project work completed by me | 1 hour | 6:00 PM | 7:00 PM | July 31st, 2023 | N/A |
 
-Total time spent as of July 28, 2023: 78.25 hours
+Total time spent as of August 1, 2023: 79.75 hours
