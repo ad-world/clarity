@@ -52,5 +52,6 @@
 | D6 Meeting + Recording | 3.75 hours | 11:15 AM | 3:00 PM | July 26th, 2023 | N/A |
 | D6 Written Work | 1.25 hours | 3:00 AM | 4:15 AM | July 28th, 2023 | N/A |
 | D6 Written Work + Meeting + Diagram | 3.5 hours | 1:30 PM | 5:00 PM | July 28th, 2023 | N/A |
+| D7 Work | 1.0 hours | 1:30 PM | 2:30 PM | August 1st, 2023 | N/A |
 
-Total time spent as of July 29th, 2023: 83.5 hours
+Total time spent as of August 1st, 2023: 84.5 hours
