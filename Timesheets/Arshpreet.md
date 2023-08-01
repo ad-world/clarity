@@ -47,5 +47,8 @@
 | Made some QOL UX and UI changes + Testing Application | 4 hours | 3:00 PM | 7:00 PM | July 25th, 2023 | [Use Actual Dictionary](https://github.com/ad-world/clarity/commit/d19eeb2033d667222667f14e0d4bcadaaa0b1c1b), [Update Set UI](https://github.com/ad-world/clarity/commit/208bb50d60dfaf9cab77df882d233fdf8a697277), [Update Activity UI](https://github.com/ad-world/clarity/commit/8cc4762b42607a81999ccf0f93ed7ba815d4a704), [Update Create Set UI](https://github.com/ad-world/clarity/commit/7402dff68bf64323ae54bb09c73850a81f54bf35)
 | Implement Set Filtering Options | 1 hour | 8:00 PM | 9:00 PM | July 25th, 2023 | [Add toggle filter button](https://github.com/ad-world/clarity/commit/24a09aedc1206d83b386b3bab0ef498fdcb718b9), [Add set filter options by title and completeness](https://github.com/ad-world/clarity/commit/8a03f645d25d71b91c9a0aaf13184d00804edeab)
 | D6 Meeting + Recording | 4.5 hours | 10:30 PM | 3:00 PM | July 26th, 2023 | N/A
+| D6 Written Work + Diagram | 2 hours | 1:00 PM | 3:00 PM | July 28th, 2023 | N/A
+| D7 Meeting | 0.5 hours | 1:00 PM | 1:30 PM | July 31st, 2023 | N/A
+| D7 Work | 0.5 hours | 2:00 PM | 2:30 PM | August 1st, 2023 | N/A
 
-Total time spent as of July 26th, 2023: 87 hours
+Total time spent as of August 1st, 2023: 90 hours
