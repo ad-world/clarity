@@ -1,3 +1,7 @@
+############################################################################################################
+##  Retrieved from: https://stackoverflow.com/questions/5245497/how-to-record-wav-format-file-in-android  ##
+############################################################################################################
+
 package com.example.clarity.sets.audio
 
 import android.Manifest
