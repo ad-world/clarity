@@ -36,5 +36,6 @@
 | Finalize getSetsForFollowing endpoint structure + demo prep | 1 hour | 10:30 am | 11:30 am | July 26th, 2023 | [Finalize getSetsForFollowing](https://github.com/ad-world/clarity/pull/82) |
 | Troubleshoot errors + Record Demo | 2 hours | 1:00 pm | 3:00 pm | July 26th, 2023 | N/A |
 | Work on D6 (System Design + Sequence Diagrams) + formatting/fixing overall doc | 11 hours | 6:00 am | 5:00 pm | July 28th, 2023 | N/A|
+| Work on D7 Document | 5 hours | 11:00 am | 4:00 pm | August 1st, 2023 | N/A|
 
-### Total Time Spent: 71.75 hours
+### Total Time Spent: 76.75 hours
